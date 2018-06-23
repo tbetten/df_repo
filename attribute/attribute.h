@@ -1,96 +1,71 @@
 #pragma once
-#include <unordered_map>
 #include <memory>
+#include <string>
+#include <vector>
+#include <iostream>
 
-namespace Attributes
+namespace attrib
 {
-	class Attribute_base
+	enum class Attribute_type { ST, DX, IQ, HT, ST_lift, ST_strike, HP, Will, Per, FP, BS, BM };
+
+	class Bonus
 	{
 	public:
-		Attribute_base(int value, int multiplier = 0) : m_base_value{ value }, m_base_multiplier{ multiplier } {}
-		int get_base_value() const { return m_base_value; }
-		int get_base_multiplier() const { return m_base_multiplier; }
-	protected:
-		int m_base_value;
-		int m_base_multiplier;
+		using Ptr = std::unique_ptr<Bonus>;
+		static Ptr create(std::string message, int base_value, int multiplier, bool timed = false, int remaining_time = 0) { return std::make_unique<Bonus>(message, base_value, multiplier, timed, remaining_time); }
+		Bonus(std::string message, int base_value = 0, int multiplier = 0, bool timed = false, int remaining_time = 0) : m_message{ message }, m_base{ base_value }, m_multiplier{ multiplier }, m_timed{ timed }, m_remaining_time{ remaining_time } {}
+		int get_base() const { return m_base; }
+		int get_multiplier() const { return m_multiplier; }
+		int is_timed() const { return m_timed; }
+		std::string get_message() const { return m_message; }
+		int pass_time(const int seconds);
+		int remaining_time() const { return m_remaining_time; }
+	private:
+		std::string m_message;
+		int m_base;
+		int m_multiplier;
+		int m_remaining_time;
+		bool m_timed;
 	};
 
-	class Raw_bonus : public Attribute_base
+	struct Attribute_data
 	{
-	public:
-		Raw_bonus(int value = 0, int multiplier = 0) : Attribute_base{ value, multiplier } {}
+		int base;
+		int price;
+		int bought;
+		int effective;
+		std::vector<std::string> messages;
 	};
 
-	class Final_bonus : public Attribute_base
+	inline std::ostream& operator<< (std::ostream& os, const Attribute_data& data)
 	{
-	public:
-		Final_bonus(int time, int value = 0, int multiplier = 0) : Attribute_base{ value, multiplier } 
+		os << "base: " << data.base << "\t price: " << data.price << "\t bought: " << data.bought << "\t effective: " << data.effective << std::endl;
+		for (auto msg : data.messages)
 		{
-			m_remaining_secs = time;
+			os << msg << std::endl;
 		}
-		int pass_time(int seconds) { return m_remaining_secs -= seconds; }
-		int get_remaining() const { return m_remaining_secs; }
-	private:
-		int m_remaining_secs;
-	};
-
-	using Bonus_map = std::unordered_map<int, Attribute_base>;
-	using Bonus_pair = std::pair<int, Attribute_base>;
-
-	class Attribute : public Attribute_base, public std::enable_shared_from_this<Attribute>
-	{
-	public:
-		using Ptr = std::shared_ptr<const Attribute>;
-		Attribute(int base) : Attribute_base{ base } {}
-		Attribute() : Attribute_base{ 0 } {}
-		Ptr get_ptr() const { return shared_from_this(); }
-		void buy(int amount) { m_bought += amount; }
-		int add_raw_bonus(Raw_bonus bonus);
-		int add_final_bonus(Final_bonus bonus);
-		void remove_raw_bonus(int id) { m_raw_bonuses.erase(id); }
-		void remove_final_bonus(int id) { m_final_bonuses.erase(id); }
-		int get_natural_value() const { return m_base_value + m_bought; }
-		int get_final_value()  { return calculate_value(); }
-	protected:
-		void apply_raw_bonuses();
-		void apply_final_bonuses();
-		virtual int calculate_value() ;
-		int m_final;
-	private:
-		
-
-		Bonus_map m_raw_bonuses;
-		Bonus_map m_final_bonuses;
-		int m_bought{ 0 };
-		int m_max_id{ 0 };
-	};
-
-	class Dependent_attribute : public Attribute
-	{
-	public:
-		Dependent_attribute(int base) : Attribute{ base } {}
-		void add_attribute(Attribute::Ptr attr) { m_parents.push_back(attr); }
-		void remove_attribute(int id);
-	protected:
-		std::vector<Attribute::Ptr> m_parents;
-	};
-
-	class Depends_on_natural : public Dependent_attribute
-	{
-	public:
-		Depends_on_natural(int base) : Dependent_attribute{ base } {}
-		int calculate_value() override;
-
-	};
+		return os;
+	}
 
 	class Attribute_set
 	{
 	public:
-		enum class Attrib {ST, ST_Lift, ST_Strike, DX, IQ, HT};
+		enum class Value_type { Natural, Effective };
+		enum class Encumbrance_level { None, Light, Medium, Heavy, Extra_Heavy, Forbidden };
 		Attribute_set();
-		int get_natural_value(Attrib attrib) { return m_attribs[attrib]->get_natural_value(); }
-		void buy(Attrib attrib, int amount, int budget) { return m_attribs[attrib]->buy(amount); }
+		~Attribute_set();
+		void buy(Attribute_type attrib, int amount, int& budget);
+		int add_bonus(const Attribute_type attrib, Bonus::Ptr& bonus);
+		void remove_bonus(Attribute_type attrib, int id);
+		void pass_time(const int seconds);
+		int get_value(Attribute_type attrib, Value_type type) const;
+		float get_basic_lift() const;
+		Encumbrance_level get_encumbrance(const float weight_carried) const;
+		int get_move(const float weight_carried) const;
+		int get_dodge() const;
+		Attribute_data get_attribute_data(Attribute_type attrib) const;
 	private:
-		std::unordered_map<Attrib, Attribute::Ptr> m_attribs;
+		class impl;
+		std::unique_ptr<impl> p_impl;
 	};
 }
