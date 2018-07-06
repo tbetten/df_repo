@@ -1,5 +1,5 @@
 #pragma once  
-
+#define DB_EXPORTS
 #ifdef DB_EXPORTS  
 #define DB __declspec(dllexport)   
 #else  

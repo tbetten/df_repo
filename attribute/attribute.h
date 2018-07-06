@@ -52,7 +52,7 @@ namespace attrib
 	public:
 		enum class Value_type { Natural, Effective };
 		enum class Encumbrance_level { None, Light, Medium, Heavy, Extra_Heavy, Forbidden };
-		Attribute_set();
+		Attribute_set() noexcept;
 		~Attribute_set();
 		void buy(Attribute_type attrib, int amount, int& budget);
 		int add_bonus(const Attribute_type attrib, Bonus::Ptr& bonus);

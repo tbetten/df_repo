@@ -42,7 +42,7 @@ namespace attrib
 		std::unordered_map<Attribute_type, std::unordered_map<int, Child_bonuses>> m_bonus_ids;
 	};
 
-	Attribute_set::Attribute_set() : p_impl{ new impl{} } {}
+	Attribute_set::Attribute_set() noexcept : p_impl{ new impl{} } {}
 	Attribute_set::~Attribute_set() = default;
 
 	Attribute_set::impl::impl()
@@ -176,6 +176,7 @@ namespace attrib
 	{
 		auto bs = get_value(Attribute_type::BS, Value_type::Effective);
 		auto basic = 3 + (bs / 4);
+		return basic;
 	}
 
 	int Attribute_set::impl::copy_bonus(Attribute_type attrib_to, const Bonus::Ptr& bonus)

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <unordered_map>
 
-namespace Attributes
+namespace attrib
 {
 	int Attribute::add_raw_bonus(Raw_bonus bonus)
 	{

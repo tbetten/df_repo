@@ -20,10 +20,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{E54DF222-91A8-4B4A-83E5-A4A74FFD66A7}</ProjectGuid>
+    <ProjectGuid>{DFF86F81-6615-4144-BE7E-9594EE754E9F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>attribute</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <RootNamespace>ecs</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -149,13 +149,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="attribute.h" />
-    <ClInclude Include="attribute_impl.h" />
+    <ClInclude Include="component_base.h" />
+    <ClInclude Include="ecs_base.h" />
+    <ClInclude Include="ecs_types.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="attribute_impl.cpp" />
+    <ClCompile Include="entity_manager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
