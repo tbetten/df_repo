@@ -10,15 +10,16 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include "db.h"
 // the numeric value of the enumerations is used as bit position in the entity bitset
 enum class Component_type : unsigned int { Position, Attribute_set, Skill_set, Item_shared, Projectile };
 
-unsigned int to_number(Component_type cmp)
+inline unsigned int to_number(Component_type cmp)
 {
 	return static_cast<int>(cmp);
 }
 
-Component_type to_comp_type(unsigned int type)
+inline Component_type to_comp_type(unsigned int type)
 {
 	return static_cast<Component_type>(type);
 }
@@ -33,6 +34,8 @@ public:
 	Component_base() = default;
 
 	virtual ~Component_base() = default;
+	virtual void load_from_db(db::db_connection* db, const std::string& key) = 0;
+	//virtual void load_from_db(const std::string& key) = 0;
 	bool is_mutable() { return m_mutable; }
 	Ptr clone() const
 	{
@@ -60,11 +63,26 @@ private:
 	}
 };
 
-using Bitmask = std::bitset<max_components>;
 using Entity_id = unsigned int;
+class Entity_manager;
+
+struct Entity_context
+{
+	Entity_manager* m_mgr;
+	Entity_id m_entity_id;
+};
+
+using Bitmask = std::bitset<max_components>;
 using Template_id = std::string;
 using Component_container = std::unordered_map<Component_type, Component_base::Ptr>;
-using Entity_data = std::pair<Bitmask, Component_container>;
+//using Entity_data = std::pair<Bitmask, Component_container>;
+struct Entity_data
+{
+	Bitmask m_component_index;
+	Entity_context m_context;
+	Component_container m_components;
+};
+
 using Entity_container = std::unordered_map<Entity_id, Entity_data>;
 using Template_container = std::map<Template_id, Entity_data>;
 using Component_factory = std::unordered_map<Component_type, std::function<Component_base::Ptr(void)>>;
@@ -89,26 +107,29 @@ class Entity_manager
 public:
 	Entity_manager();
 
-	int add_entity(const Bitmask mask, bool fill_default = false);
+	Entity_id add_entity(const Bitmask mask, bool fill_default = false);
 	bool remove_entity(const Entity_id id);
-	int spawn_from_template(const Template_id& template_id);
+	Entity_id spawn_from_template(const Template_id& template_id);
 
 	bool add_component(const Entity_id entity, const Component_type component);
+	bool add_component(Entity_data& entity, const Component_type component);
 
 	template <class T>
 	std::shared_ptr<T> get_component(const Entity_id entity, const Component_type component)
 	{
 		auto itr = m_entities.find(entity);
 		if (itr == m_entities.end()) { return nullptr; }  // not found
-		if (!itr->second.first.test(to_number (component))) { return nullptr; }  // entity doesn't have this component
-		auto& container = itr->second.second;
+		if (!itr->second.m_component_index.test(to_number (component))) { return nullptr; }  // entity doesn't have this component
+		auto& container = itr->second.m_components;
 		auto cmp_itr = container.find(component);
-		return (cmp_itr != container.end() ? std::dynamic_pointer_cast<T>(*cmp_itr) : nullptr);
+		auto comp_ptr = cmp_itr->second;
+		return (cmp_itr != container.end() ? std::dynamic_pointer_cast<T>(cmp_itr->second) : nullptr);
 	}
 	bool remove_component(const Entity_id entity, const Component_type component);
 	bool has_component(const Entity_id entity, const Component_type component);
 private:
 	void load_templates();
+	Entity_data create_entity(Entity_id id, const Bitmask mask, bool fill_default);
 
 	template <class T>
 	void add_component_type(const Component_type id)

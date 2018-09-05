@@ -21,28 +21,56 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs_types.h">
+    <ClInclude Include="hexlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs_base.h">
+    <ClInclude Include="hexmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="item.h">
+    <ClInclude Include="tileset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs_db.h">
+    <ClInclude Include="tilemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="entity_manager.cpp">
+    <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs_db.cpp">
+    <ClCompile Include="hexlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="item.cpp">
+    <ClCompile Include="hexmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tileset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tilemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\df\assets\maps\fantasyhextiles_randr_4_v1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\df\assets\maps\fantasyhextiles_v2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\df\assets\maps\fantasyhextiles_v2_borderless.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\df\assets\maps\fantasyhextiles_randr_4_v1.tsx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\df\assets\maps\fantasyhextiles_v2.tsx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\df\assets\maps\wilderness.tmx">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
