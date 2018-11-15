@@ -34,7 +34,7 @@ namespace db
 		void exec_sql(std::string sql);
 		~db_connection();		// destructor
 	protected:
-		db_connection() = default;
+		db_connection () : connection{ nullptr } {};
 	private:
 		void init(std::string dbname);
 

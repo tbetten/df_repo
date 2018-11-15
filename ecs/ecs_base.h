@@ -2,7 +2,6 @@
 #include <sstream>
 #include <memory>
 #include <vector>
-#include <bitset>
 #include <map>
 #include <unordered_map>
 #include <functional>
@@ -11,20 +10,7 @@
 #include <type_traits>
 
 #include "db.h"
-// the numeric value of the enumerations is used as bit position in the entity bitset
-enum class Component_type : unsigned int { Position, Attribute_set, Skill_set, Item_shared, Projectile };
-
-inline unsigned int to_number(Component_type cmp)
-{
-	return static_cast<int>(cmp);
-}
-
-inline Component_type to_comp_type(unsigned int type)
-{
-	return static_cast<Component_type>(type);
-}
-
-const int max_components = 32;
+#include "ecs_types.h"
 
 class Component_base
 {
@@ -63,7 +49,6 @@ private:
 	}
 };
 
-using Entity_id = unsigned int;
 class Entity_manager;
 
 struct Entity_context
@@ -72,9 +57,9 @@ struct Entity_context
 	Entity_id m_entity_id;
 };
 
-using Bitmask = std::bitset<max_components>;
+
 using Template_id = std::string;
-using Component_container = std::unordered_map<Component_type, Component_base::Ptr>;
+using Component_container = std::unordered_map<Component, Component_base::Ptr>;
 //using Entity_data = std::pair<Bitmask, Component_container>;
 struct Entity_data
 {
@@ -85,7 +70,7 @@ struct Entity_data
 
 using Entity_container = std::unordered_map<Entity_id, Entity_data>;
 using Template_container = std::map<Template_id, Entity_data>;
-using Component_factory = std::unordered_map<Component_type, std::function<Component_base::Ptr(void)>>;
+using Component_factory = std::unordered_map<Component, std::function<Component_base::Ptr(void)>>;
 
 struct Not_found_exception : public std::runtime_error
 {
@@ -102,20 +87,21 @@ inline std::string to_string(T id)
 	return std::to_string(static_cast<int>(id));
 }
 
+class System_manager;
 class Entity_manager
 {
 public:
-	Entity_manager();
+	explicit Entity_manager(System_manager* systems);
 
 	Entity_id add_entity(const Bitmask mask, bool fill_default = false);
 	bool remove_entity(const Entity_id id);
 	Entity_id spawn_from_template(const Template_id& template_id);
 
-	bool add_component(const Entity_id entity, const Component_type component);
-	bool add_component(Entity_data& entity, const Component_type component);
+	bool add_component(const Entity_id entity, const Component component);
+	bool add_component(Entity_data& entity, const Component component);
 
 	template <class T>
-	std::shared_ptr<T> get_component(const Entity_id entity, const Component_type component)
+	std::shared_ptr<T> get_component(const Entity_id entity, const Component component)
 	{
 		auto itr = m_entities.find(entity);
 		if (itr == m_entities.end()) { return nullptr; }  // not found
@@ -125,14 +111,14 @@ public:
 		auto comp_ptr = cmp_itr->second;
 		return (cmp_itr != container.end() ? std::dynamic_pointer_cast<T>(cmp_itr->second) : nullptr);
 	}
-	bool remove_component(const Entity_id entity, const Component_type component);
-	bool has_component(const Entity_id entity, const Component_type component);
+	bool remove_component(const Entity_id entity, const Component component);
+	bool has_component(const Entity_id entity, const Component component);
 private:
 	void load_templates();
 	Entity_data create_entity(Entity_id id, const Bitmask mask, bool fill_default);
 
 	template <class T>
-	void add_component_type(const Component_type id)
+	void add_component_type(const Component id)
 	{
 		m_cfactory[id] = []()->Component_base::Ptr {return T::create(); };
 	}
@@ -141,4 +127,6 @@ private:
 	Entity_container m_entities;
 	Component_factory m_cfactory;
 	Template_container m_templates;
+	System_manager* m_systems;
 };
+

@@ -3,6 +3,7 @@
 #include "eventmanager.h"
 #include "statemanager.h"
 #include "tileset.h"
+#include "tilemap.h"
 
 #include <SFML\Graphics.hpp>
 #include <memory>
@@ -37,6 +38,7 @@ public:
 	void pause(const Event_details& details);
 
 private:
+	Layer m_l;
 	sf::Sprite m_sprite;
 	sf::Sprite m_sprite2;
 	sf::Texture m_text;

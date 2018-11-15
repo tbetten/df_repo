@@ -1,17 +1,19 @@
 #include "stdafx.h"
 #include "ecs_base.h"
 #include "item.h"
+#include "attribute_comp.h"
 #include "db.h"
+#include "system.h"
 
 #include <iostream>
 #include <filesystem>
 
-Entity_manager::Entity_manager() : m_max_id{ 0 }
+Entity_manager::Entity_manager (System_manager* systems) : m_max_id{ 0 }, m_systems{ systems }
 {
-	add_component_type<item::Item_shared>(Component_type::Item_shared);
-	add_component_type<item::Projectile>(Component_type::Projectile);
+	add_component_type<item::Item_shared>(Component::Item_shared);
+	add_component_type<item::Projectile>(Component::Projectile);
+	add_component_type<Attribute_comp> (Component::Attributes);
 	load_templates();
-	//add_component_type<
 }
 
 Entity_id Entity_manager::add_entity(const Bitmask mask, bool fill_default)
@@ -41,7 +43,7 @@ Entity_id Entity_manager::add_entity(const Bitmask mask, bool fill_default)
 			}
 		}
 	}
-//	m_systems->entity_modified(entity, mask);
+	m_systems->entity_modified(entity, mask);
 //	m_systens->add_event(entity, static_cast<Event_id>(Entity_event::Spawned));
 	return entity;
 }
@@ -163,7 +165,7 @@ Entity_id Entity_manager::spawn_from_template(const Template_id& t_id)
 	return ent;
 }
 
-bool Entity_manager::add_component(const Entity_id entity, const Component_type component)
+bool Entity_manager::add_component(const Entity_id entity, const Component component)
 {
 	auto ent_itr = m_entities.find(entity);
 	if (ent_itr == m_entities.end()) { return false; }
@@ -177,7 +179,7 @@ bool Entity_manager::add_component(const Entity_id entity, const Component_type 
 	return true;
 }
 
-bool Entity_manager::add_component(Entity_data& entity, const Component_type component)
+bool Entity_manager::add_component(Entity_data& entity, const Component component)
 {
 	auto cf_itr = m_cfactory.find(component);
 	if (cf_itr == m_cfactory.end()) { return false; }
@@ -187,7 +189,7 @@ bool Entity_manager::add_component(Entity_data& entity, const Component_type com
 	return true;
 }
 
-bool Entity_manager::remove_component(const Entity_id entity, const Component_type component)
+bool Entity_manager::remove_component(const Entity_id entity, const Component component)
 {
 	auto ent_itr = m_entities.find(entity);
 	if (ent_itr == m_entities.end()) { return false; }
@@ -201,7 +203,7 @@ bool Entity_manager::remove_component(const Entity_id entity, const Component_ty
 	return true;
 }
 
-bool Entity_manager::has_component(const Entity_id entity, const Component_type component)
+bool Entity_manager::has_component(const Entity_id entity, const Component component)
 {
 	auto ent_itr = m_entities.find(entity);
 	if (ent_itr == m_entities.end()) { return false; }

@@ -63,7 +63,7 @@ using Bindings = std::vector<Binding::Ptr>;
 
 using Command_container = std::unordered_map<std::string, Command::Ptr>;
 
-using Commands = std::unordered_map<State_type, Command_container>;
+using Commands = std::unordered_map<Game_state, Command_container>;
 
 /*class Eventmanager::impl
 {

@@ -5,9 +5,11 @@
 //#include "state_main_menu.h"
 #include "state_game.h"
 //#include "state_paused.h"
+
+
 #include <iostream>
 
-Game::Game() : m_window{ "Theotris", sf::Vector2u(800, 600), &m_context }, m_statemanager{ &m_context }
+Game::Game () : m_window{ "Theotris", sf::Vector2u (1600, 600), &m_context }, m_statemanager{ &m_context }, m_entity_mgr{ &m_system_mgr }
 {
 	m_clock.restart();
 	//std::srand(time(nullptr));
@@ -17,12 +19,14 @@ Game::Game() : m_window{ "Theotris", sf::Vector2u(800, 600), &m_context }, m_sta
 
 //	m_statemanager.insert_state(state_to_int(Game_state::Intro), std::move(std::make_unique<State_intro>(&m_context)));
 //	m_statemanager.insert_state(state_to_int(Game_state::Main_menu), std::move(std::make_unique<State_main_menu>(&m_context)));
-	m_statemanager.insert_state(state_to_int(Game_state::Game), std::move(std::make_unique<State_game>(&m_context)));
+	m_statemanager.insert_state(Game_state::Game, std::move(std::make_unique<State_game>(&m_context)));
 //	m_statemanager.insert_state(state_to_int(Game_state::Paused), std::move(std::make_unique<State_paused>(&m_context)));
 	m_context.m_state_manager = &m_statemanager;
 	m_context.m_cache = &m_cache;
-
-	m_statemanager.switch_to(state_to_int(Game_state::Game));
+	m_statemanager.switch_to(Game_state::Game);
+	m_context.m_entity_manager = &m_entity_mgr;
+	m_system_mgr.set_entity_mgr (&m_entity_mgr);
+	m_context.m_system_manager = &m_system_mgr;
 }
 
 void Game::update()

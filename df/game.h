@@ -4,6 +4,8 @@
 #include "shared_context.h"
 #include "statemanager.h"
 #include "resource_cache.h"
+#include "ecs_base.h"
+#include "system.h"
 
 class Game
 {
@@ -25,4 +27,6 @@ private:
 	Cache m_cache;
 	sf::Clock m_clock;
 	sf::Time m_elapsed;
+	Entity_manager m_entity_mgr;
+	System_manager m_system_mgr;
 };

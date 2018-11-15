@@ -23,7 +23,7 @@ State_manager::~State_manager()
 	}
 }
 
-void State_manager::insert_state(const int id, State_ptr state)
+void State_manager::insert_state(Game_state id, State_ptr state)
 {
 	m_states.emplace(id, std::move(state));
 }
@@ -36,7 +36,7 @@ void State_manager::draw()
 	}
 	if (m_states[m_state_stack.back()]->is_transparent() && m_state_stack.size() > 1)
 	{
-		auto r_itr = std::find_if_not(m_state_stack.crbegin(), m_state_stack.crend(), [this](int id) {return m_states[id]->is_transparent(); });
+		auto r_itr = std::find_if_not(m_state_stack.crbegin(), m_state_stack.crend(), [this](Game_state id) {return m_states[id]->is_transparent(); });
 		for (; r_itr != m_state_stack.crbegin(); --r_itr)
 		{
 			m_states[*r_itr]->draw();
@@ -75,7 +75,7 @@ void State_manager::update(const sf::Time time)
 	}
 	if (m_states[m_state_stack.back()]->is_transcendent() && m_state_stack.size() > 1)
 	{
-		auto r_itr = std::find_if_not(m_state_stack.crbegin(), m_state_stack.crend(), [this](int id) {return m_states[id]->is_transcendent(); });
+		auto r_itr = std::find_if_not(m_state_stack.crbegin(), m_state_stack.crend(), [this](Game_state id) {return m_states[id]->is_transcendent(); });
 		for (; r_itr != m_state_stack.crbegin(); --r_itr)
 		{
 			m_states[*r_itr]->update(time);
@@ -99,7 +99,7 @@ void State_manager::update(const sf::Time time)
 	}*/
 }
 
-bool State_manager::has_state(const int  id) const
+bool State_manager::has_state(Game_state  id) const
 {
 	//auto state = std::find_if(m_states.begin(), m_states.end(), [type](const State_elem& e) {return e.first == type; });
 	auto state = std::find(m_state_stack.cbegin(), m_state_stack.cend(), id);
@@ -114,7 +114,7 @@ bool State_manager::has_state(const int  id) const
 	}
 }
 
-void State_manager::remove(const int id)
+void State_manager::remove(Game_state id)
 {
 	m_to_remove.push_back(id);
 }
@@ -129,7 +129,7 @@ void State_manager::process_requests()
 }
 
 
-void State_manager::switch_to(const int id)
+void State_manager::switch_to(Game_state id)
 {
 	m_shared->m_event_manager->set_current_state(id);
 	auto state = std::find(m_state_stack.cbegin(), m_state_stack.cend(), id);//std::find_if(m_states.begin(), m_states.end(), [type](State_elem& e) {return e.first == type; });
@@ -160,7 +160,7 @@ void State_manager::switch_to(const int id)
 	}
 }
 
-void State_manager::create_state(const int id)
+void State_manager::create_state(Game_state id)
 {
 	m_state_stack.push_back(id);
 	m_states[id]->on_create();
@@ -174,7 +174,7 @@ void State_manager::create_state(const int id)
 	m_states.back().second->on_create();*/
 }
 
-void State_manager::remove_state(const int id)
+void State_manager::remove_state(Game_state id)
 {
 	auto state = std::find(m_state_stack.cbegin(), m_state_stack.cend(), id);
 	if (state != m_state_stack.cend())

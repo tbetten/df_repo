@@ -31,7 +31,7 @@ public:
 private:
 	void load_bindings();
 
-	State_type m_current_state;
+	Game_state m_current_state;
 	Bindings m_bindings;
 	Commands m_commands;
 	bool m_focus;
@@ -44,14 +44,14 @@ Eventmanager::~Eventmanager() = default;
 Eventmanager::impl::impl() : m_focus{ true } { load_bindings(); }
 Eventmanager::impl::~impl() {}
 
-void Eventmanager::add_command(State_type state, std::string name, Command::Ptr command)
+void Eventmanager::add_command(Game_state state, std::string name, Command::Ptr command)
 {
 	auto itr = p_impl->m_commands.emplace(state, Command_container()).first;
 	itr->second.emplace(name, command);
 	//p_impl->m_commands.emplace(name, command);
 }
 
-void Eventmanager::remove_command(State_type state, std::string name)
+void Eventmanager::remove_command(Game_state state, std::string name)
 {
 	auto state_itr = p_impl->m_commands.find(state);
 	if (state_itr != p_impl->m_commands.end())
@@ -85,17 +85,17 @@ void Eventmanager::set_focus(const bool focus)
 	p_impl->m_focus = focus;
 }
 
-void Eventmanager::set_current_state(State_type state)
+void Eventmanager::set_current_state(Game_state state)
 {
 	p_impl->m_current_state = state;
 }
 
-void Actor::add_command_to_eventmanager(State_type state, Command::Ptr command, Eventmanager& eventmanager)
+void Actor::add_command_to_eventmanager(Game_state state, Command::Ptr command, Eventmanager& eventmanager)
 {
 	eventmanager.add_command(state, command->m_name, command);
 }
 
-void Actor::remove_command_from_eventmanager(State_type state, std::string name, Eventmanager& eventmanager)
+void Actor::remove_command_from_eventmanager(Game_state state, std::string name, Eventmanager& eventmanager)
 {
 	eventmanager.remove_command(state, name);
 }
@@ -238,7 +238,7 @@ void Eventmanager::impl::update()
 			{
 				//auto command_itr = m_commands.find(binding->m_name);
 				auto state_commands = m_commands.find(m_current_state);
-				auto other_commands = m_commands.find(All_states);
+				auto other_commands = m_commands.find(Game_state::All_states);
 				if (state_commands != m_commands.end())
 				{
 					auto itr = state_commands->second.find(binding->m_name);

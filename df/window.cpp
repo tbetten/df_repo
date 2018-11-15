@@ -47,10 +47,10 @@ void Window::setup(const std::string& title, const sf::Vector2u& size)
 	auto fullscreen_cmd = std::make_shared<CMD_toggle_fullscreen>(std::string("CMD_fullscreen_toggle"), this);
 	//fullscreen_cmd->set_actor(this);
 	//auto x = std::make_shared<CMD_toggle_fullscreen>(fullscreen_cmd);
-	add_command_to_eventmanager(state_to_int(Game_state::All_states), fullscreen_cmd, m_eventmanager);
+	add_command_to_eventmanager(Game_state::All_states, fullscreen_cmd, m_eventmanager);
 	auto close_cmd = std::make_shared<CMD_close_window>(std::string{ "CMD_close_window" }, this);
 	//close_cmd->set_actor(this);
-	add_command_to_eventmanager(state_to_int(Game_state::All_states), close_cmd, m_eventmanager);
+	add_command_to_eventmanager(Game_state::All_states, close_cmd, m_eventmanager);
 }
 
 void Window::create()
