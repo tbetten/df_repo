@@ -61,7 +61,7 @@ private:
 
 using Bindings = std::vector<Binding::Ptr>;
 
-using Command_container = std::unordered_map<std::string, Command::Ptr>;
+using Command_container = std::unordered_map<std::string, Command>;
 
 using Commands = std::unordered_map<Game_state, Command_container>;
 

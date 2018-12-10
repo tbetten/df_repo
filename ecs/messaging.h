@@ -1,14 +1,15 @@
 #pragma once
 #include <memory>
 #include <functional>
-
+#include <any>
+/*
 struct Payload_base
 {
 	virtual ~Payload_base () = default;
 };
 
-using Payload = std::shared_ptr<Payload_base>;
-using Callback = std::function<void (Payload)>;
+using Payload = std::shared_ptr<Payload_base>;*/
+using Callback = std::function<void (std::any)>;
 
 class Dispatcher
 {
@@ -17,7 +18,7 @@ public:
 	{
 		m_callbacks.push_back (c);
 	}
-	void notify (Payload value) const
+	void notify (std::any value) const
 	{
 		for (auto callback : m_callbacks)
 		{

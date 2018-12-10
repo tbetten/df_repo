@@ -61,7 +61,16 @@ void Keynames::init()
 	keycodes.insert(sf::Keyboard::Key::Right, "Right");
 	keycodes.insert(sf::Keyboard::Key::Up, "Up");
 	keycodes.insert(sf::Keyboard::Key::Down, "Down");
-
+	keycodes.insert (sf::Keyboard::Key::Numpad0, "Numpad0");
+	keycodes.insert (sf::Keyboard::Key::Numpad1, "Numpad1");
+	keycodes.insert (sf::Keyboard::Key::Numpad2, "Numpad2");
+	keycodes.insert (sf::Keyboard::Key::Numpad3, "Numpad3");
+	keycodes.insert (sf::Keyboard::Key::Numpad4, "Numpad4");
+	keycodes.insert (sf::Keyboard::Key::Numpad5, "Numpad5");
+	keycodes.insert (sf::Keyboard::Key::Numpad6, "Numpad6");
+	keycodes.insert (sf::Keyboard::Key::Numpad7, "Numpad7");
+	keycodes.insert (sf::Keyboard::Key::Numpad8, "Numpad8");
+	keycodes.insert (sf::Keyboard::Key::Numpad9, "Numpad9");
 	keycodes.insert(sf::Keyboard::Key::F1, "F1");
 	keycodes.insert(sf::Keyboard::Key::F2, "F2");
 	keycodes.insert(sf::Keyboard::Key::F3, "F3");

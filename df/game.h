@@ -24,7 +24,7 @@ private:
 	Shared_context m_context;
 	Window m_window;
 	State_manager m_statemanager;
-	Cache m_cache;
+	cache::Cache m_cache;
 	sf::Clock m_clock;
 	sf::Time m_elapsed;
 	Entity_manager m_entity_mgr;

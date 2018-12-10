@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <queue>
 #include <functional>
+#include <SFML/Graphics.hpp>
 
 namespace hexlib
 {
@@ -194,6 +195,7 @@ namespace hexlib
 	Hex hex_round(FractionalHex h);
 	std::vector<Hex> hex_linedraw(Hex a, Hex b);
 	HexMap create_map(int width, int heigth, Orientation orientation);
+	sf::VertexArray to_vertex_array (const HexMap& map, Layout layout);
 
 	template <typename Location>
 	struct Graph

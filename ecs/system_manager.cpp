@@ -1,18 +1,42 @@
 #include "stdafx.h"
 #include "system.h"
 #include "attribute_system.h"
+#include "renderer.h"
+#include "controller.h"
+#include "window.h"
 #include <algorithm>
 #include <stdexcept>
 
 System_manager::System_manager () : m_entity_mgr{ nullptr }
 {
 	m_systems[System::Attribute] = Attribute_system::create (this);
+	
+	m_systems[System::Renderer] = Renderer::create (this);
+	
+	m_systems[System::Controller] = Controller::create (this);
+	
+}
+
+void System_manager::setup_events ()
+{
 	m_systems[System::Attribute]->setup_events ();
+	m_systems[System::Renderer]->setup_events ();
+	m_systems[System::Controller]->setup_events ();
 }
 
 void System_manager::update (int dt)
 {
 	std::for_each (m_systems.begin (), m_systems.end (), [dt](auto& system) {system.second->update (dt); });
+}
+
+class Window;
+
+void System_manager::draw (Window* win)
+{
+	auto renderer_itr = m_systems.find (System::Renderer);
+	if (renderer_itr == m_systems.end ()) return;
+	auto renderer = dynamic_cast<Renderer*>(renderer_itr->second.get());
+	renderer->render (win);
 }
 
 void System_manager::entity_modified (Entity_id entity, Bitmask mask)

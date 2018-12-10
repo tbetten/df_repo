@@ -116,7 +116,7 @@ void Layer::create_model()
 	auto context = m_map->m_context;
 	auto cache = context->m_cache;
 	m_tileset_resource = cache->get_obj(texture_name);
-	auto tileset = get_val<Tileset>(m_tileset_resource.get());
+	auto tileset = cache::get_val<Tileset>(m_tileset_resource.get());
 	sf::Vertex* quad = &m_model[0];
 	sf::Vector2f stagger_offset{ 0.0f, 0.0f };
 	bool stagger{ false };
@@ -164,7 +164,7 @@ void Layer::create_model()
 
 void Layer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	auto tileset = get_val<Tileset>(m_tileset_resource.get());
+	auto tileset = cache::get_val<Tileset>(m_tileset_resource.get());
 	states.texture = &tileset->m_tiles;
 	target.draw(m_model, states);
 }

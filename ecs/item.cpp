@@ -18,10 +18,10 @@ void item::Item_shared::load_from_db(db::db_connection* db, const std::string& k
 	auto res = m_stmt->fetch_table();
 	for (auto& row : res)
 	{
-		m_name = row["name"].string_value;
-		m_description = row["description"].string_value;
-		m_price = row["price"].integer_value;
-		m_weight = row["weight"].double_value;
+		m_name = std::get<std::string>(row["name"]);
+		m_description = std::get<std::string>(row["description"]);
+		m_price = std::get<int>(row["price"]);
+		m_weight = static_cast<float> (std::get<double>(row["weight"]));
 	}
 }
 
@@ -35,9 +35,9 @@ void item::Projectile::load_from_db(db::db_connection* db, const std::string& ke
 	auto res = m_stmt->fetch_table();
 	for (auto& row : res)
 	{
-		m_damage_bonus = row["damage_bonus"].integer_value;
-		m_range_multiplier = row["range_multiplier"].integer_value;
-		m_damage_type = static_cast<Damage_type> (row["damage_type"].integer_value);
-		m_armour_divisor = row["armour_divisor"].double_value;
+		m_damage_bonus = std::get<int>(row["damage_bonus"]);
+		m_range_multiplier = std::get<int>(row["range_multiplier"]);
+		m_damage_type = static_cast<Damage_type> (std::get<int>(row["damage_type"]));
+		m_armour_divisor = static_cast<float> (std::get<double>(row["armour_divisor"]));
 	}
 }

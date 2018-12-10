@@ -5,11 +5,11 @@
 
 class State_manager;
 
-class State : public Actor
+class State
 {
 	friend class State_manager;
 public:
-	explicit State(Shared_context* context) : Actor{ context }, m_transparent{ false }, m_transcendent{ false } {}
+	explicit State (Shared_context* context) : m_context{ context }, m_transparent { false }, m_transcendent{ false } {}
 	virtual ~State() {}
 
 	virtual void on_create() = 0;
@@ -28,7 +28,8 @@ public:
 	State_manager* get_statemanager() const { return m_context->m_state_manager; }
 
 protected:
-	//State_manager* m_state_mgr;
+	State_manager* m_state_mgr;
+	Shared_context* m_context;
 	bool m_transparent;
 	bool m_transcendent;
 };

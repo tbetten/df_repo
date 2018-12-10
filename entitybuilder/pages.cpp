@@ -3,6 +3,7 @@
 #include "builder.h"
 #include <iostream>
 #include <regex>
+#include <variant>
 
 Builder* Page::m_builder{ nullptr };
 
@@ -159,17 +160,15 @@ int Shared_page::insert_into_database(db::db_connection_ptr& db, const std::stri
 	auto y = atof(m_weight_entry->GetText().toAnsiString().c_str());
 	m_insert_stmt->bind(4, y);
 	m_insert_stmt->bind(5, key);
-	int rc = m_insert_stmt->execute_row();
-	std::cout << "result of insert is " << rc << std::endl;
-	if (rc == SQLITE_DONE)  // success
+	if (m_insert_stmt->execute_row() == db::Result_code::Success)
 	{
 		m_insert_stmt->reset();
-		rc = m_max_index->execute_row();
-		if (rc == SQLITE_ROW)  // success
+		auto rc = m_max_index->execute_row();
+		if (rc == db::Result_code::Row)  // success
 		{
 			auto data = m_max_index->fetch_row();
 			m_max_index->reset();
-			return data["max_id"].integer_value;
+			return std::get<int>(data["max_id"]);
 		}
 	}
 	return 0;
@@ -259,16 +258,16 @@ int Projectile_page::insert_into_database(db::db_connection_ptr& db, const std::
 	m_insert_stmt->bind(4, static_cast<int>(damage_type));
 	m_insert_stmt->bind(5, armour_divisor);
 	m_insert_stmt->bind(6, key);
-	int rc = m_insert_stmt->execute_row();
-	if (rc == SQLITE_DONE)
+	auto rc = m_insert_stmt->execute_row();
+	if (rc == db::Result_code::Success)
 	{
 		m_insert_stmt->reset();
-		int rc = m_max_id->execute_row();
-		if (rc == SQLITE_ROW)
+		rc = m_max_id->execute_row();
+		if (rc == db::Result_code::Row)
 		{
 			auto data = m_max_id->fetch_row();
 			m_max_id->reset();
-			return data["max_id"].integer_value;
+			return std::get<int>(data["max_id"]);
 		}
 	}
 	return 0;

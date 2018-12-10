@@ -4,28 +4,12 @@
 #include "game_states.h"
 #include <iostream>
 
-void CMD_toggle_fullscreen::execute()
-{
-	//auto actor = p_actor.get();
-	auto window = dynamic_cast<Window*> (p_actor);
-	window->toggle_fullscreen(*m_details);
-	//auto win = dynamic_cast<std::shared_ptr<Window>> (*p_actor);
-	//win.toggle_fullscreen();
-}
-
-void CMD_close_window::execute()
-{
-	//auto actor = p_actor.get();
-	auto window = dynamic_cast<Window*>(p_actor);
-	window->close(*m_details);
-}
-
-Window::Window(Shared_context *context) : Actor{ context }
+Window::Window() //: Actor{ context }
 {
 	setup("window", sf::Vector2u(640, 480));
 }
 
-Window::Window(const std::string& title, const sf::Vector2u& size, Shared_context* context) : Actor{ context }
+Window::Window(const std::string& title, const sf::Vector2u& size) //: Actor{ context }
 {
 	setup(title, size);
 }
@@ -43,14 +27,8 @@ void Window::setup(const std::string& title, const sf::Vector2u& size)
 	m_done = false;
 	m_focus = true;
 	create();
-	//std::string name = "CMD_toggle_fullscreen";
-	auto fullscreen_cmd = std::make_shared<CMD_toggle_fullscreen>(std::string("CMD_fullscreen_toggle"), this);
-	//fullscreen_cmd->set_actor(this);
-	//auto x = std::make_shared<CMD_toggle_fullscreen>(fullscreen_cmd);
-	add_command_to_eventmanager(Game_state::All_states, fullscreen_cmd, m_eventmanager);
-	auto close_cmd = std::make_shared<CMD_close_window>(std::string{ "CMD_close_window" }, this);
-	//close_cmd->set_actor(this);
-	add_command_to_eventmanager(Game_state::All_states, close_cmd, m_eventmanager);
+	m_eventmanager.add_command (Game_state::All_states, "CMD_fullscreen_toggle", [this](auto data) {toggle_fullscreen (data); });
+	m_eventmanager.add_command (Game_state::All_states, "CMD_close_window", [this](auto data) {close (); });
 }
 
 void Window::create()
@@ -82,10 +60,9 @@ void Window::update()
 		m_eventmanager.handle_event(event);
 	}
 	m_eventmanager.update();
-	m_eventmanager.handle_command();
 }
 
-void Window::toggle_fullscreen(const Event_details& details)
+void Window::toggle_fullscreen(std::any details)
 {
 	std::cout << "toggle fullscreen " << std::endl;
 	m_fullscreen = !m_fullscreen;
@@ -93,7 +70,7 @@ void Window::toggle_fullscreen(const Event_details& details)
 	create();
 }
 
-void Window::close(const Event_details& details)
+void Window::close()
 {
 	std::cout << "close command" << std::endl;
 	m_done = true;

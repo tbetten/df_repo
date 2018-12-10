@@ -2,6 +2,8 @@
 #include "ecs_base.h"
 #include "item.h"
 #include "attribute_comp.h"
+#include "drawable_comp.h"
+#include "position_comp.h"
 #include "db.h"
 #include "system.h"
 
@@ -10,9 +12,11 @@
 
 Entity_manager::Entity_manager (System_manager* systems) : m_max_id{ 0 }, m_systems{ systems }
 {
+	add_component_type<Position_comp> (Component::Position);
 	add_component_type<item::Item_shared>(Component::Item_shared);
 	add_component_type<item::Projectile>(Component::Projectile);
 	add_component_type<Attribute_comp> (Component::Attributes);
+	add_component_type<Drawable_comp> (Component::Drawable);
 	load_templates();
 }
 
@@ -103,8 +107,8 @@ void Entity_manager::load_templates()
 	auto result = entity_stmt->fetch_table();
 	for (auto& row : result)
 	{
-		auto entity_key = row["key"].string_value;
-		std::string component_index = row["c_index"].string_value;
+		auto entity_key = std::get<std::string>(row["key"]);
+		std::string component_index = std::get<std::string>(row["c_index"]);
 		std::cout << entity_key << "\t" << component_index << std::endl;
 		//Bitmask index( "00011000000000000000000000000000" );
 		std::reverse(component_index.begin(), component_index.end());

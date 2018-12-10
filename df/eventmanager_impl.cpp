@@ -26,7 +26,7 @@ public:
 	bool remove_binding(const std::string& name);
 	void set_focus(const bool focus) { m_focus = focus; }
 	void handle_event(sf::Event& event);
-	void handle_command();
+//	void handle_command();
 	void update();
 private:
 	void load_bindings();
@@ -35,7 +35,7 @@ private:
 	Bindings m_bindings;
 	Commands m_commands;
 	bool m_focus;
-	std::deque<Command::Ptr> m_command_queue;
+	std::deque<Command> m_command_queue;
 };
 
 Eventmanager::Eventmanager() :p_impl(std::make_unique<impl>()) {}
@@ -44,11 +44,10 @@ Eventmanager::~Eventmanager() = default;
 Eventmanager::impl::impl() : m_focus{ true } { load_bindings(); }
 Eventmanager::impl::~impl() {}
 
-void Eventmanager::add_command(Game_state state, std::string name, Command::Ptr command)
+void Eventmanager::add_command(Game_state state, std::string name, Command command)
 {
 	auto itr = p_impl->m_commands.emplace(state, Command_container()).first;
 	itr->second.emplace(name, command);
-	//p_impl->m_commands.emplace(name, command);
 }
 
 void Eventmanager::remove_command(Game_state state, std::string name)
@@ -62,7 +61,6 @@ void Eventmanager::remove_command(Game_state state, std::string name)
 			state_itr->second.erase(name);
 		}
 	}
-	//p_impl->m_commands.erase(command_itr);
 }
 
 void Eventmanager::handle_event(sf::Event event)
@@ -75,11 +73,6 @@ void Eventmanager::update()
 	p_impl->update();
 }
 
-void Eventmanager::handle_command()
-{
-	p_impl->handle_command();
-}
-
 void Eventmanager::set_focus(const bool focus)
 {
 	p_impl->m_focus = focus;
@@ -90,29 +83,9 @@ void Eventmanager::set_current_state(Game_state state)
 	p_impl->m_current_state = state;
 }
 
-void Actor::add_command_to_eventmanager(Game_state state, Command::Ptr command, Eventmanager& eventmanager)
-{
-	eventmanager.add_command(state, command->m_name, command);
-}
-
-void Actor::remove_command_from_eventmanager(Game_state state, std::string name, Eventmanager& eventmanager)
-{
-	eventmanager.remove_command(state, name);
-}
-
-void Commander::add_command_to_queue(Command::Ptr command, Eventmanager& eventmanager)
+void Commander::add_command_to_queue(Command command, Eventmanager& eventmanager)
 {
 	eventmanager.p_impl->m_command_queue.push_front(command);
-}
-
-void Command::set_actor(Actor* actor)
-{
-	p_actor = actor;
-}
-
-void Command::set_details(Event_details& details)
-{
-	m_details = std::make_unique<Event_details>(details);
 }
 
 void Binding::handle_event(sf::Event e)
@@ -163,16 +136,6 @@ void Binding::handle_event(sf::Event e)
 				break;
 			}
 		}
-	}
-}
-
-void Eventmanager::impl::handle_command()
-{
-	if (!m_command_queue.empty())
-	{
-		auto command = m_command_queue.back();
-		command->execute();
-		m_command_queue.pop_back();
 	}
 }
 
@@ -236,7 +199,6 @@ void Eventmanager::impl::update()
 			}
 			if (binding->m_events.size() == binding->c)
 			{
-				//auto command_itr = m_commands.find(binding->m_name);
 				auto state_commands = m_commands.find(m_current_state);
 				auto other_commands = m_commands.find(Game_state::All_states);
 				if (state_commands != m_commands.end())
@@ -244,8 +206,7 @@ void Eventmanager::impl::update()
 					auto itr = state_commands->second.find(binding->m_name);
 					if (itr != state_commands->second.end())
 					{
-						itr->second->set_details(binding->m_details);
-						m_command_queue.push_front(itr->second);
+						itr->second (binding->m_details);
 					}
 				}
 
@@ -254,8 +215,7 @@ void Eventmanager::impl::update()
 					auto itr = other_commands->second.find(binding->m_name);
 					if (itr != other_commands->second.end())
 					{
-						itr->second->set_details(binding->m_details);
-						m_command_queue.push_front(itr->second);
+						itr->second(binding->m_details);
 					}
 				}
 			}
@@ -313,7 +273,6 @@ void Eventmanager::impl::load_bindings()
 				info.m_code = Mousebutton::to_buttoncode(code);
 				break;
 			}
-			//info.m_code = Keynames::to_keycode(code);
 			bind->bind_event(static_cast<Event_type> (type), info);
 		}
 		std::cout << std::endl;

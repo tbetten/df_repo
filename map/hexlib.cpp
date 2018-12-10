@@ -141,6 +141,27 @@ namespace hexlib
 		return map;
 	}
 
+	sf::VertexArray to_vertex_array (const HexMap& map, Layout layout)
+	{
+		sf::VertexArray vertices{ sf::Lines, map.size () * 6 * 2 };
+		int i{ 0 };
+		for (auto hex : map)
+		{
+			sf::Vertex* current_hex = &vertices[i * 6 * 2];
+			auto corners = hexlib::polygon_corners (layout, hex);
+			auto x = corners.size ();
+			for (unsigned int j = 0; j < corners.size (); ++j)
+			{
+				int next = j + 1;
+				if (next == 6) next = 0;
+				current_hex[2 * j].position = sf::Vector2f (static_cast<float>(corners[j].x), static_cast<float>(corners[j].y));
+				current_hex[2 * j + 1].position = sf::Vector2f (static_cast<float>(corners[next].x), static_cast<float>(corners[next].y));
+			}
+			++i;
+		}
+		return vertices;
+	}
+
 	void fill_graph(HexMap& map, Hex_graph& graph)
 	{
 		for (auto node : map)

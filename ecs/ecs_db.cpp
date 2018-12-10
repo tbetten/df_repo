@@ -3,6 +3,8 @@
 
 #include <filesystem>
 #include <iostream>
+#include <variant>
+
 namespace fs = std::filesystem;
 Ecs_db::Ecs_db()
 {
@@ -37,7 +39,7 @@ std::vector<std::string> Ecs_db::load_entities()
 	auto entity_data = m_select_entity->fetch_table();
 	for (auto row : entity_data)
 	{
-		result.emplace_back(row["key"].string_value);
+		result.emplace_back (std::get<std::string> (row["key"]));
 	}
 	return result;
 }
@@ -58,12 +60,12 @@ void Ecs_db::load_components(const std::string& entity_key)
 		for (auto entry : row)
 		{
 			auto colname = entry.first;
-			auto type = entry.second.type;
-			if (type == db::value::Type::STRING)
+			//auto type = entry.second.type;
+			if (std::holds_alternative<std::string>(entry.second))//  type == db::value::Type::STRING)
 			{
-				std::cout << "column " << colname << " value " << entry.second.string_value << std::endl;
+				std::cout << "column " << colname << " value " << std::get<std::string>(entry.second) << std::endl;
 			}
 		}
-		std::cout << row["description"].string_value << std::endl;
+		std::cout << std::get<std::string>(row["description"]) << std::endl;
 	}
 }

@@ -132,7 +132,7 @@ void Builder::on_create()
 	auto stmt = m_database->prepare(entity_sql);
 	stmt->bind(1, key);
 	stmt->bind(2, index.to_string());
-	int rc = stmt->execute_row();
+	auto rc = stmt->execute_row();
 	//int max_shared = m_pages[1].m_page->insert_into_database(m_database);
 	//std::cout << "max index of page shared is " << max_shared << std::endl;
 }

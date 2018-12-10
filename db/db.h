@@ -9,9 +9,13 @@
 #include <memory>
 #include <string>
 #include <exception>
+#include <stdexcept>
 #include <map>
 #include <vector>
-#include "sqlite3.h"
+#include <variant>
+
+struct sqlite3_stmt;
+struct sqlite3;
 
 namespace db
 {
@@ -23,7 +27,12 @@ namespace db
 	using prepared_statement_ptr = std::shared_ptr<prepared_statement>;
 	//	using row_t = std::vector<void*>;
 	//	using resultset_ptr = std::shared_ptr<resultset>;
+	using value_t = std::variant<std::monostate, int, double, std::string>;
 
+	class DB db_exception : public std::runtime_error
+	{
+		using std::runtime_error::runtime_error;
+	};
 
 	class DB db_connection
 	{
@@ -61,19 +70,22 @@ namespace db
 		}
 	};
 
-	using row_t = std::map<std::string, value>;
+	//using row_t = std::map<std::string, value>;
+	using row_t = std::map<std::string, value_t>;
 	using table_data_t = std::vector<row_t>;
 
+	enum class Result_code {Success, Row, Error};
 	class DB prepared_statement
 	{
 	public:
 		static prepared_statement_ptr create();
-		void bind(int index, std::string value);
+		void bind(int index, value_t value);
+	/*	void bind(int index, std::string value);
 		void bind(int index, int value);
 		void bind(int index, double value);
-		void bind_null(int index);
+		void bind_null(int index);*/
 		void reset();
-		int execute_row();
+		Result_code execute_row();
 		std::string column_name(int index);
 		std::string fetch_string(int index);
 		int fetch_int(int index);

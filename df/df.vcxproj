@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -150,7 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

@@ -15,7 +15,7 @@ struct Layer : public sf::Drawable
 	std::vector<int> m_data;
 	std::ptrdiff_t m_tileset_index;
 	sf::VertexArray m_model;
-	std::shared_ptr<Resource_base> m_tileset_resource;
+	std::shared_ptr<cache::Resource_base> m_tileset_resource;
 	Tilemap* m_map;
 };
 

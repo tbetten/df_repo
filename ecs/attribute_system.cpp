@@ -151,18 +151,19 @@ std::string format_units (int units)
 	return ss.str ();
 }
 
-void Attribute_system::on_attrib_bought (Payload value)
+void Attribute_system::on_attrib_bought (std::any value)
 {
-	auto payload = dynamic_cast<Attrib_payload*>(value.get ());
-	auto attrib = payload->attribute;
-	auto& comp = payload->current_component;
-	int units = payload->units;
+	auto payload = std::any_cast<Attrib_payload>(value);
+	//auto payload = dynamic_cast<Attrib_payload*>(value.get ());
+	auto attrib = payload.attribute;
+	auto& comp = payload.current_component;
+	int units = payload.units;
 	switch (attrib)
 	{
 	case Attribute::ST:
 
-		comp->m_attributes[Attribute::HP]->received += payload->units;
-		comp->m_attributes[Attribute::HP]->notes.emplace_back (format_units (payload->units) + " points from bought ST");
+		comp->m_attributes[Attribute::HP]->received += payload.units;
+		comp->m_attributes[Attribute::HP]->notes.emplace_back (format_units (payload.units) + " points from bought ST");
 		{
 			int strength = comp->get_natural(Attribute::ST);
 			int new_value = (strength * strength) / 500;
@@ -174,14 +175,14 @@ void Attribute_system::on_attrib_bought (Payload value)
 	case Attribute::DX:
 		break;
 	case Attribute::IQ:
-		comp->m_attributes[Attribute::Will]->received += payload->units;
-		comp->m_attributes[Attribute::Per]->received += payload->units;
-		comp->m_attributes[Attribute::Will]->notes.emplace_back (format_units (payload->units) + "points from bought IQ");
-		comp->m_attributes[Attribute::Per]->notes.emplace_back (format_units (payload->units) + "points from bought IQ");
+		comp->m_attributes[Attribute::Will]->received += payload.units;
+		comp->m_attributes[Attribute::Per]->received += payload.units;
+		comp->m_attributes[Attribute::Will]->notes.emplace_back (format_units (payload.units) + "points from bought IQ");
+		comp->m_attributes[Attribute::Per]->notes.emplace_back (format_units (payload.units) + "points from bought IQ");
 		break;
 	case Attribute::HT:
-		comp->m_attributes[Attribute::FP]->received += payload->units;
-		comp->m_attributes[Attribute::FP]->notes.emplace_back (format_units (payload->units) + "points from bought HT");
+		comp->m_attributes[Attribute::FP]->received += payload.units;
+		comp->m_attributes[Attribute::FP]->notes.emplace_back (format_units (payload.units) + "points from bought HT");
 	default:
 		break;
 	}

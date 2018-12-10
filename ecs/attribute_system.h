@@ -2,7 +2,7 @@
 #include "system.h"
 #include "attribute_comp.h"
 
-struct Attrib_payload : public Payload_base
+struct Attrib_payload
 {
 	Attribute_comp::Ptr current_component;
 	Attribute attribute;
@@ -35,7 +35,7 @@ public:
 	int get_value (Entity_id entity, Attribute attrib, Value_type value);
 	Dispatcher& get_event (std::string event) override;
 private:
-	void on_attrib_bought (Payload val);
+	void on_attrib_bought (std::any val);
 	Attribute_comp::Ptr get_component (Entity_id entity);
 	int calculate_bonus (const Attribute_data& data) const;
 	

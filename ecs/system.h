@@ -5,10 +5,12 @@
 
 #include "ecs_types.h"
 #include "messaging.h"
+#include "shared_context.h"
 
 using Entity_list = std::vector<Entity_id>;
 using Requirements = std::vector<Bitmask>;
 
+class Window;
 class System_manager;
 class System_base
 {
@@ -48,6 +50,9 @@ public:
 	System_manager ();
 
 	void set_entity_mgr (Entity_manager* mgr) { if (!m_entity_mgr) m_entity_mgr = mgr; }
+	void set_context (Shared_context* context) { m_context = context; }
+	void setup_events ();
+	Shared_context* get_context () { return m_context; }
 	Entity_manager* get_entity_mgr () const { return m_entity_mgr; }
 
 	template <typename T>
@@ -57,6 +62,7 @@ public:
 		return (system_itr != m_systems.end () ? dynamic_cast<T*>(system_itr->second.get ()) : nullptr);
 	}
 	void update (int dt);
+	void draw (Window* win);
 
 	void entity_modified (Entity_id entity, Bitmask mask);
 	void remove_entity (Entity_id entity);
@@ -71,5 +77,6 @@ public:
 private:
 	System_container m_systems;
 	Entity_manager* m_entity_mgr;
+	Shared_context* m_context;
 	std::unordered_map<std::string, System> m_events;
 };

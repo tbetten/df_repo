@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "db.h"
+#include "sqlite3.h"
 #include <iostream>
 #include <vector>
 
@@ -117,7 +118,39 @@ namespace db
 		statement = prep_stmt;
 	}
 
-	void prepared_statement::bind(int index, string value)
+	void handle_error (int errorcode)
+	{
+		if (errorcode != SQLITE_OK)
+		{
+			throw db_exception (sqlite3_errstr (errorcode));
+		}
+	}
+
+	template<class... Ts>
+	struct overload : Ts...
+	{
+		using Ts::operator()...;
+	};
+
+	template<class... Ts>
+	overload (Ts...)->overload<Ts...>;
+
+	void prepared_statement::bind (int index, value_t value)
+	{
+		std::visit 
+		(
+			overload 
+			{
+				[this, index] (const std::monostate& m) {handle_error (sqlite3_bind_null (statement, index)); },
+				[this, index](const int& i) {handle_error (sqlite3_bind_int (statement, index, i)); },
+				[this, index](const double& d) {handle_error (sqlite3_bind_double (statement, index, d)); },
+				[this, index](const std::string& s) {handle_error (sqlite3_bind_text (statement, index, s.c_str (), -1, SQLITE_TRANSIENT)); }
+			}
+			, value
+		);
+	}
+
+/*	void prepared_statement::bind(int index, string value)
 	{
 		int rc;
 		rc = sqlite3_bind_text(statement, index, value.c_str(), -1, SQLITE_TRANSIENT);
@@ -154,7 +187,7 @@ namespace db
 		{
 			throw sqlite3_errstr(rc);
 		}
-	}
+	}*/
 
 	void prepared_statement::reset()
 	{
@@ -162,11 +195,20 @@ namespace db
 		sqlite3_clear_bindings(statement);
 	}
 
-	int prepared_statement::execute_row()
+	Result_code prepared_statement::execute_row()
 	{
 		int rc = 0;
 		rc = sqlite3_step(statement);
-		return rc;
+		if (rc == SQLITE_DONE)
+		{
+			return Result_code::Success;
+		}
+		if (rc == SQLITE_ROW)
+		{
+			return Result_code::Row;
+		}
+		throw db_exception (sqlite3_errstr (rc));
+		return Result_code::Error;
 	}
 
 	string prepared_statement::column_name(int index)
@@ -193,13 +235,37 @@ namespace db
 		return result;
 	}
 
-	row_t prepared_statement::fetch_row()
+	row_t prepared_statement::fetch_row ()
 	{
-		int num_columns = sqlite3_column_count(statement);
+		int num_columns = sqlite3_column_count (statement);
 		row_t result;
 		for (int i = 0; i < num_columns; ++i)
 		{
-			value cell;
+			string colname = sqlite3_column_name (statement, i);
+			int coltype = sqlite3_column_type (statement, i);
+			switch (coltype)
+			{
+			case SQLITE_NULL:
+				result[colname] = std::monostate{};
+				break;
+			case SQLITE_INTEGER:
+				result[colname] = sqlite3_column_int (statement, i);
+				break;
+			case SQLITE_FLOAT:
+				result[colname] = sqlite3_column_double (statement, i);
+				break;
+			case SQLITE_TEXT:
+				result[colname] = std::string{ (char*)(sqlite3_column_text (statement, i)) };
+				break;
+			case SQLITE_BLOB:
+				break;
+			}
+		}
+		return result;
+	}
+
+
+/*			value cell;
 			string colname = sqlite3_column_name(statement, i);
 			int coltype = sqlite3_column_type(statement, i);
 			switch (coltype)
@@ -235,12 +301,12 @@ namespace db
 			result[colname] = cell;
 		}
 		return result;
-	}
+	}*/
 
 	table_data_t prepared_statement::fetch_table()
 	{
 		table_data_t result;
-		while (this->execute_row() == SQLITE_ROW)
+		while (this->execute_row() == Result_code::Row)
 		{
 			row_t row = this->fetch_row();
 			result.push_back(row);
