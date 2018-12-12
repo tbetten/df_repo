@@ -20,3 +20,5 @@ inline Component to_comp_type (unsigned int type)
 {
 	return static_cast<Component>(type);
 }
+
+enum class Direction { North, Northeast, Southeast, South, Southwest, Northwest };

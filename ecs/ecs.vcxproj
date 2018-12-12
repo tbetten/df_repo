@@ -172,6 +172,8 @@
     <ClInclude Include="event.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="messaging.h" />
+    <ClInclude Include="movement.h" />
+    <ClInclude Include="move_payload.h" />
     <ClInclude Include="position_comp.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="stdafx.h" />
@@ -187,6 +189,7 @@
     <ClCompile Include="entity_manager.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="item.cpp" />
+    <ClCompile Include="movement.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="system.cpp" />
     <ClCompile Include="system_manager.cpp" />

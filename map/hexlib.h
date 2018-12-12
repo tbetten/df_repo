@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <queue>
 #include <functional>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 
 namespace hexlib
@@ -13,21 +14,17 @@ namespace hexlib
 	{
 		union
 		{
-			const Number v[3];
+			Number v[3];
 			struct
 			{
-				const Number q;
-				const Number r;
-				const Number s;
+				Number q;
+				Number r;
+				Number s;
 			};
 		};
 		_Hex() : v{ 0, 0, 0 } {}
 		_Hex(Number q, Number r) : v{ q, r, -q - r } {}
 		_Hex(Number q, Number r, Number s) : v{ q, r, s } {}
-		_Hex operator= (const _Hex& other)
-		{
-			return _Hex(other.q, other.r, other.s);
-		}
 	};
 
 	using Hex = _Hex<int, 1>;
@@ -36,6 +33,12 @@ namespace hexlib
 	using FractionalHexDifference = _Hex<double, 0>;
 
 	using HexMap = std::unordered_set<Hex>;
+
+	ostream& operator<< (ostream& os, Hex h)
+	{
+		os << "(" << std::to_string (h.q) << ", " << std::to_string (h.r) << ", " << std::to_string (h.s) << ")";
+		return os;
+	}
 
 	struct Point
 	{

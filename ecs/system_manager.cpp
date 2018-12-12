@@ -3,6 +3,7 @@
 #include "attribute_system.h"
 #include "renderer.h"
 #include "controller.h"
+#include "movement.h"
 #include "window.h"
 #include <algorithm>
 #include <stdexcept>
@@ -10,11 +11,9 @@
 System_manager::System_manager () : m_entity_mgr{ nullptr }
 {
 	m_systems[System::Attribute] = Attribute_system::create (this);
-	
 	m_systems[System::Renderer] = Renderer::create (this);
-	
 	m_systems[System::Controller] = Controller::create (this);
-	
+	m_systems[System::Movement] = Movement::create (this);
 }
 
 void System_manager::setup_events ()
@@ -22,6 +21,7 @@ void System_manager::setup_events ()
 	m_systems[System::Attribute]->setup_events ();
 	m_systems[System::Renderer]->setup_events ();
 	m_systems[System::Controller]->setup_events ();
+	m_systems[System::Movement]->setup_events ();
 }
 
 void System_manager::update (int dt)

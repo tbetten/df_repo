@@ -1,7 +1,8 @@
 #include "controller.h"
+#include "move_payload.h"
 #include <iostream>
 
-Controller::Controller (System_manager* mgr) : System_base(System::Controller, mgr)//, Actor(nullptr)
+Controller::Controller (System_manager* mgr) : System_base(System::Controller, mgr)
 {
 	Bitmask b;
 	b.set (to_number (Component::Position));
@@ -12,6 +13,7 @@ void Controller::setup_events ()
 {
 	Dispatcher d;
 	m_dispatchers["change_position"] = d;
+	m_system_manager->register_events (System::Controller, { "change_position" });
 	auto eventmgr = m_system_manager->get_context ()->m_event_manager;
 	eventmgr->add_command (Game_state::Game, "CMD_move_north", [this](auto data) {move (Direction::North); });
 	eventmgr->add_command (Game_state::Game, "CMD_move_northeast", [this](auto data) {move (Direction::Northeast); });
@@ -24,6 +26,10 @@ void Controller::setup_events ()
 void Controller::move (Direction d)
 {
 	std::cout << "move " << static_cast<int>(d) << std::endl;
+	Move_payload m;
+	m.entity = m_current_entity;
+	m.direction = d;
+	m_dispatchers["change_position"].notify (m);
 }
 
 void Controller::update (int dt)

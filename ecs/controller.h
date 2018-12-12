@@ -2,15 +2,14 @@
 #include "system.h"
 #include "eventmanager.h"
 #include "shared_context.h"
+#include "messaging.h"
 
-enum class Direction { North, Northeast, Southeast, South, Southwest, Northwest };
-
-class Controller : public System_base//, public Actor
+class Controller : public System_base
 {
 public:
 	using Ptr = std::unique_ptr<Controller>;
 	static Ptr create (System_manager* mgr) { return std::make_unique<Controller> (mgr); }
-	Controller (System_manager* mgr);
+	explicit Controller (System_manager* mgr);
 	void setup_events () override;
 	void update (int dt) override;
 	Dispatcher& get_event (std::string event) override;
