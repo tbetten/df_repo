@@ -34,5 +34,6 @@ void Movement::move (std::any val)
 	auto pos = m_system_manager->get_entity_mgr ()->get_component<Position_comp> (ent, Component::Position);
 	auto coords = pos->coords;
 	auto x = hexlib::hex_neighbour (coords, static_cast<int>(d.direction));
+	std::cout << x << std::endl;
 	pos->coords = x;
 }

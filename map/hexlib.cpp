@@ -11,8 +11,8 @@ namespace hexlib
 
 	const std::vector<Hex> hex_directions =
 	{
-		Hex (1, -1, 0), Hex(1, 0, -1), Hex(0, -1, 1),
-		Hex(-1, 0, 1), Hex(-1, 1, 0), Hex(0, 1, -1)
+		Hex (0, -1, 1), Hex (1, -1, 0), Hex(1, 0, -1),
+		Hex (0, 1, -1), Hex(-1, 1, 0), Hex (-1, 0, 1)
 	};
 
 	inline Hex hexlib::hex_direction(int direction)

@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <queue>
 #include <functional>
-#include <iostream>
+#include <ostream>
 #include <SFML/Graphics.hpp>
 
 namespace hexlib
@@ -34,7 +34,7 @@ namespace hexlib
 
 	using HexMap = std::unordered_set<Hex>;
 
-	ostream& operator<< (ostream& os, Hex h)
+	inline std::ostream& operator<< (std::ostream& os, Hex h)
 	{
 		os << "(" << std::to_string (h.q) << ", " << std::to_string (h.r) << ", " << std::to_string (h.s) << ")";
 		return os;

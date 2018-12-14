@@ -171,6 +171,7 @@
     <ClInclude Include="keynames.h" />
     <ClInclude Include="mousebutton.h" />
     <ClInclude Include="resource_cache.h" />
+    <ClInclude Include="scheduler.h" />
     <ClInclude Include="shared_context.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="statemanager.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="keynames.cpp" />
     <ClCompile Include="mousebutton.cpp" />
     <ClCompile Include="resource_cache.cpp" />
+    <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="statemanager.cpp" />
     <ClCompile Include="state_game.cpp" />
     <ClCompile Include="stdafx.cpp">
