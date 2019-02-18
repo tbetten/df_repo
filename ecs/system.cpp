@@ -22,7 +22,19 @@ bool System_base::remove_entity(const Entity_id entity)
 	return true;
 }
 
+inline bool fits (Bitmask reqs, Bitmask b)
+{
+	for (int i = 0; i < reqs.size (); ++i)
+	{
+		if (reqs.test (i) && !b.test (i))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 bool System_base::fits_requirements(const Bitmask mask) const
 {
-	return std::find_if(m_required_components.cbegin(), m_required_components.cend(), [mask](Bitmask b) {return mask == b; }) != m_required_components.cend();
+	return std::find_if(m_required_components.cbegin(), m_required_components.cend(), [mask](Bitmask b) {return fits (b, mask); }) != m_required_components.cend();
 }

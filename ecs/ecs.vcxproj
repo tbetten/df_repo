@@ -164,12 +164,15 @@
     <ClInclude Include="attribute_comp.h" />
     <ClInclude Include="attribute_system.h" />
     <ClInclude Include="bonus.h" />
+    <ClInclude Include="container.h" />
     <ClInclude Include="controller.h" />
     <ClInclude Include="drawable_comp.h" />
     <ClInclude Include="ecs_base.h" />
     <ClInclude Include="ecs_db.h" />
     <ClInclude Include="ecs_types.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="inventory_system.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="messaging.h" />
     <ClInclude Include="movement.h" />
@@ -188,6 +191,7 @@
     <ClCompile Include="ecs_db.cpp" />
     <ClCompile Include="entity_manager.cpp" />
     <ClCompile Include="event.cpp" />
+    <ClCompile Include="Inventory_system.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="movement.cpp" />
     <ClCompile Include="renderer.cpp" />

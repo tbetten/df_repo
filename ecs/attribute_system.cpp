@@ -6,22 +6,12 @@
 #include <algorithm>
 #include <iostream>
 
-Attribute_comp::Ptr Attribute_system::get_component (Entity_id entity)
-{
-	if (has_entity (entity))
-	{
-		return m_system_manager->get_entity_mgr ()->get_component<Attribute_comp> (entity, Component::Attributes);
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
 void Attribute_system::setup_events ()
 {
-	Dispatcher d;
-	m_dispatchers["attribute_bought"] = d;
+	Dispatcher bought;
+	m_dispatchers["attribute_bought"] = bought;
+	Dispatcher changed;
+	m_dispatchers["attribute_changed"] = changed;
 	m_system_manager->register_events (System::Attribute, m_eventnames);
 	auto x = m_system_manager->find_event ("attribute_bought");
 	auto y = m_system_manager->get_event (System::Attribute, "attribute_bought");
@@ -31,10 +21,10 @@ void Attribute_system::setup_events ()
 
 void Attribute_system::update (int dt)
 {
-	for (auto entity : m_entities)
+	auto data = m_component->m_data;
+	for (auto entity : data)
 	{
-		auto comp = m_system_manager->get_entity_mgr ()->get_component<Attribute_comp> (entity, Component::Attributes);
-		for (auto& attrib : comp->m_attributes)
+		for (auto& attrib : entity.second)
 		{
 			int index{ 0 };
 			for (auto& bonus : attrib.second->bonuses)
@@ -44,12 +34,14 @@ void Attribute_system::update (int dt)
 					bonus.remaining_time -= dt;
 					if (bonus.remaining_time <= 0)
 					{
-						attrib.second->bonuses.erase (attrib.second->bonuses.begin() + index);
+						attrib.second->bonuses.erase (attrib.second->bonuses.begin () + index);
+						--index;
 					}
 				}
 				++index;
 			}
 		}
+
 	}
 }
 
@@ -57,9 +49,8 @@ void Attribute_system::reset (Entity_id entity)
 {
 	if (has_entity (entity))
 	{
-		auto entity_mgr = m_system_manager->get_entity_mgr ();
-		auto comp = entity_mgr->get_component<Attribute_comp> (entity, Component::Attributes);
-		auto& attribs = comp->m_attributes;
+
+		auto& attribs = m_component->m_data[entity];
 		for (auto& attrib : attribs)
 		{
 			attrib.second->bought = 0;
@@ -78,38 +69,40 @@ void Attribute_system::reset (Entity_id entity)
 
 void Attribute_system::spend_points (Entity_id entity, Attribute attrib, int amount)
 {
-	if (auto comp = get_component (entity))
-	{
-		auto units = comp->m_attributes[attrib]->units_per_point * amount;
-		comp->m_attributes[attrib]->bought += units;
-		auto payload = std::make_shared<Attrib_payload> ();
-		payload->current_component = comp;
-		payload->units = units;
-		payload->attribute = attrib;
-		m_dispatchers.at ("attribute_bought").notify (payload);
-	}
+	if (m_component->m_data.count(entity))
+	auto attribs = m_component->m_data[entity];
+	auto units = m_component->m_data[entity][attrib]->units_per_point * amount;
+	m_component->m_data[entity][attrib]->bought += units;
+	auto payload = std::make_shared<Attrib_payload> ();
+	payload->entity = entity;
+	payload->units = units;
+	payload->attribute = attrib;
+	m_dispatchers.at ("attribute_bought").notify (payload);
+	m_dispatchers.at ("attribute_changed").notify (payload);
 }
 
 int Attribute_system::get_value (Entity_id entity, Attribute attrib, Value_type value)
 {
-	if (auto comp = get_component (entity))
+	if (has_entity (entity))
 	{
-		auto& data = *comp->m_attributes[attrib];
+		auto& data = m_component->m_data[entity][attrib];
+	//	auto& x = attrib_data[attrib];
+	//	auto& data = *comp->m_attributes[attrib];
 		switch (value)
 		{
 		case Value_type::Base:
-			return data.base;
+			return data->base;
 			break;
 		case Value_type::Bought:
-			return data.bought;
+			return data->bought;
 			break;
 		case Value_type::Natural:
-			return data.base + data.received + data.bought;
+			return data->base + data->received + data->bought;
 		case Value_type::Bonus:
-			return calculate_bonus (data);
+			return calculate_bonus (*data);
 			break;
 		case Value_type::Effective:
-			return data.base + data.bought + calculate_bonus (data);
+			return data->base + data->bought + calculate_bonus (*data);
 			break;
 		default:
 			break;
@@ -151,38 +144,38 @@ std::string format_units (int units)
 	return ss.str ();
 }
 
-void Attribute_system::on_attrib_bought (std::any value)
+void Attribute_system::on_attrib_bought (std::any value)  // add notification of attribute changed event
 {
 	auto payload = std::any_cast<Attrib_payload>(value);
 	//auto payload = dynamic_cast<Attrib_payload*>(value.get ());
 	auto attrib = payload.attribute;
-	auto& comp = payload.current_component;
 	int units = payload.units;
+	auto entity = payload.entity;
 	switch (attrib)
 	{
 	case Attribute::ST:
 
-		comp->m_attributes[Attribute::HP]->received += payload.units;
-		comp->m_attributes[Attribute::HP]->notes.emplace_back (format_units (payload.units) + " points from bought ST");
+		m_component->m_data[entity][Attribute::HP]->received += payload.units;
+		m_component->m_data[entity][Attribute::HP]->notes.emplace_back (format_units (payload.units) + " points from bought ST");
 		{
-			int strength = comp->get_natural(Attribute::ST);
+			int strength = m_component->get_natural(entity, Attribute::ST);
 			int new_value = (strength * strength) / 500;
-			int old = comp->get_natural (Attribute::BL);
-			comp->m_attributes[Attribute::BL]->received += new_value - old ;
+			int old = m_component->get_natural (entity, Attribute::BL);
+			m_component->m_data[entity][Attribute::BL]->received += new_value - old ;
 		}
 		
 		break;
 	case Attribute::DX:
 		break;
 	case Attribute::IQ:
-		comp->m_attributes[Attribute::Will]->received += payload.units;
-		comp->m_attributes[Attribute::Per]->received += payload.units;
-		comp->m_attributes[Attribute::Will]->notes.emplace_back (format_units (payload.units) + "points from bought IQ");
-		comp->m_attributes[Attribute::Per]->notes.emplace_back (format_units (payload.units) + "points from bought IQ");
+		m_component->m_data[entity][Attribute::Will]->received += payload.units;
+		m_component->m_data[entity][Attribute::Per]->received += payload.units;
+		m_component->m_data[entity][Attribute::Will]->notes.emplace_back (format_units (payload.units) + "points from bought IQ");
+		m_component->m_data[entity][Attribute::Per]->notes.emplace_back (format_units (payload.units) + "points from bought IQ");
 		break;
 	case Attribute::HT:
-		comp->m_attributes[Attribute::FP]->received += payload.units;
-		comp->m_attributes[Attribute::FP]->notes.emplace_back (format_units (payload.units) + "points from bought HT");
+		m_component->m_data[entity][Attribute::FP]->received += payload.units;
+		m_component->m_data[entity][Attribute::FP]->notes.emplace_back (format_units (payload.units) + "points from bought HT");
 	default:
 		break;
 	}

@@ -10,6 +10,88 @@
 #include <iostream>
 #include <filesystem>
 
+Entity_manager::Entity_manager (System_manager* systems) : m_systems{ systems }
+{
+	m_components[Component::Position] = create_component<Position_comp> ();
+	m_components[Component::Item_shared] = create_component<item::Item_shared> ();
+	m_components[Component::Projectile] = create_component<item::Projectile> ();
+	m_components[Component::Attributes] = create_component<Attribute_comp> ();
+	m_components[Component::Drawable] = create_component<Drawable_comp> ();
+}
+
+Entity_id Entity_manager::generate_entity_id ()
+{
+	if (m_recycle_bin.empty ())
+	{
+		return ++m_max_entity_id;
+	}
+	else
+	{
+		auto tmp = m_recycle_bin.back ();
+		m_recycle_bin.pop_back ();
+		return tmp;
+	}
+}
+
+Entity_id Entity_manager::add_entity (const Bitmask index)
+{
+	auto id = generate_entity_id ();
+	m_index[id] = index;
+	return id;
+}
+
+bool Entity_manager::remove_entity (Entity_id entity)
+{
+	auto num = m_index.erase (entity);
+	if (num == 1)
+	{
+		m_recycle_bin.push_back (entity);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Entity_manager::has_entity (const Entity_id entity) const
+{
+	return m_index.count (entity);
+}
+
+bool Entity_manager::has_component (const Entity_id entity, const Component component) const
+{
+	if (!m_index.count (entity)) return false;
+	if (m_index.at(entity).test (static_cast<int>(component)))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Entity_manager::add_component_to_entity (const Entity_id entity, const Component component)
+{
+	if (has_entity(entity) && !has_component (entity, component))
+	{
+		m_index[entity].set (static_cast<int>(component));
+		return true;
+	}
+	return false;
+}
+
+bool Entity_manager::remove_component_from_entity (const Entity_id entity, const Component component)
+{
+	if (has_entity (entity) && has_component (entity, component))
+	{
+		m_index[entity].reset (static_cast<int>(component));
+		return true;
+	}
+	return false;
+}
+/*
 Entity_manager::Entity_manager (System_manager* systems) : m_max_id{ 0 }, m_systems{ systems }
 {
 	add_component_type<Position_comp> (Component::Position);
@@ -122,13 +204,13 @@ void Entity_manager::load_templates()
 		m_templates[entity_key] = entity_data;
 	}
 
-/*	Ecs_db db{};
+///*	Ecs_db db{};
 	auto entities = db.load_entities();
 	for (auto entity : entities)
 	{
 		std::cout << "a " << entity << std::endl;
 		db.load_components(entity);
-	}*/
+//	}*/
 
 	// om te testen, eigenlijk uit db laden
 /*	auto shared = item::Item_shared::create("Arrow", "Standard arrow", 2, 0.1f);
@@ -144,7 +226,7 @@ void Entity_manager::load_templates()
 	Entity_data ed;
 	ed.m_components = cc;
 	ed.m_component_index = m;
-	m_templates[id] = std::move(ed);*/
+	m_templates[id] = std::move(ed);//
 }
 
 Entity_id Entity_manager::spawn_from_template(const Template_id& t_id)
@@ -212,4 +294,4 @@ bool Entity_manager::has_component(const Entity_id entity, const Component compo
 	auto ent_itr = m_entities.find(entity);
 	if (ent_itr == m_entities.end()) { return false; }
 	return ent_itr->second.m_component_index[to_number(component)];
-}
+}*/

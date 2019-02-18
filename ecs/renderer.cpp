@@ -21,9 +21,9 @@ void Renderer::update (int dt)
 	auto entities = m_system_manager->get_entity_mgr ();
 	for (auto& entity : m_entities)
 	{
-		auto pos = entities->get_component<Position_comp> (entity, Component::Position);
-		auto drawable = entities->get_component<Drawable_comp> (entity, Component::Drawable);
-		drawable->update_position (pos->coords);
+		auto pos = entities->get_component<Position_comp> (Component::Position)->get_data(entity);
+		auto drawable = entities->get_component<Drawable_comp> (Component::Drawable);
+		drawable->update_position (entity, pos.coords);
 	}
 }
 
@@ -32,7 +32,7 @@ void Renderer::render (Window* win)
 	auto entities = m_system_manager->get_entity_mgr ();
 	for (auto& entity : m_entities)
 	{
-		auto drawable = entities->get_component<Drawable_comp> (entity, Component::Drawable);
-		drawable->draw (win->get_renderwindow ());
+		auto drawable = entities->get_component<Drawable_comp> (Component::Drawable);
+		drawable->draw (entity, win->get_renderwindow ());
 	}
 }

@@ -20,56 +20,17 @@ public:
 	Component_base() = default;
 
 	virtual ~Component_base() = default;
+	virtual void add_entity (Entity_id entity) = 0;
+	virtual bool has_entity (Entity_id entity) = 0;
 	virtual void load_from_db(db::db_connection* db, const std::string& key) = 0;
-	//virtual void load_from_db(const std::string& key) = 0;
-	bool is_mutable() { return m_mutable; }
-	Ptr clone() const
-	{
-		return std::shared_ptr<Component_base>(this->clone_impl());
-	}
-protected:
-	bool m_mutable;
-private:
-	virtual Component_base* clone_impl() const = 0;
-};
-
-template <typename Derived, typename Base>
-class cloneable : public Base
-{
-public:
-	virtual ~cloneable() = default;
-	std::shared_ptr<Derived> clone() const
-	{
-		return std::shared_ptr<Derived>(static_cast<Derived*>(this->clone_impl()));
-	}
-private:
-	virtual cloneable* clone_impl() const override
-	{
-		return new Derived(static_cast<const Derived&>(*this));
-	}
 };
 
 class Entity_manager;
 
-struct Entity_context
-{
-	Entity_manager* m_mgr;
-	Entity_id m_entity_id;
-};
-
-
 using Template_id = std::string;
 using Component_container = std::unordered_map<Component, Component_base::Ptr>;
 //using Entity_data = std::pair<Bitmask, Component_container>;
-struct Entity_data
-{
-	Bitmask m_component_index;
-	Entity_context m_context;
-	Component_container m_components;
-};
 
-using Entity_container = std::unordered_map<Entity_id, Entity_data>;
-using Template_container = std::map<Template_id, Entity_data>;
 using Component_factory = std::unordered_map<Component, std::function<Component_base::Ptr(void)>>;
 
 struct Not_found_exception : public std::runtime_error
@@ -88,6 +49,49 @@ inline std::string to_string(T id)
 }
 
 class System_manager;
+
+using Template_id = std::string;
+
+class Entity_manager
+{
+public:
+	explicit Entity_manager (System_manager* systems);
+	Entity_id add_entity (const Bitmask mask);
+	bool remove_entity (const Entity_id id);
+
+	bool add_component_to_entity (const Entity_id entity, const Component component);
+
+	template <typename T>
+	std::shared_ptr<T> get_component (const Component component)
+	{
+		if (m_components.count (component) > 0)
+		{
+			return std::dynamic_pointer_cast<T>(m_components[component]);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+	bool remove_component_from_entity (const Entity_id entity, const Component component);
+	inline bool has_component (const Entity_id entity, const Component component) const;
+	inline bool has_entity (const Entity_id entity) const;
+private:
+	template <typename T>
+	Component_base::Ptr create_component ()
+	{
+		return T::create ();
+	}
+	inline Entity_id generate_entity_id ();
+
+	std::map<Component, Component_base::Ptr> m_components;
+	std::map<Entity_id, Bitmask> m_index;
+	std::map<Template_id, Bitmask> m_template_index;
+	System_manager* m_systems;
+	std::vector<Entity_id> m_recycle_bin;
+	Entity_id m_max_entity_id = 0;
+};
+/*
 class Entity_manager
 {
 public:
@@ -128,5 +132,5 @@ private:
 	Component_factory m_cfactory;
 	Template_container m_templates;
 	System_manager* m_systems;
-};
+};*/
 

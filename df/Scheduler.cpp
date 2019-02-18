@@ -47,7 +47,7 @@ int Scheduler::process_delay (Turn& current, int duration)
 	current.prio -= duration;
 	std::make_heap (m_schedule.begin (), m_schedule.end ());
 	int delay = t1 - m_schedule.front ().prio;
-	for (auto t : m_schedule)
+	for (auto& t : m_schedule)
 	{
 		t.prio += delay;
 	}

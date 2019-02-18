@@ -10,18 +10,31 @@ namespace item
 	enum class Damage_type { cr, cut, imp, pi_, pi, spec, ranged };
 	enum class Attack_type { Swing, Thrust };
 
-	struct Item_shared : public cloneable<Item_shared, Component_base>
+	struct Item_shared_data
 	{
-		using Ptr = std::shared_ptr<Item_shared>;
-		static Ptr create(std::string name = ""s, std::string description = ""s, int price = 0, float weight = 0.0f) { return std::make_shared<Item_shared>(name, description, price, weight); }
-		Item_shared(std::string name = ""s, std::string description = ""s, int price = 0, float weight = 0.0f) noexcept : m_name{ name }, m_description{ description }, m_price { price }, m_weight{ weight } {}
-		void load_from_db(db::db_connection* db, const std::string& key) override;
-		//void load_from_db(const std::string& key) override {}
-
 		std::string m_name;
 		std::string m_description;
-		int m_price;  // in farthing, the smallest unit of currency
+		int m_price;
 		float m_weight;
+	};
+
+	struct Item_shared : public Component_base
+	{
+		using Ptr = std::shared_ptr<Item_shared>;
+		static Ptr create () { return std::make_shared<Item_shared> (); }
+		//static Ptr create(std::string name = ""s, std::string description = ""s, int price = 0, float weight = 0.0f) { return std::make_shared<Item_shared>(name, description, price, weight); }
+		//Item_shared(std::string name = ""s, std::string description = ""s, int price = 0, float weight = 0.0f) noexcept : m_name{ name }, m_description{ description }, m_price { price }, m_weight{ weight } {}
+		void load_from_db(db::db_connection* db, const std::string& key) override;
+		void add_entity (Entity_id entity) override { m_data.emplace (entity, Item_shared_data ()); }
+		bool has_entity (Entity_id entity) override { return m_data.count (entity);	}
+		Item_shared_data& get_data (Entity_id entity) { return m_data[entity]; }
+		//void load_from_db(const std::string& key) override {}
+
+		std::unordered_map<Entity_id, Item_shared_data> m_data;
+//		std::string m_name;
+//		std::string m_description;
+//		int m_price;  // in farthing, the smallest unit of currency
+//		float m_weight;
 		const std::string m_sql = "select name, description, price, weight from item_shared where entity_key = ?";
 		db::prepared_statement_ptr m_stmt = nullptr;
 	};
@@ -56,13 +69,15 @@ namespace item
 		int m_num_readies;
 	};
 
-	struct Projectile : public cloneable<Projectile, Component_base>
+	struct Projectile : public Component_base
 	{
 		enum class Point { None, Default, Bodkin, Cutting, Flaming };
 		using Ptr = std::shared_ptr<Projectile>;
 		static Ptr create(Point point_type = Point::Default, int damage_bonus = 0, int range_multiplier = 0) { return std::make_shared<Projectile>(point_type, damage_bonus, range_multiplier); }
 		Projectile(Point point_type = Point::Default, int damage_bonus = 0, int range_multiplier = 0) noexcept : m_point_type{ point_type }, m_damage_bonus{ damage_bonus }, m_range_multiplier{ range_multiplier } {}
 		void load_from_db(db::db_connection* db, const std::string& key) override;
+		void add_entity (Entity_id entity) override;
+		bool has_entity (Entity_id entity) override;
 		//void load_from_db(const std::string& key) override {}
 
 		Point m_point_type;

@@ -46,10 +46,13 @@ void State_game::update(const sf::Time& time)
 		Bitmask b;
 		b.set (to_number (Component::Position));
 		b.set (to_number (Component::Drawable));
+		b.set (to_number (Component::Attributes));
 		auto entity_mgr = m_context->m_entity_manager;
 		auto ent = entity_mgr->add_entity (b, true);
 		auto comp = entity_mgr->get_component<Drawable_comp> (ent, Component::Drawable);
 		auto pos = entity_mgr->get_component<Position_comp> (ent, Component::Position);
+		auto attribs = entity_mgr->get_component<Attribute_comp> (ent, Component::Attributes);
+		auto bm = attribs->get_natural (Attribute::BM);
 
 		comp->init ("big_kobold", m_context->m_cache, m_grid_layout);
 		m_first = false;

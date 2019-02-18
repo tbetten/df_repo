@@ -7,8 +7,9 @@ using Component_type = unsigned int;
 constexpr int max_components = 32;
 using Bitmask = std::bitset<max_components>;
 
-enum class Component {Position, SpriteSheet, State, Item_shared, Projectile, Attributes, Drawable};
-enum class System {Renderer, Movement, Collision, Attribute, Controller};
+enum class Component {Position, SpriteSheet, State, Item_shared, Projectile, Attributes, Drawable, Inventory, Container};
+constexpr int nr_components = 9;  // must agree with enum class above
+enum class System {Renderer, Movement, Collision, Attribute, Controller, Inventory};
 enum class Entity_event{Spawned, Despawned, };
 
 inline unsigned int to_number (Component cmp)

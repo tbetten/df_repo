@@ -18,10 +18,10 @@ void item::Item_shared::load_from_db(db::db_connection* db, const std::string& k
 	auto res = m_stmt->fetch_table();
 	for (auto& row : res)
 	{
-		m_name = std::get<std::string>(row["name"]);
-		m_description = std::get<std::string>(row["description"]);
-		m_price = std::get<int>(row["price"]);
-		m_weight = static_cast<float> (std::get<double>(row["weight"]));
+//		m_name = std::get<std::string>(row["name"]);
+//		m_description = std::get<std::string>(row["description"]);
+//		m_price = std::get<int>(row["price"]);
+//		m_weight = static_cast<float> (std::get<double>(row["weight"]));
 	}
 }
 
