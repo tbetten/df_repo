@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <memory>
 #include <algorithm>
 
@@ -36,3 +36,4 @@ struct Attribute_comp : public Component_base
 private:
 	attribute_table init_attributes ();
 };
+*/

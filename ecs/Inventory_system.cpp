@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "inventory_system.h"
 #include "item.h"
 #include "container.h"
@@ -49,4 +49,4 @@ void Inventory_system::drop (Entity_id item, Entity_id target)
 		pack.contents.erase (pack_itr);
 		pack.total_weight -= weight;
 	}
-}
+}*/

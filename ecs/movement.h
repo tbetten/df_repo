@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "system.h"
 #include <unordered_map>
 
@@ -16,4 +16,4 @@ public:
 
 private:
 	std::unordered_map<Entity_id, int> m_move_cache;
-};
+};*/

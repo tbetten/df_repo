@@ -11,10 +11,7 @@ struct Turn
 	Action action;
 };
 
-bool operator< (const Turn& left, const Turn& right)
-{
-	return left.prio < right.prio;
-}
+bool operator< (const Turn& left, const Turn& right);
 
 class Scheduler
 {

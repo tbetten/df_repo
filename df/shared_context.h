@@ -3,12 +3,18 @@
 class Window;
 class Eventmanager;
 class State_manager;
+struct Tilemap;
+class Scheduler;
+
 namespace cache
 {
 	struct Cache;
 }
-class Entity_manager;
-class System_manager;
+namespace ecs
+{
+	class Entity_manager;
+	class System_manager;
+}
 
 struct Shared_context
 {
@@ -18,6 +24,8 @@ struct Shared_context
 	Eventmanager* m_event_manager;
 	State_manager* m_state_manager;
 	cache::Cache* m_cache;
-	Entity_manager* m_entity_manager;
-	System_manager* m_system_manager;
+	ecs::Entity_manager* m_entity_manager;
+	ecs::System_manager* m_system_manager;
+	Tilemap* m_current_map;
+	Scheduler* m_scheduler{ nullptr };
 };

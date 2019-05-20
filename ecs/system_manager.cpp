@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "system.h"
 #include "attribute_system.h"
 #include "renderer.h"
@@ -100,4 +100,4 @@ System System_manager::find_event (std::string event)
 Dispatcher& System_manager::get_event (System system_id, std::string event)
 {
 	return m_systems[system_id]->get_event (event);
-}
+}*/

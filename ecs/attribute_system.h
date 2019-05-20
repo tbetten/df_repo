@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "system.h"
 #include "attribute_comp.h"
 
@@ -42,4 +42,4 @@ private:
 	const std::vector<std::string> m_eventnames;
 	std::unordered_map<std::string, Dispatcher> m_dispatchers;
 	Attribute_comp::Ptr m_component;
-};
+};*/

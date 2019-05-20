@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "system.h"
 #include "eventmanager.h"
 #include "shared_context.h"
@@ -19,4 +19,4 @@ private:
 	Entity_id m_current_entity;
 	const std::vector<std::string> m_eventnames;
 	std::unordered_map<std::string, Dispatcher> m_dispatchers;
-};
+};*/

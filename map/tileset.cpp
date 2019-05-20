@@ -3,8 +3,14 @@
 #include "tinyxml2.h"
 #include <filesystem>
 #include <array>
+#include <cstdlib>
 
 namespace fs = std::filesystem;
+
+bool operator== (Tile_property first, Tile_property second)
+{
+	return first.name == second.name && first.type == second.type && first.value == second.value;
+}
 
 void Tileset::loadFromFile(const std::string& file)
 {
@@ -18,16 +24,50 @@ void Tileset::loadFromFile(const std::string& file)
 	m_columns = tileset_elem->IntAttribute("columns");
 
 	auto tile_offset_elem = tileset_elem->FirstChildElement("tileoffset");
-	m_tile_offset.x = tile_offset_elem->IntAttribute("x");
-	m_tile_offset.y = tile_offset_elem->IntAttribute("y");
+	if (tile_offset_elem)
+	{
+		m_tile_offset.x = tile_offset_elem->IntAttribute ("x");
+		m_tile_offset.y = tile_offset_elem->IntAttribute ("y");
+	}
 
 	auto image_elem = tileset_elem->FirstChildElement("image");
-	std::string name = image_elem->Attribute("source");
-	fs::path path{ file };
-	fs::path dir = path.parent_path() / name;
-	m_tiles.loadFromFile(dir.string());
+	m_filename = image_elem->Attribute ("source");
 
-	precalculate();
+	auto tile_elem = tileset_elem->FirstChildElement("tile");
+	while (tile_elem != nullptr)
+	{
+		auto id = std::atoi(tile_elem->Attribute ("id"));
+		auto properties_elem = tile_elem ->FirstChildElement("properties");
+		auto property_elem = properties_elem->FirstChildElement ("property");
+		while (property_elem != nullptr)
+		{
+			Tile_property p;
+			p.name = property_elem->Attribute ("name");
+			p.value = property_elem->Attribute ("value");
+
+			auto proptype = property_elem->Attribute ("type");
+			if (proptype == nullptr)
+			{
+				p.type = "string";
+			}
+			else
+			{
+				p.type = proptype;
+			}
+			auto itr = std::find (m_properties.begin (), m_properties.end (), p);
+			if (itr == m_properties.end())
+			{
+				m_properties.push_back (p);
+				itr = m_properties.end () - 1;
+				
+			}
+			m_property_indices[id][p.name] = std::distance (m_properties.begin (), itr);
+
+			property_elem = property_elem->NextSiblingElement ("property");
+		}
+		tile_elem = tile_elem->NextSiblingElement ("tile");
+	}
+//	precalculate();
 }
 
 void Tileset::precalculate()

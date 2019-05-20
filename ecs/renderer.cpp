@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "renderer.h"
 #include "ecs_base.h"
 #include "position_comp.h"
@@ -35,4 +35,4 @@ void Renderer::render (Window* win)
 		auto drawable = entities->get_component<Drawable_comp> (Component::Drawable);
 		drawable->draw (entity, win->get_renderwindow ());
 	}
-}
+}*/

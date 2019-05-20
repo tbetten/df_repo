@@ -1,6 +1,6 @@
 #pragma once
 #include <bitset>
-
+/*
 using Entity_id = unsigned int;
 using Component_type = unsigned int;
 
@@ -22,4 +22,4 @@ inline Component to_comp_type (unsigned int type)
 	return static_cast<Component>(type);
 }
 
-enum class Direction { North, Northeast, Southeast, South, Southwest, Northwest };
+enum class Direction { North, Northeast, Southeast, South, Southwest, Northwest };*/

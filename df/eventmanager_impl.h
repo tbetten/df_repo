@@ -42,7 +42,8 @@ struct Binding
 {
 	using Ptr = std::unique_ptr<Binding>;
 	static Ptr create(const std::string&name) { return Ptr(new Binding(name)); }  // cannot use make_unique because it can't access private constructor
-
+	Ptr clone();
+	Binding(const std::string& name) : m_name{ name }, m_details{ name }, c{ 0 } {}
 	void bind_event(Event_type type, Event_info info = Event_info{})
 	{
 		m_events.emplace_back(type, info);
@@ -56,7 +57,7 @@ struct Binding
 	Event_details m_details;
 
 private:
-	Binding(const std::string& name) : m_name{ name }, m_details{ name }, c{ 0 } {}
+	
 };
 
 using Bindings = std::vector<Binding::Ptr>;

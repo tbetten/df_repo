@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include "system.h"
 
@@ -21,4 +21,4 @@ public:
 	void render (Window* win);
 private:
 	std::unordered_map<std::string, Dispatcher> m_dispatchers;
-};
+};*/

@@ -4,14 +4,11 @@
 #include "game_states.h"
 #include <iostream>
 
-Window::Window() //: Actor{ context }
-{
-	setup("window", sf::Vector2u(640, 480));
-}
+Window::Window () : Window ("window", sf::Vector2u (640, 480)) {}
 
-Window::Window(const std::string& title, const sf::Vector2u& size) //: Actor{ context }
+Window::Window (const std::string& title, const sf::Vector2u& size) : m_title{ title }, m_windowsize{ size }
 {
-	setup(title, size);
+	setup();
 }
 
 Window::~Window()
@@ -19,16 +16,11 @@ Window::~Window()
 	destroy();
 }
 
-void Window::setup(const std::string& title, const sf::Vector2u& size)
+void Window::setup()
 {
-	m_title = title;
-	m_windowsize = size;
-	m_fullscreen = false;
-	m_done = false;
-	m_focus = true;
-	create();
 	m_eventmanager.add_command (Game_state::All_states, "CMD_fullscreen_toggle", [this](auto data) {toggle_fullscreen (data); });
 	m_eventmanager.add_command (Game_state::All_states, "CMD_close_window", [this](auto data) {close (); });
+	create ();
 }
 
 void Window::create()

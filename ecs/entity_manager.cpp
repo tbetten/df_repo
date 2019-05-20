@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "ecs_base.h"
 #include "item.h"
 #include "attribute_comp.h"

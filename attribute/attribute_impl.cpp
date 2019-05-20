@@ -326,7 +326,7 @@ namespace attrib
 			mult += itr->second->get_multiplier();
 		}
 		final += val;
-		final *= (1 + (mult / 100.0f));
+		final *= static_cast<int>((1 + (mult / 100.0f)));
 		return final;
 	}
 

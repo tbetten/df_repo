@@ -11,6 +11,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <filesystem>
+#include "messaging.h"
 
 namespace fs = std::filesystem;
 
@@ -30,6 +31,7 @@ public:
 	void update();
 private:
 	void load_bindings();
+	Bindings create_bindings(std::string& command_name, Event_info i, bool has_alt, bool has_ctrl, bool has_shift);
 
 	Game_state m_current_state;
 	Bindings m_bindings;
@@ -101,6 +103,10 @@ void Binding::handle_event(sf::Event e)
 			case Event_type::KeyUp:
 				if (event.second.m_code == e.key.code)
 				{
+					if (e.key.code == sf::Keyboard::Key::G)
+					{
+						std::cout << "g \n";
+					}
 					if (m_details.m_keycode != sf::Keyboard::Unknown)
 					{
 						m_details.m_keycode = event.second.m_code;
@@ -137,6 +143,15 @@ void Binding::handle_event(sf::Event e)
 			}
 		}
 	}
+}
+
+Binding::Ptr Binding::clone()
+{
+	auto new_binding = Binding::create(m_name);
+	new_binding->m_events = m_events;
+	new_binding->m_details = m_details;
+	new_binding->c = c;
+	return new_binding;
 }
 
 void Eventmanager::impl::add_binding(Binding::Ptr binding)
@@ -249,13 +264,74 @@ void Eventmanager::impl::load_bindings()
 		keystream >> commandname;
 		std::cout << "command " << commandname << " is gebonden aan ";
 		auto bind = Binding::create(commandname);
+		Bindings b{};
+		bool has_shift{ false };
+		bool has_ctrl{ false };
+		bool has_alt{ false };
+		Event_info info{ sf::Keyboard::Key::Unknown };
 		while (!keystream.eof())
 		{
 			std::string keyval;
 			keystream >> keyval;
 			std::cout << keyval;
-			int start = 0;
-			size_t end = keyval.find(delimiter);
+			if (keyval == "shift") has_shift = true;
+			if (keyval == "ctrl") has_ctrl = true;
+			if (keyval == "alt")has_alt = true;
+			if (Keynames::contains(keyval))
+			{
+				info.m_code = Keynames::to_keycode(keyval);
+			}
+		}
+		if (info.m_code == sf::Keyboard::Key::Unknown) continue;
+		auto bindings = create_bindings(commandname, info, has_alt, has_ctrl, has_shift);
+		for (auto& binding : bindings)
+		{
+			add_binding(std::move(binding));
+		}
+
+
+
+	/*		if (keyval == "shift")
+			{
+				Event_info e{ sf::Keyboard::Key::LShift };
+				e.m_code = sf::Keyboard::Key::LShift;
+				if (b.size() == 0)
+				{
+					b.emplace_back(Binding::create(commandname));
+					b.back()->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::LShift });
+					b.emplace_back(Binding::create(commandname));
+					b.back()->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::RShift });
+				}
+				bind->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::LShift });
+				bind->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::RShift });
+				keystream >> keyval;
+				std::cout << " " << keyval;
+			}
+			if (keyval == "ctrl")
+			{
+				bind->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::LControl });
+			//	bind->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::RControl });
+				keystream >> keyval;
+				std::cout << " " << keyval;
+			}
+			if (keyval == "alt")
+			{
+				bind->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::LAlt });
+	//			bind->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::RAlt });
+				keystream >> keyval;
+				std::cout << " " << keyval;
+			}
+
+			if (Keynames::contains(keyval))
+			{
+				bind->bind_event(Event_type::KeyDown, Event_info{ Keynames::to_keycode(keyval) });
+			}
+			if (Mousebutton::contains(keyval))
+			{
+				bind->bind_event(Event_type::MButtonDown, Event_info{ Mousebutton::to_buttoncode(keyval) });
+			}*/
+
+/*			size_t end = keyval.find(delimiter);
 			if (end == std::string::npos)
 			{
 				bind = nullptr;
@@ -273,10 +349,62 @@ void Eventmanager::impl::load_bindings()
 				info.m_code = Mousebutton::to_buttoncode(code);
 				break;
 			}
-			bind->bind_event(static_cast<Event_type> (type), info);
-		}
-		std::cout << std::endl;
-		add_binding(std::move(bind));
+			bind->bind_event(static_cast<Event_type> (type), info);*/
 	}
+		std::cout << "\n";
+	//	add_binding(std::move(bind));
+	
 	bindings.close();
 }
+
+void add_modifiers(Bindings& b, sf::Keyboard::Key left_key, sf::Keyboard::Key right_key)
+{
+	Bindings temp;
+	for (auto& binding : b)
+	{
+		Binding q = *binding;
+		auto copy = binding->clone();
+		binding->bind_event(Event_type::Keyboard, Event_info{ left_key });
+		copy->bind_event(Event_type::Keyboard, Event_info{ right_key });
+		temp.push_back(std::move(copy));
+	}
+	for (auto itr = temp.begin(); itr < temp.end(); ++itr)
+	{
+		b.emplace_back(std::move(*itr));
+	}
+//	std::copy(temp.begin(), temp.end(), b.end());*/
+}
+
+Bindings Eventmanager::impl::create_bindings(std::string& command_name, Event_info i, bool has_alt, bool has_ctrl, bool has_shift)
+{
+	Bindings result;
+	result.emplace_back(Binding::create(command_name));
+	result.back()->bind_event(Event_type::KeyDown, i);
+	if (has_alt)
+	{
+		add_modifiers(result, sf::Keyboard::Key::LAlt, sf::Keyboard::Key::RAlt);
+	}
+	if (has_ctrl)
+	{
+		add_modifiers(result, sf::Keyboard::Key::LControl, sf::Keyboard::Key::RControl);
+	}
+	if (has_shift)
+	{
+		add_modifiers(result, sf::Keyboard::Key::LShift, sf::Keyboard::Key::RShift);
+	}
+	return result;
+/*	Bindings bindings{};
+	bindings.emplace_back(Binding::create(command_name));
+	bindings.back()->bind_event(Event_type::KeyDown, i);
+	if (has_alt)
+	{
+		for (auto& binding : bindings)
+		{
+			Binding bind{ *binding };
+			binding->bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::LAlt });
+			bind.bind_event(Event_type::Keyboard, Event_info{ sf::Keyboard::Key::RAlt });
+			bindings.push_back(Binding::Ptr{ &bind });
+		}
+	}*/
+}
+

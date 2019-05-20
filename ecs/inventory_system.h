@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include "system.h"
 #include "Inventory.h"
@@ -31,4 +31,4 @@ private:
 	std::unordered_map<std::string, Dispatcher> m_dispatchers;
 	Entity_manager* entity_mgr;
 	Inventory::Ptr m_inventory_comp;
-};
+};*/

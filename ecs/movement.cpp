@@ -1,4 +1,4 @@
-#include "movement.h"
+/*#include "movement.h"
 #include "move_payload.h"
 #include "hexlib.h"
 #include "position_comp.h"
@@ -53,4 +53,4 @@ void Movement::move (std::any val)
 	auto x = hexlib::hex_neighbour (coords, static_cast<int>(d.direction));
 	std::cout << x << std::endl;
 	pos.coords = x;
-}
+}*/

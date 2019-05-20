@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "ecs_base.h"
 #include "hexlib.h"
 
@@ -20,4 +20,4 @@ struct Position_comp : public Component_base
 	Position_data& get_data (Entity_id entity) { return m_data[entity]; }
 
 	std::unordered_map<Entity_id, Position_data> m_data;
-};
+};*/

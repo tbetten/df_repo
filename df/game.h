@@ -1,11 +1,14 @@
 #pragma once
+#pragma comment (lib, "ecs.lib")
 
 #include "window.h"
 #include "shared_context.h"
 #include "statemanager.h"
 #include "resource_cache.h"
-#include "ecs_base.h"
-#include "system.h"
+//#include "ecs_base.h"
+//#include "system.h"
+#include "ecs.h"
+#include "scheduler.h"
 
 class Game
 {
@@ -27,6 +30,7 @@ private:
 	cache::Cache m_cache;
 	sf::Clock m_clock;
 	sf::Time m_elapsed;
-	Entity_manager m_entity_mgr;
-	System_manager m_system_mgr;
+	ecs::Entity_manager m_entity_mgr;
+	ecs::System_manager m_system_mgr;
+	Scheduler m_scheduler;
 };

@@ -21,6 +21,11 @@ const sf::Mouse::Button Mousebutton::to_buttoncode(const std::string& buttonname
 	return buttoncodes.at(buttonname);
 }
 
+bool Mousebutton::contains(const std::string& buttonname)
+{
+	return buttoncodes.contains(buttonname);
+}
+
 void Mousebutton::init()
 {
 	buttoncodes.insert(sf::Mouse::Button::Left, "LeftButton");

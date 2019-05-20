@@ -1,4 +1,4 @@
-#include "drawable_comp.h"
+/*#include "drawable_comp.h"
 #include "resource_cache.h"
 
 void Drawable_comp::load_from_db(db::db_connection* db, const std::string& key)
@@ -28,4 +28,4 @@ void Drawable_comp::update_position (Entity_id entity, hexlib::Hex coords)
 void Drawable_comp::draw (Entity_id entity, sf::RenderWindow* win)
 {
 	win->draw (m_data[entity].m_sprite);
-}
+}*/

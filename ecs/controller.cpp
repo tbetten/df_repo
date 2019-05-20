@@ -1,4 +1,4 @@
-#include "controller.h"
+/*#include "controller.h"
 #include "move_payload.h"
 #include <iostream>
 
@@ -40,4 +40,4 @@ void Controller::update (int dt)
 Dispatcher& Controller::get_event (std::string event)
 {
 	return m_dispatchers[event];
-}
+}*/

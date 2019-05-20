@@ -1,4 +1,4 @@
-#include "item.h"
+/*#include "item.h"
 #include <iostream>
 
 void item::Item_shared::load_from_db(db::db_connection* db, const std::string& key)
@@ -40,4 +40,4 @@ void item::Projectile::load_from_db(db::db_connection* db, const std::string& ke
 		m_damage_type = static_cast<Damage_type> (std::get<int>(row["damage_type"]));
 		m_armour_divisor = static_cast<float> (std::get<double>(row["armour_divisor"]));
 	}
-}
+}*/

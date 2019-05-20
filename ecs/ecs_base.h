@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <sstream>
 #include <memory>
 #include <vector>
@@ -10,7 +10,7 @@
 #include <type_traits>
 
 #include "db.h"
-#include "ecs_types.h"
+#include "ecs_types_old.h"
 
 class Component_base
 {

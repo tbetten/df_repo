@@ -90,14 +90,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\sfml\32bit\SFML-2.4.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-main-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\ecs\Debug;D:\sfml\32bit\SFML-2.4.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-main-d.lib;sfml-window-d.lib;ecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -137,7 +137,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\sfml\32bit\SFML-2.4.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-main-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-main-d.lib;sfml-window-d.lib;ecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,7 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -175,10 +175,12 @@
     <ClInclude Include="shared_context.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="statemanager.h" />
+    <ClInclude Include="state_character_generator.h" />
     <ClInclude Include="state_game.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="util_types.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +193,7 @@
     <ClCompile Include="resource_cache.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="statemanager.cpp" />
+    <ClCompile Include="state_character_generator.cpp" />
     <ClCompile Include="state_game.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -198,17 +201,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="util_types.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\attribute\attribute.vcxproj">
       <Project>{e54df222-91a8-4b4a-83e5-a4a74ffd66a7}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ecs\ecs.vcxproj">
-      <Project>{dff86f81-6615-4144-be7e-9594ee754e9f}</Project>
+    <ProjectReference Include="..\components\components.vcxproj">
+      <Project>{23fff8e4-d958-48e9-8e8e-39aeefb46c8e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\map\map.vcxproj">
       <Project>{9d98aff6-4f64-4436-b6d2-af61169d8d18}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\systems\systems.vcxproj">
+      <Project>{e43d5ad7-1cab-47a5-aa9e-9c63e8d3c62a}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -21,9 +21,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs_types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ecs_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,9 +40,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="attribute_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="messaging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="bonus.h">
@@ -76,6 +70,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="container.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs_types_old.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

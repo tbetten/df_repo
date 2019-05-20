@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <string>
 #include <vector>
 
@@ -131,3 +131,4 @@ namespace item
 		std::vector<Hit_location> m_hit_location;
 	};
 }
+*/

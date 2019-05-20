@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "ecs_base.h"
 #include "hexlib.h"
 #include <SFML/Graphics.hpp>
@@ -34,4 +34,4 @@ struct Drawable_comp : public Component_base
 //	sf::Texture m_texture;
 //	sf::Vector2f m_screen_coords;
 //	hexlib::Layout m_layout;
-};
+};*/

@@ -5,17 +5,23 @@
 #include "keynames.h"
 #include "tileset.h"
 #include "tilemap.h"
+#include "grid.h"
 #include <iostream>
 #include <string>
 #include <filesystem>
 #include "resource_cache.h"
-#include "ecs_base.h"
-#include "system.h"
+//#include "ecs_base.h"
+//#include "system.h"
+#include "systems.h"
+#include "renderer.h"
+#include "ecs.h"
+#include "drawable.h"
 #include "attribute_system.h"
 #include "attribute_comp.h"
 #include "drawable_comp.h"
 #include "position_comp.h"
 #include "hexlib.h"
+#include "statemanager.h"
 
 namespace fs = std::filesystem;
 
@@ -24,12 +30,11 @@ void State_game::on_create()
 	auto eventmgr = m_context ->m_event_manager;
 	eventmgr->add_command (Game_state::Game, "CMD_game_menu", [this](auto data) {to_mainmenu (); });
 	eventmgr->add_command (Game_state::Game, "CMD_pause", [this](auto data) {pause (); });
+	eventmgr->add_command(Game_state::Game, "CMD_character_generator", [this](auto data) {to_chargen(); });
 
-	m_grid_layout = hexlib::Layout (hexlib::flat, hexlib::Point{ 32.0, 32.0 }, hexlib::Point{150.0, 100.0});
-	auto grid = hexlib::create_map (15, 5, hexlib::flat);
-	m_grid = hexlib::to_vertex_array (grid, m_grid_layout);
-
-
+	m_map = std::make_shared<Tilemap> (m_context);
+	m_map->load_from_file ("d:/dfmaps/test.tmx");
+	m_context->m_current_map = m_map.get ();
 }
 
 void State_game::on_destroy()
@@ -43,18 +48,10 @@ void State_game::update(const sf::Time& time)
 {
 	if (m_first)
 	{
-		Bitmask b;
-		b.set (to_number (Component::Position));
-		b.set (to_number (Component::Drawable));
-		b.set (to_number (Component::Attributes));
-		auto entity_mgr = m_context->m_entity_manager;
-		auto ent = entity_mgr->add_entity (b, true);
-		auto comp = entity_mgr->get_component<Drawable_comp> (ent, Component::Drawable);
-		auto pos = entity_mgr->get_component<Position_comp> (ent, Component::Position);
-		auto attribs = entity_mgr->get_component<Attribute_comp> (ent, Component::Attributes);
-		auto bm = attribs->get_natural (Attribute::BM);
-
-		comp->init ("big_kobold", m_context->m_cache, m_grid_layout);
+		auto id = comps::spawn_from_key (m_context, "big_kobold", sf::Vector2u{ 3, 6 }, m_map);
+		auto id2 = comps::spawn_from_key(m_context, "big_kobold", sf::Vector2u{ 5, 6 }, m_map);
+		auto id3 = comps::spawn_from_key(m_context, "sword", sf::Vector2u{ 4,5 }, m_map);
+		std::cout << id << "\t " << id2 << "\n";
 		m_first = false;
 	}
 	m_context->m_system_manager->update (1);
@@ -66,13 +63,22 @@ void State_game::draw()
 	//window->draw(m_sprite);
 	//window->draw(m_sprite2);
 	//window->draw(m_l);
-	window->draw(m_grid);
-	m_context->m_system_manager->draw (m_context->m_wind);
+//	window->draw (*m_grid);
+//	window->draw (*m_map);
+//	window->draw(m_grid);
+	auto renderer = m_context->m_system_manager->get_system<systems::Renderer> (ecs::System_type::Renderer);
+	renderer->render (window);
+	//m_context->m_system_manager->draw (m_context->m_wind);
 }
 
 void State_game::to_mainmenu()
 {
 	m_context->m_state_manager->switch_to(Game_state::Main_menu);
+}
+
+void State_game::to_chargen()
+{
+	m_context->m_state_manager->switch_to(Game_state::Character_generator);
 }
 
 void State_game::pause()

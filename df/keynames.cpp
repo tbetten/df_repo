@@ -23,6 +23,15 @@ const sf::Keyboard::Key Keynames::to_keycode(const std::string& keyname)
 	return keycodes.at(keyname);
 }
 
+bool Keynames::contains(const std::string& keyname)
+{
+	if (keycodes.size() == 0)
+	{
+		init();
+	}
+	return keycodes.contains(keyname);
+}
+
 void Keynames::init()
 {
 	keycodes.insert(sf::Keyboard::Key::Unknown, "Unknown");
@@ -54,6 +63,8 @@ void Keynames::init()
 	keycodes.insert(sf::Keyboard::Key::Z, "Z");
 
 	keycodes.insert(sf::Keyboard::Key::Escape, "Escape");
+	keycodes.insert(sf::Keyboard::Key::LControl, "LeftControl");
+	keycodes.insert(sf::Keyboard::Key::LShift, "LeftShift");
 
 	keycodes.insert(sf::Keyboard::Key::Space, "Space");
 

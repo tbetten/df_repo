@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <vector>
 #include <unordered_map>
 #include <memory>
@@ -79,4 +79,4 @@ private:
 	Entity_manager* m_entity_mgr;
 	Shared_context* m_context;
 	std::unordered_map<std::string, System> m_events;
-};
+};*/

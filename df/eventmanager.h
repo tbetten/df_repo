@@ -2,9 +2,12 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <any>
+#include <functional>
 #include <SFML/Graphics.hpp>
 #include "game_states.h"
-#include "messaging.h"
+//#include "messaging.h"
+
 
 class Actor;
 
@@ -27,10 +30,10 @@ struct Event_details
 
 	std::string m_name;
 	sf::Vector2i m_size;
-	sf::Uint32 m_text_entered;
+	sf::Uint32 m_text_entered = 0;
 	sf::Vector2i m_mouse;
-	int m_mousewheel_delta;
-	int m_keycode;
+	int m_mousewheel_delta = 0;
+	int m_keycode = 0;
 };
 
 /*

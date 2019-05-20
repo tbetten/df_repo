@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "attribute_system.h"
 #include "ecs_base.h"
 #include "attribute_comp.h"
@@ -180,4 +180,4 @@ void Attribute_system::on_attrib_bought (std::any value)  // add notification of
 		break;
 	}
 
-}
+}*/

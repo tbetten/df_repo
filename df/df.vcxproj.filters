@@ -66,6 +66,12 @@
     <ClInclude Include="scheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="util_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="state_character_generator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +108,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util_types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="state_character_generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

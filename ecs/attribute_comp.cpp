@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "attribute_comp.h"
 
 void Attribute_comp::add_entity (Entity_id entity)
@@ -61,4 +61,4 @@ Attribute_comp::attribute_table Attribute_comp::init_attributes ()
 Attribute& operator++(Attribute& a)
 {
 	return a = (a == Attribute::BS) ? Attribute::ST : static_cast<Attribute>(static_cast<int>(a) + 1);
-}
+}*/

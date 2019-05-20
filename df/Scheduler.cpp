@@ -3,6 +3,11 @@
 #include <algorithm>
 #include <iostream>
 
+bool operator< (const Turn& left, const Turn& right)
+{
+	return left.prio < right.prio;
+}
+
 void Scheduler::schedule (Action action, int initial_prio)
 {
 	m_schedule.emplace_back (Turn{ initial_prio, action });
@@ -18,6 +23,7 @@ void Scheduler::unschedule ()
 int Scheduler::pass_time ()
 {
 	if (m_waiting) return 0;
+	if (m_schedule.size() == 0) return 0;
 	Turn& current = m_schedule.front ();
 	auto delay = current.action ();
 	if (delay)

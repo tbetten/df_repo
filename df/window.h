@@ -4,22 +4,7 @@
 #include <SFML\Graphics.hpp>
 #include "eventmanager.h"
 
-/*
-class CMD_toggle_fullscreen : public Command
-{
-public:
-	CMD_toggle_fullscreen(std::string name, Actor* actor) : Command(name, actor) {}
-	void execute();
-};
-
-class CMD_close_window : public Command
-{
-public:
-	CMD_close_window(std::string name, Actor* actor) : Command(name, actor) {}
-	void execute();
-};*/
-
-class Window //: public Actor
+class Window 
 {
 public:
 	Window();
@@ -44,15 +29,16 @@ public:
 	void draw(sf::Drawable& drawable) { m_window.draw(drawable); }
 
 private:
-	void setup(const std::string& title, const sf::Vector2u& size);
+	void setup();
 	void destroy();
 	void create();
 
-	sf::RenderWindow m_window;
+	
 	Eventmanager m_eventmanager;
 	sf::Vector2u m_windowsize;
 	std::string m_title;
-	bool m_done;
-	bool m_fullscreen;
-	bool m_focus;
+	bool m_done = false;
+	bool m_fullscreen = false;
+	bool m_focus = true;
+	sf::RenderWindow m_window;
 };

@@ -1,4 +1,4 @@
-#include <algorithm>
+/*#include <algorithm>
 
 #include "system.h"
 
@@ -37,4 +37,4 @@ inline bool fits (Bitmask reqs, Bitmask b)
 bool System_base::fits_requirements(const Bitmask mask) const
 {
 	return std::find_if(m_required_components.cbegin(), m_required_components.cend(), [mask](Bitmask b) {return fits (b, mask); }) != m_required_components.cend();
-}
+}*/

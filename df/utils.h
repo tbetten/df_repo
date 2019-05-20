@@ -42,10 +42,18 @@ public:
 			return itr->second;
 		}
 	}
+
+	bool contains(const std::string& string) const
+	{
+		auto itr = m_mappings.find(string);
+		return itr != m_mappings.end();
+	}
+
 	std::size_t size() const
 	{
 		return m_mappings.size();
 	}
+
 private:
 	std::vector<std::string> m_strings;
 	std::map<std::string, T> m_mappings;
