@@ -4,8 +4,9 @@
 #include "drawable.h"
 #include "facing.h"
 #include "ecs.h"
-#include "grid.h"
+//#include "grid.h"
 #include "shared_context.h"
+#include "map_data.h"
 
 namespace systems
 {
@@ -19,21 +20,38 @@ namespace systems
 		m_drawable = m_system_manager->get_entity_mgr ()->get_component<ecs::Component<Drawable>> (ecs::Component_type::Drawable);
 	}
 
-	void Renderer::update (float dt)
+	sf::Vector2u grid_to_pixel(Shared_context* context, std::string map, sf::Vector2u grid_coords)
+	{
+		auto& map_data = context->m_maps->maps[map];
+		auto& tilesize = map_data.tilesize;
+		if (map_data.orientation == Map_data::Orientation::Orthogonal)
+		{
+			return sf::Vector2u{(grid_coords.x * tilesize.x) + tilesize.x / 2u, (grid_coords.y * tilesize.y) + tilesize.y / 2u};
+		}
+		return sf::Vector2u{};
+	}
+
+	void Renderer::update (sf::Int64 dt)
 	{
 		auto mgr = m_system_manager->get_entity_mgr ();
 		for (auto& entity : m_entities)
 		{
 			auto index = mgr->get_index(ecs::Component_type::Drawable, entity);
-			auto drawable = &m_drawable->m_data[index];
-			//auto drawable = mgr->get_data<ecs::Component<Drawable>> (ecs::Component_type::Drawable, entity);
-			auto position = &m_position->m_data[mgr->get_index(ecs::Component_type::Position, entity)];
-		//	auto position = mgr->get_data<ecs::Component<Position>> (ecs::Component_type::Position, entity);
-			auto pixel_coords = position->current_map->grid_to_pixel (position->coords);// hexlib::hex_to_pixel (drawable->layout, position->coords);
-			auto size = drawable->texture.getSize ();
-			drawable->screen_coords.x = pixel_coords.x;// -(size.x / 2.0f);
-			drawable->screen_coords.y = pixel_coords.y;// -(size.y / 2.0f);
-			drawable->sprite.setPosition ({ static_cast<float>(pixel_coords.x), static_cast<float>(pixel_coords.y) });
+			auto drawable = &m_drawable->m_data[*index];
+			auto position = &m_position->m_data[*mgr->get_index(ecs::Component_type::Position, entity)];
+			if (position->moved)
+			{
+				//auto drawable = mgr->get_data<ecs::Component<Drawable>> (ecs::Component_type::Drawable, entity);
+				
+				//	auto position = mgr->get_data<ecs::Component<Position>> (ecs::Component_type::Position, entity);
+					//auto pixel_coords = position->current_map->grid_to_pixel (position->coords);// hexlib::hex_to_pixel (drawable->layout, position->coords);
+				auto pixel_coords = grid_to_pixel(m_system_manager->get_context(), position->current_map, position->coords);
+				auto size = drawable->texture->getSize ();
+				drawable->screen_coords.x = pixel_coords.x -(size.x / 2.0f);
+				drawable->screen_coords.y = pixel_coords.y -(size.y / 2.0f);
+				drawable->sprite.setPosition({ static_cast<float>(pixel_coords.x), static_cast<float>(pixel_coords.y) });
+				position->moved = false;
+			}
 		}
 	}
 
@@ -52,19 +70,19 @@ namespace systems
 	{
 		auto mgr = m_system_manager->get_entity_mgr ();
 		auto map = m_system_manager->get_context ()->m_current_map;
-		auto view = sf::View{ sf::FloatRect{0.0f, 0.0f, 1000.0f, 800.0f} };
-		auto index_current_entity = mgr->get_index(ecs::Component_type::Drawable, m_current_entity);
+		auto index_current_entity = *mgr->get_index(ecs::Component_type::Drawable, m_current_entity);
 		auto current = &m_drawable->m_data[index_current_entity];
-		view.setCenter(current->screen_coords);
-		//view.setViewport (sf::FloatRect{ 0.1f , 0.1f, 0.5f, 0.5f });
-		win->setView (view);
-		win->draw (*map);
+		//auto view = win->getView();
+		//view.setCenter(current->screen_coords);
+		//win->setView(view);
+
+		//win->draw (*map);
 		//auto target = win->get_renderwindow ();
 		for (auto& entity : m_entities)
 		{
 			//auto drawable = mgr->get_data<ecs::Component<Drawable>> (ecs::Component_type::Drawable, entity);
-			auto drawable = &m_drawable->m_data[mgr->get_index(ecs::Component_type::Drawable, entity)];
-			drawable->sprite.setTexture (drawable->texture);
+			auto drawable = &m_drawable->m_data[*mgr->get_index(ecs::Component_type::Drawable, entity)];
+			//drawable->sprite.setTexture (*drawable->texture);
 			win->draw(drawable->sprite);
 			if (mgr->has_component (entity, ecs::Component_type::Facing))
 			{

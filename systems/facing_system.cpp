@@ -22,7 +22,7 @@ namespace systems
 
 	}
 
-	void Facing_system::update(float dt)
+	void Facing_system::update(sf::Int64 dt)
 	{
 		auto entity_mgr = m_system_manager->get_entity_mgr ();
 		for (auto entity : m_entities)

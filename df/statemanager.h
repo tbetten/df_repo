@@ -50,9 +50,10 @@ private:
 
 	//void register_state(const State_type type, const State& state);
 
-	Shared_context * m_shared;
+	
 	State_container m_states;
 	std::vector<Game_state> m_state_stack;
 	Type_container m_to_remove;
+	Shared_context* m_shared;
 	//State_factory m_state_factory;
 };

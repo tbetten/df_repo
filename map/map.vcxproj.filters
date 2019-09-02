@@ -27,16 +27,13 @@
     <ClInclude Include="hexmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tileset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tilemap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="directions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tile_info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,16 +47,10 @@
     <ClCompile Include="hexmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tileset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tilemap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="directions.cpp">
+    <ClCompile Include="tile_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

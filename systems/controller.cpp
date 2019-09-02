@@ -6,6 +6,8 @@
 #include "eventmanager.h"
 #include "move_payload.h"
 #include "scheduler.h"
+#include "ai.h"
+#include "character.h"
 
 #include <iostream>
 
@@ -37,6 +39,9 @@ namespace systems
 		eventmgr->add_command (Game_state::Game, "CMD_move_right", [this](auto data) {move (Direction::Right); });
 
 		m_system_manager->get_entity_mgr()->get_event().bind([this](auto val) {register_entity(val); });
+		
+		auto sys = m_system_manager->find_event("move");
+		m_system_manager->get_event(sys, "move").bind([this](auto val) {move_ai(val); });
 	}
 
 	void Controller::register_entity(std::any val)
@@ -50,19 +55,35 @@ namespace systems
 		}
 	}
 
+	// wordt aangeroepen door scheduler
 	std::optional<int> Controller::take_turn(ecs::Entity_id entity)
 	{
+		auto ai = m_system_manager->get_system<AI>(ecs::System_type::AI);
 		m_current_entity = entity;
+		auto character_comp = m_system_manager->get_entity_mgr()->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
+		m_player_controlled = character_comp->user_controlled;
 		m_dispatchers["switched_current_entity"].notify(entity);
+		if (!m_player_controlled)
+		{
+			return ai->take_turn(entity);
+		}
+		
 		return std::nullopt;
 	}
 
-	void Controller::update(float dt)
+	void Controller::update(sf::Int64 dt)
 	{}
 
 	Dispatcher& Controller::get_event (const std::string& event)
 	{
 		return m_dispatchers[event];
+	}
+
+	void Controller::move_ai(std::any val)
+	{
+		std::cout << "AI movement\n";
+		auto dir = std::any_cast<Direction> (val);
+		move(dir);
 	}
 
 	void Controller::move (Direction d)
@@ -72,7 +93,10 @@ namespace systems
 		m.entity = m_current_entity;
 		m.direction = d;
 		m_dispatchers["change_position"].notify (m);
-		m_system_manager->get_context()->m_scheduler->async_response(50);
+		if (m_player_controlled)
+		{
+			m_system_manager->get_context()->m_scheduler->async_response(50);
+		}
 	}
 
 }

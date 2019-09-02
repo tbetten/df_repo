@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 #include "grid.h"
 
 namespace grid
@@ -30,4 +30,4 @@ namespace grid
 	{
 		return sf::Vector2f{ l.origin.x + (gridcoords.x * l.tilesize.x) + (l.tilesize.x / 2.0f), l.origin.y + (gridcoords.y * l.tilesize.y) + (l.tilesize.y / 2.0f) };
 	}
-}
+}*/

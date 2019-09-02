@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -152,18 +152,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="animation.h" />
+    <ClInclude Include="attributes.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="components.h" />
+    <ClInclude Include="container.h" />
     <ClInclude Include="drawable.h" />
+    <ClInclude Include="entity_loader.h" />
     <ClInclude Include="facing.h" />
+    <ClInclude Include="floor.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="map.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="tile.h" />
+    <ClInclude Include="tile_type.h" />
+    <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="animation.cpp" />
+    <ClCompile Include="attributes.cpp" />
     <ClCompile Include="components.cpp" />
+    <ClCompile Include="container.cpp" />
     <ClCompile Include="drawable.cpp" />
+    <ClCompile Include="entity_loader.cpp" />
     <ClCompile Include="facing.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="position.cpp" />
@@ -176,8 +189,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\map\map.vcxproj">
-      <Project>{9d98aff6-4f64-4436-b6d2-af61169d8d18}</Project>
+    <ProjectReference Include="..\db\db.vcxproj">
+      <Project>{3a331d50-8fb2-4f76-9efb-e401fa586a17}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

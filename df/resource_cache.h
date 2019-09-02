@@ -5,7 +5,8 @@
 #include <memory>
 #include <map>
 #include <SFML/Graphics.hpp>
-#include "tileset.h"
+//#include "tileset.h"
+#include <functional>
 
 namespace fs = std::filesystem;
 namespace cache
@@ -19,7 +20,7 @@ namespace cache
 
 	//using Pf = std::shared_ptr<Resource_base> (*)(fs::path);  // classic way
 	using Pf = std::add_pointer_t<std::shared_ptr<Resource_base> (fs::path)>;  // C++ 14 way
-
+	//using Pf = std::function<std::shared_ptr<Resource_base>(fs::path)>;
 
 	struct Cache
 	{
@@ -72,6 +73,7 @@ namespace cache
 
 	using Texture_resource = Resource<sf::Texture>;
 
-	using Tileset_resource = Resource<Tileset>;
+//	using Tileset_resource = Resource<Tileset>;
 
+	using Font_resource = Resource<sf::Font>;
 }

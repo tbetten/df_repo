@@ -3,7 +3,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
-#include <deque>
+#include <variant>
 #include "eventmanager.h"
 
 enum class Event_type
@@ -22,38 +22,56 @@ enum class Event_type
 	TextEntered = sf::Event::TextEntered,
 	Keyboard = sf::Event::Count + 1,
 	Mouse,
-	Joystick
+	Joystick,
+};
+
+struct Key
+{
+	int keycode;
+	bool shift;
+	bool ctrl;
+	bool alt;
+};
+
+struct Mouse_button
+{
 };
 
 struct Event_info
 {
-	Event_info() { m_code = 0; }
-	Event_info(int event) { m_code = event; }
+//	Event_info() : key{ 0, false, false, false } {}
+//	explicit Event_info(int event) : key{ event, false, false, false } {}
+//	Event_info(int keycode, bool shift, bool ctrl, bool alt) : key{ keycode, shift, ctrl, alt } {}
 
-	union
+	std::variant<Key, Mouse_button> params;
+/*	union
 	{
-		int m_code;
-	};
+		Key key;
+		Mouse_button mouse_button;
+	};*/
 };
 
-using Events = std::vector<std::pair<Event_type, Event_info>>;
+//using Events = std::vector<std::pair<Event_type, Event_info>>;
 
 struct Binding
 {
 	using Ptr = std::unique_ptr<Binding>;
 	static Ptr create(const std::string&name) { return Ptr(new Binding(name)); }  // cannot use make_unique because it can't access private constructor
-	Ptr clone();
-	Binding(const std::string& name) : m_name{ name }, m_details{ name }, c{ 0 } {}
-	void bind_event(Event_type type, Event_info info = Event_info{})
+	Binding(const std::string& name) : m_type{ Event_type::KeyDown }, m_name{ name }, m_details{ name } {}
+	inline void bind_event(Event_type type, Event_info info = Event_info{})
 	{
-		m_events.emplace_back(type, info);
+		m_type = type;
+		m_event_params = info;
+	//	m_events.emplace_back(type, info);
 	}
 
-	void handle_event(sf::Event e);
+	bool handle_event(sf::Event e);
 
-	Events m_events;
+//	Events m_events;
+	Event_type m_type;
+	Event_info m_event_params;
 	std::string m_name;
-	int c;
+//	int c;
 	Event_details m_details;
 
 private:

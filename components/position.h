@@ -1,8 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
-
-#include "hexlib.h"
+#include <SFML/System/Vector2.hpp>
 
 struct Tilemap;
 
@@ -11,5 +10,9 @@ struct Position
 	void reset ();
 	std::string map_id = "";
 	sf::Vector2u coords;
-	std::shared_ptr<Tilemap> current_map;
+	std::string current_map;
+	int layer = 2;
+	bool moved = false;
 };
+
+bool operator< (const Position& lhs, const Position& rhs);

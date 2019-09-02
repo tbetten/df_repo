@@ -5,6 +5,9 @@
 #include "facing.h"
 #include "ecs.h"
 #include "move_payload.h"
+#include "shared_context.h"
+#include "map_data.h"
+//#include "tilemap.h"
 
 namespace systems
 {
@@ -21,7 +24,7 @@ namespace systems
 		m_system_manager->get_event (sys, "change_position").bind ([this](auto val) {move (val); });
 	}
 
-	void Movement::update(float dt)
+	void Movement::update(sf::Int64 dt)
 	{}
 
 	Dispatcher& Movement::get_event (const std::string& event)
@@ -31,6 +34,10 @@ namespace systems
 
 	void Movement::move (std::any val)
 	{
+		auto context = m_system_manager->get_context();
+		auto map = context->m_current_map;
+		auto& mapsize = context->m_maps->maps[map].mapsize;
+		int width = mapsize.x;
 		auto payload = std::any_cast<Move_payload>(val);
 		auto entity = payload.entity;
 		auto entity_mgr = m_system_manager->get_entity_mgr ();
@@ -44,5 +51,14 @@ namespace systems
 		auto delta = Compass_util::get_direction_vector (move_dir);
 		pos_comp->coords.x = coords.x + delta.x;
 		pos_comp->coords.y = coords.y + delta.y;
+		pos_comp->moved = true;
+		auto tile_id = (coords.y + delta.y) * width + (coords.x + delta.x);
+	/*	std::cout << coords.x + delta.x << "\t" << coords.y + delta.y << "\t" << tile_id << "\t" << map->m_tile_info[tile_id]->description << "\n";
+		if (map->m_tile_info[tile_id] && map->m_tile_info[tile_id]->accessible)
+		{
+			pos_comp->coords.x = coords.x + delta.x;
+			pos_comp->coords.y = coords.y + delta.y;
+		}*/
+		
 	}
 }

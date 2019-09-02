@@ -1,18 +1,28 @@
 #pragma once
 #include "component.h"
 
+
 #include <memory>
-#include <SFML/System/Vector2.hpp>
+
+
 
 namespace ecs
 {
-	enum class Component_type : size_t { Position, Drawable, Facing, Character, Item };
+	enum class Component_type : size_t { Position, Drawable, Facing, Character, Item, Container, Attributes, Animation };
 }
 
-struct Shared_context;
+
 struct Tilemap;
 namespace comps
 {
 	void add_components (ecs::Entity_manager* mgr);
-	ecs::Entity_id spawn_from_key (Shared_context* context, std::string key, sf::Vector2u coords, std::shared_ptr<Tilemap> map);
 }
+
+/*namespace db
+{
+	class db_connection;
+	class prepared_statement;
+	using db_connection_ptr = std::unique_ptr<db_connection>;
+	using prepared_statement_ptr = std::shared_ptr<prepared_statement>;
+}*/
+

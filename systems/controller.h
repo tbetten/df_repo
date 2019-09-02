@@ -2,6 +2,7 @@
 #include "system.h"
 #include "messaging.h"
 #include <optional>
+#include <SFML/System.hpp>
 //#include "move_payload.h"
 
 enum class Direction : int;
@@ -12,14 +13,16 @@ namespace systems
 	{
 	public:
 		Controller (ecs::System_type type, ecs::System_manager* mgr);
-		void update (float dt) override;
+		void update (sf::Int64 dt) override;
 		void setup_events () override;
 		Dispatcher& get_event (const std::string& event) override;
 		std::optional<int> take_turn(unsigned int entity);
 	private:
 		std::unordered_map<std::string, Dispatcher> m_dispatchers;
 		ecs::Entity_id m_current_entity{ 0 };
+		bool m_player_controlled{ true };
 
+		void move_ai(std::any val);
 		void move (Direction d);
 		void register_entity(std::any val);
 	};

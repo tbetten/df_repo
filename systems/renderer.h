@@ -4,6 +4,7 @@
 #include "component.h"
 #include "messaging.h"
 #include "SFML/Graphics.hpp"
+#include <SFML/System.hpp>
 
 struct Position;
 struct Drawable;
@@ -14,7 +15,7 @@ namespace systems
 	{
 	public:
 		Renderer (ecs::System_type type, ecs::System_manager* mgr);
-		void update (float dt) override;
+		void update (sf::Int64 dt) override;
 		void setup_events () override;
 		Dispatcher& get_event (const std::string& event) override;
 		void render (sf::RenderWindow* win);

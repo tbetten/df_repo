@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include "SFML/Graphics.hpp"
 #include <unordered_map>
@@ -17,4 +17,4 @@ namespace grid
 	};
 
 	sf::Vector2f grid_to_pixel (const Layout& l, const sf::Vector2u gridcoords);
-}
+}*/

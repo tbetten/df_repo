@@ -1,5 +1,6 @@
 #pragma once
 #include "state.h"
+#include "resource_cache.h"
 
 #include <memory>
 
@@ -24,4 +25,8 @@ public:
 private:
 	bool m_first{ true };
 	std::shared_ptr<Tilemap> m_map;
+	Eventmanager* m_event_mgr = nullptr;
+//	std::shared_ptr<cache::Resource_base> m_font_resource;
+//	sf::Font* m_font;
+//	sf::Text m_text;
 };

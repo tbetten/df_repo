@@ -14,7 +14,7 @@
 
 Game::Game () : m_window{ "Theotris", sf::Vector2u (1600, 600) }, m_statemanager{ &m_context }//, m_system_mgr{&m_entity_mgr}
 {
-	m_clock.restart();
+	restart_clock();
 
 	m_context.m_wind = &m_window;
 	m_context.m_event_manager = m_window.get_eventmanager();
@@ -40,9 +40,11 @@ Game::Game () : m_window{ "Theotris", sf::Vector2u (1600, 600) }, m_statemanager
 
 void Game::update()
 {
+	
 	m_scheduler.pass_time();
 	m_window.update();
 	m_statemanager.update(m_elapsed);
+	restart_clock();
 }
 
 void Game::render()

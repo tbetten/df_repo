@@ -1,27 +1,29 @@
 #include "resource_cache.h"
+#include "db.h"
+#include <variant>
+#include <ostream>
+#include <array>
 
 namespace cache
 {
+	enum class Resource_type { Texture, Tileset, Font };  // must agree with table resource_type of database
+
+	constexpr std::array<Pf, 3> funcs { &Texture_resource::load_resource, nullptr};
+
 	void Cache::init ()
 	{
-		loadfuncs["fantasyhextiles_v2.tsx"] = &Tileset_resource::load_resource;
-		paths["fantasyhextiles_v2.tsx"] = "assets/maps/fantasyhextiles_v2.tsx";
-		loadfuncs["fantasyhextiles_randr_4_v1.tsx"] = &Tileset_resource::load_resource;
-		paths["fantasyhextiles_randr_4_v1.tsx"] = "assets/maps/fantasyhextiles_randr_4_v1.tsx";
-		loadfuncs["walltiles.tsx"] = &Tileset_resource::load_resource;
-		paths["walltiles.tsx"] = "d:/dfmaps/walltiles.tsx";
-		loadfuncs["floortiles.tsx"] = &Tileset_resource::load_resource;
-		paths["floortiles.tsx"] = "d:/dfmaps/floortiles.tsx";
-		loadfuncs["floor.png"] = &Texture_resource::load_resource;
-		paths["floor.png"] = "d:/dfmaps/floor.png";
-		loadfuncs["wall.png"] = &Texture_resource::load_resource;
-		paths["wall.png"] = "d:/dfmaps/wall.png";
-		loadfuncs["big_kobold"] = &Texture_resource::load_resource;
-		paths["big_kobold"] = "assets/sprite/big_kobold_new.png";
-		loadfuncs["facing_indicator"] = &Texture_resource::load_resource;
-		paths["facing_indicator"] = "assets/sprite/arrow_up.png";
-		loadfuncs["sword"] = &Texture_resource::load_resource;
-		paths["sword"] = "assets/sprite/long_sword_1_new.png";
+		std::string sql = "select key, type, path from resource";
+		auto db = db::db_connection::create("assets/database/gamedat.db");
+		auto stmt = db->prepare(sql);
+		auto data = stmt->fetch_table();
+		for (auto row : data)
+		{
+			std::string key = std::get<std::string>(row["key"]);
+			auto type = std::get<int>(row["type"]);
+			std::string path = std::get<std::string>(row["path"]);
+			loadfuncs[key] = funcs [type];
+			paths[key] = path;
+		}
 	}
 
 	Texture_resource::Resource (fs::path file)
@@ -29,8 +31,13 @@ namespace cache
 		val.loadFromFile (file.string ());
 	}
 
-	Tileset_resource::Resource (fs::path file)
+/*	Tileset_resource::Resource (fs::path file)
 	{
 		val.loadFromFile (file.string ());
+	}*/
+
+	Font_resource::Resource(fs::path file)
+	{
+		val.loadFromFile(file.string());
 	}
 }
