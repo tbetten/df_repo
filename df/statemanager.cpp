@@ -1,6 +1,6 @@
-#include "stdafx.h"
 #include "statemanager.h"
 #include "eventmanager.h"
+#include "state.h"
 #include <iostream>
 
 State_manager::State_manager(Shared_context* context) : m_shared{ context }
@@ -61,6 +61,23 @@ void State_manager::update(const sf::Time time)
 	else
 	{
 		m_states[m_state_stack.back()]->update(time);
+	}
+}
+
+void State_manager::handle_event(sf::Event& e)
+{
+	if (m_state_stack.empty()) return;
+	if (m_states[m_state_stack.back()]->is_transcendent() && m_state_stack.size() > 1)
+	{
+		auto r_itr = std::find_if_not(m_state_stack.crbegin(), m_state_stack.crend(), [this](Game_state id) {return m_states[id]->is_transcendent(); });
+		for (; r_itr != m_state_stack.crbegin(); --r_itr)
+		{
+			m_states[*r_itr]->handle_sfml_event(e);
+		}
+	}
+	else
+	{
+		m_states[*m_state_stack.crbegin()]->handle_sfml_event(e);
 	}
 }
 

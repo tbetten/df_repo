@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,14 +90,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;C:\Users\T. Betten\source\repos\ecs\Debug;D:\sfml\32bit\SFML-2.4.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-main-d.lib;sfml-window-d.lib;ecs.lib;db.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;C:\Users\T. Betten\source\repos\ecs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ecs.lib;db.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sfgui\sfgui-0.4.0-install\include;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="character_sheet.h" />
     <ClInclude Include="eventmanager.h" />
     <ClInclude Include="eventmanager_impl.h" />
     <ClInclude Include="event_types.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="statemanager.h" />
     <ClInclude Include="state_character_generator.h" />
     <ClInclude Include="state_game.h" />
+    <ClInclude Include="state_main_menu.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils.h" />
@@ -185,11 +187,13 @@
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="character_sheet.cpp" />
     <ClCompile Include="df.cpp" />
     <ClCompile Include="eventmanager_impl.cpp" />
     <ClCompile Include="event_types.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="keynames.cpp" />
+    <ClCompile Include="map_data.cpp" />
     <ClCompile Include="mousebutton.cpp" />
     <ClCompile Include="resource_cache.cpp" />
     <ClCompile Include="Scheduler.cpp" />
@@ -197,6 +201,7 @@
     <ClCompile Include="statemanager.cpp" />
     <ClCompile Include="state_character_generator.cpp" />
     <ClCompile Include="state_game.cpp" />
+    <ClCompile Include="state_main_menu.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

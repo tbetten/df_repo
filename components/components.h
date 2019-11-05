@@ -8,7 +8,7 @@
 
 namespace ecs
 {
-	enum class Component_type : size_t { Position, Drawable, Facing, Character, Item, Container, Attributes, Animation };
+	enum class Component_type : size_t { Position, Drawable, Facing, Character, Item, Container, Attributes, Animation, Tile_type };
 }
 
 

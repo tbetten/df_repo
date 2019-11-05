@@ -8,6 +8,8 @@ struct Shared_context;
 
 namespace el
 {
+	std::vector<std::string> split(const std::string& s, const std::string& delims);
+
 	class Entity_loader
 	{
 	public:

@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <memory>
+#include "ecs_types.h"
 
 class Window;
 class Eventmanager;
@@ -31,4 +34,5 @@ struct Shared_context
 	std::string m_current_map;
 	Scheduler* m_scheduler{ nullptr };
 	std::unique_ptr<Maps> m_maps{ nullptr };
+	std::vector<ecs::Entity_id> m_party;
 };

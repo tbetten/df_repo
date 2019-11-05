@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include "SFML/System/Vector2.hpp"
 
-enum class Compass : int { North, North_east, East, South_east, South, South_west, West, North_west };
+const enum class Compass : int { North, North_east, East, South_east, South, South_west, West, North_west };
 
 Compass& operator++ (Compass& c);
 

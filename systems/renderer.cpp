@@ -10,7 +10,9 @@
 
 namespace systems
 {
-	Renderer::Renderer (ecs::System_type type, ecs::System_manager* mgr) : S_base (type, mgr)
+	using namespace std::string_literals;
+
+	Renderer::Renderer(ecs::System_type type, ecs::System_manager* mgr, messaging::Messenger* m) : S_base(type, mgr), messaging::Sender{ m }
 	{
 		ecs::Bitmask b;
 		b.set (static_cast<int>(ecs::Component_type::Position));
@@ -57,28 +59,52 @@ namespace systems
 
 	void Renderer::setup_events ()
 	{
-		auto system = m_system_manager->find_event("switched_current_entity");
-		m_system_manager->get_event(system, "switched_current_entity").bind([this](std::any val) { m_current_entity = std::any_cast<ecs::Entity_id>(val); });
+		m_messenger->bind("switched_current_entity"s, [this](std::any val) { m_current_entity = std::any_cast<ecs::Entity_id>(val); });
+//		auto system = m_system_manager->find_event("switched_current_entity");
+//		m_system_manager->get_event(system, "switched_current_entity").bind([this](std::any val) { m_current_entity = std::any_cast<ecs::Entity_id>(val); });
 	}
 
-	Dispatcher& Renderer::get_event (const std::string& event)
+/*	Dispatcher& Renderer::get_event (const std::string& event)
 	{
 		throw "don't have any events";
-	}
+	}*/
 
 	void Renderer::render (sf::RenderWindow* win)
 	{
 		auto mgr = m_system_manager->get_entity_mgr ();
 		auto map = m_system_manager->get_context ()->m_current_map;
-		auto index_current_entity = *mgr->get_index(ecs::Component_type::Drawable, m_current_entity);
-		auto current = &m_drawable->m_data[index_current_entity];
+		//auto index_current_entity = *mgr->get_index(ecs::Component_type::Drawable, m_current_entity);
+		//auto current = &m_drawable->m_data[index_current_entity];
 		//auto view = win->getView();
 		//view.setCenter(current->screen_coords);
 		//win->setView(view);
 
+		auto drawable_comp = mgr->get_component<ecs::Component<Drawable>>(ecs::Component_type::Drawable);
+		auto& layers = m_system_manager->get_context()->m_maps->maps[map].layers;
+		for (auto& layer : layers)
+		{
+			for (auto& cell : layer)
+			{
+				for (auto& entity : cell)
+				{
+					if (entity)
+					{
+						auto index = mgr->get_index(ecs::Component_type::Drawable, *entity);
+						if (!index) continue;
+						auto& drawable = drawable_comp->m_data[*index];
+						win->draw(drawable.sprite);
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+		}
+
 		//win->draw (*map);
 		//auto target = win->get_renderwindow ();
-		for (auto& entity : m_entities)
+/*		for (auto& entity : m_entities)
 		{
 			//auto drawable = mgr->get_data<ecs::Component<Drawable>> (ecs::Component_type::Drawable, entity);
 			auto drawable = &m_drawable->m_data[*mgr->get_index(ecs::Component_type::Drawable, entity)];
@@ -90,6 +116,6 @@ namespace systems
 				facing->facing_indicator.setTexture (facing->facing_texture);
 				win->draw (facing->facing_indicator);
 			}
-		}
+		}*/
 	}
 }

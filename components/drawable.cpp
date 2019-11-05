@@ -5,6 +5,10 @@
 //#include "grid.h"
 #include "tinyxml2.h"
 
+Drawable::Drawable()
+{
+	composed_icon = std::make_unique<sf::RenderTexture>();
+}
 void Drawable::reset () {}
 /*
 void load_tile(ecs::Entity_manager* mgr, ecs::Entity_id entity, const std::string& tileset_file, cache::Cache* cache, int tile_id)

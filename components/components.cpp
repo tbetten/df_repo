@@ -8,6 +8,7 @@
 #include "drawable.h"
 #include "character.h"
 #include "attributes.h"
+#include "tile_type.h"
 
 void comps::add_components (ecs::Entity_manager* mgr)
 {
@@ -19,6 +20,7 @@ void comps::add_components (ecs::Entity_manager* mgr)
 	mgr->add_component(ecs::Component_type::Container, std::unique_ptr<ecs::C_base>(new ecs::Component <Container>()));
 	mgr->add_component(ecs::Component_type::Attributes, std::unique_ptr<ecs::C_base>(new ecs::Component<Attributes>()));
 	mgr->add_component(ecs::Component_type::Animation, std::unique_ptr<ecs::C_base>(new ecs::Component<Animation>()));
+	mgr->add_component(ecs::Component_type::Tile_type, std::unique_ptr<ecs::C_base>(new ecs::Component<Tile_type>()));
 }
 
 

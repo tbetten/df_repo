@@ -16,10 +16,12 @@ namespace ecs
 
 struct Drawable
 {
+	Drawable();
 	void reset ();
 	
 	sf::Sprite sprite;
 	sf::Texture* texture;
+	std::unique_ptr<sf::RenderTexture> composed_icon;
 	sf::Vector2f screen_coords;
 	std::shared_ptr<cache::Resource_base> m_texture_resource;
 };

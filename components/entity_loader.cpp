@@ -8,15 +8,33 @@
 #include "animation.h"
 #include "map_data.h"
 #include "tinyxml2.h"
+#include "tile_info.h"
+#include "tile_type.h"
 
 #include <filesystem>
 #include <sstream>
 #include <iostream>
+#include <optional>
+#include <charconv>
 
 namespace fs = std::filesystem;
 
 namespace el
 {
+	std::vector<std::string> split(const std::string& s, const std::string& delim)
+	{
+		std::vector<std::string> res;
+		for (auto first = s.data(), second = s.data(), last = first + s.size(); second != last && first != last; first = second + 1)
+		{
+			second = std::find_first_of(first, last, std::cbegin(delim), std::cend(delim));
+			if (first != second)
+			{
+				res.emplace_back(first, second - first);
+			}
+		}
+		return res;
+	}
+
 	Entity_loader::Entity_loader(Shared_context* context) : m_context{ context }
 	{
 		using namespace std::string_literals;
@@ -54,6 +72,10 @@ namespace el
 			position->layer = layer;
 			position->current_map = map;
 			position->moved = true;
+			auto tile_index = coords.y * m_context->m_maps->maps[map].mapsize.x + coords.x;
+			auto& cell = m_context->m_maps->maps[map].layers[layer][tile_index];
+			auto cell_itr = std::find_if(std::begin(cell), std::end(cell), [](std::optional<size_t> id) {return id == std::nullopt; });
+			*cell_itr = entity;
 			return true;
 		}
 		return false;
@@ -155,11 +177,42 @@ namespace el
 		return std::get<std::string>(row["file"]);
 	}
 
+	class Next
+	{
+	public:
+		Next(std::string_view sv, std::string_view delims_v) : s{ sv }, delims{ delims_v }, offset{ 0 }{}
+		explicit Next(std::string_view delims_v) : delims{ delims_v }, offset{ 0 }{}
+		void set_data(std::string_view sv) { s = sv; offset = 0; }
+		void reset(std::string_view sv, std::string_view delims_v)
+		{
+			s = sv;
+			delims = delims_v;
+			offset = 0;
+		}
+		std::optional<unsigned int> operator()()
+		{
+			auto first = s.find_first_not_of(delims, offset);
+			if (first == std::string_view::npos) return std::nullopt;
+			auto second = s.find_first_of(delims, first);
+			if (second == std::string_view::npos) second = s.size();
+			offset = second;
+			std::from_chars(s.data() + first, s.data() + second, result);
+			return result;
+		}
+	private:
+		std::string_view s;
+		std::string_view delims;
+		size_t offset;
+		unsigned int result = 0;
+	};
+
 	void Entity_loader::load_map(const std::string& map_handle)
 	{
 		std::vector<Tileset> tilesets;
 		auto cache = m_context->m_cache;
 
+		auto objecttypes = get_filename("objecttypes");
+		auto tile_types = tile_info::load_tile_data(objecttypes);
 		auto filename = get_filename(map_handle);
 		std::cout << filename << "\n";
 		tinyxml2::XMLDocument doc;
@@ -181,7 +234,7 @@ namespace el
 			md.orientation = Map_data::Orientation::Isometric;
 		}
 		md.tilesize = sf::Vector2i{ map_elem->IntAttribute("tilewidth"), map_elem->IntAttribute("tileheight") };
-		m_context->m_maps->maps.emplace(map_handle, md);
+		
 		auto num_cols = md.mapsize.x;
 		for (auto tileset_elem = map_elem->FirstChildElement("tileset"); tileset_elem != nullptr; tileset_elem = tileset_elem->NextSiblingElement("tileset"))
 		{
@@ -191,82 +244,102 @@ namespace el
 			load_tileset(filename, ts, m_context);
 			tilesets.push_back(ts);
 		}
-		auto itr = tilesets.begin();
+
 		auto position = m_context->m_entity_manager->get_component<ecs::Component<Position>>(ecs::Component_type::Position);
 		auto drawable = m_context->m_entity_manager->get_component<ecs::Component<Drawable>>(ecs::Component_type::Drawable);
+		std::string delims = " ,\n\t";
+		Next next(delims);
 
 		for (auto layer_elem = map_elem->FirstChildElement("layer"); layer_elem != nullptr; layer_elem = layer_elem->NextSiblingElement("layer"))
 		{
-			auto layer_id = layer_elem->IntAttribute("name");
+			unsigned int layer_id = layer_elem->IntAttribute("name");
 			auto data_elem = layer_elem->FirstChildElement("data");
 			std::string data = data_elem->GetText();
-			std::istringstream ss{ data };
-			std::string buf;
+			next.set_data(data);
+
+			while (md.layers.size() <= layer_id)
+			{
+				md.layers.emplace_back(Map_data::layer_data{});
+			}
 
 			int tile_index{ 0 };
-			while (std::getline(ss, buf, ','))
+			while (auto n = next())
 			{
-				std::istringstream fs{ buf };
+				md.layers[layer_id].emplace_back(Map_data::cell_data{});
+				md.layers[layer_id].back().fill(std::nullopt);
 				int gid;
-				fs >> gid;
+				gid = n.value();
 				if (gid == 0)
 				{
 					++tile_index;
 					continue;
 				}
 
-				auto itr = std::find_if(tilesets.cbegin(), tilesets.cend(), [gid](const Tileset& ts) {return ts.firstgid < gid && ts.lastgid > gid; });
-				for (auto& t : tilesets)
+				auto t = *(std::find_if(tilesets.cbegin(), tilesets.cend(), [gid](const Tileset& ts) {return ts.firstgid < gid && ts.lastgid > gid; }));
+				int tile_id = gid - t.firstgid;
+				auto rect = t.get_rect(tile_id);
+				ecs::Bitmask b;
+				b.set(static_cast<int> (ecs::Component_type::Position));
+				b.set(static_cast<int>(ecs::Component_type::Drawable));
+			//	Animation anim;
+
+				auto itr = std::find_if(t.animations.cbegin(), t.animations.cend(), [tile_id](Animation a)
+					{return std::find_if(a.cbegin(), a.cend(), [tile_id](Animation_frame f) {return f.tile_id == tile_id; }) != a.cend(); });
+				if (itr != t.animations.cend())
 				{
+					std::cout << "2 animation found at " << tile_index << " \n";
+					b.set(static_cast<int> (ecs::Component_type::Animation));
+				}
 
-					if ((t.firstgid < gid && t.lastgid > gid))
+				auto type_itr = std::find_if(std::cbegin(t.tile_types), std::cend(t.tile_types), [tile_id](Tile_type t) {return t.first == tile_id; });
+				if (type_itr != std::cend(t.tile_types))
+				{
+					b.set(static_cast<int>(ecs::Component_type::Tile_type));
+				}
+
+				auto entity = m_context->m_entity_manager->add_entity(b);
+				auto& cell = md.layers[0][tile_index];
+				auto cell_itr = std::find_if(std::begin(cell), std::end(cell), [](std::optional<size_t> id) {return id == std::nullopt; });
+				*cell_itr = entity;
+
+				if (m_context->m_entity_manager->has_component(entity, ecs::Component_type::Animation))
+				{
+					auto anim_comp = m_context->m_entity_manager->get_data<ecs::Component<::Animation>>(ecs::Component_type::Animation, entity);
+					std::cout << std::distance(t.animations.cbegin(), itr) << "\n";
+					for (auto frame : *itr)
 					{
-						int tile_id = gid - t.firstgid;
-						auto rect = t.get_rect(tile_id);
-						ecs::Bitmask b;
-						b.set(static_cast<int> (ecs::Component_type::Position));
-						b.set(static_cast<int>(ecs::Component_type::Drawable));
-						Animation anim;
-
-						auto itr = std::find_if(t.animations.cbegin(), t.animations.cend(), [tile_id](Animation a)
-							{return std::find_if(a.cbegin(), a.cend(), [tile_id](Animation_frame f) {return f.tile_id == tile_id; }) != a.cend(); });
-						if (itr != t.animations.cend())
-						{
-							std::cout << "2 animation found at " << tile_index << " \n";
-							b.set(static_cast<int> (ecs::Component_type::Animation));
-						}
-
-
-						auto entity = m_context->m_entity_manager->add_entity(b);
-						if (m_context->m_entity_manager->has_component(entity, ecs::Component_type::Animation))
-						{
-							auto anim_comp = m_context->m_entity_manager->get_data<ecs::Component<::Animation>>(ecs::Component_type::Animation, entity);
-							std::cout << std::distance(t.animations.cbegin(), itr) << "\n";
-							for (auto frame : *itr)
-							{
-								auto r = t.get_rect(frame.tile_id);
-								anim_comp->frames.emplace_back(Frame{ t.get_rect(frame.tile_id), frame.duration });
-							}
-						}
-						auto pos_index = *m_context->m_entity_manager->get_index(ecs::Component_type::Position, entity);
-						auto drawable_index = *m_context->m_entity_manager->get_index(ecs::Component_type::Drawable, entity);
-						position->m_data[pos_index].coords = sf::Vector2u{ static_cast<unsigned int>(tile_index % num_cols), static_cast<unsigned int> (tile_index / num_cols) };
-						position->m_data[pos_index].layer = layer_id;
-						position->m_data[pos_index].map_id = map_handle;
-						drawable->m_data[drawable_index].m_texture_resource = t.texture;
-						auto texture = cache::get_val<sf::Texture>(t.texture.get());
-						drawable->m_data[drawable_index].texture = texture;
-						drawable->m_data[drawable_index].sprite.setTexture(*texture);
-						drawable->m_data[drawable_index].sprite.setTextureRect(t.get_rect(tile_id));
-						auto x = tile_index % md.mapsize.x * md.tilesize.x;
-						auto y = tile_index / md.mapsize.y * md.tilesize.y;
-						drawable->m_data[drawable_index].screen_coords = sf::Vector2f{ static_cast<float>(tile_index % md.mapsize.x * md.tilesize.x), static_cast<float>(tile_index / md.mapsize.y * md.tilesize.y) };
-						drawable->m_data[drawable_index].sprite.setPosition(drawable->m_data[drawable_index].screen_coords);
-
+						auto r = t.get_rect(frame.tile_id);
+						anim_comp->frames.emplace_back(Frame{ t.get_rect(frame.tile_id), frame.duration });
 					}
 				}
+				if (m_context->m_entity_manager->has_component(entity, ecs::Component_type::Tile_type))
+				{
+					auto tile_type_comp = m_context->m_entity_manager->get_data<ecs::Component<::Tile_type>>(ecs::Component_type::Tile_type, entity);
+					auto type = type_itr->second;
+					auto ti_itr = std::find_if(std::cbegin(tile_types), std::cend(tile_types), [type](tile_info::Tile_info ti) {return ti.name == type; });
+					tile_type_comp->accessible = ti_itr->accessible;
+					tile_type_comp->description = ti_itr->description;
+					tile_type_comp->name = ti_itr->name;
+					tile_type_comp->transparent = ti_itr->transparant;
+				}
+				auto pos_index = *m_context->m_entity_manager->get_index(ecs::Component_type::Position, entity);
+				auto drawable_index = *m_context->m_entity_manager->get_index(ecs::Component_type::Drawable, entity);
+				position->m_data[pos_index].coords = sf::Vector2u{ static_cast<unsigned int>(tile_index % num_cols), static_cast<unsigned int> (tile_index / num_cols) };
+				position->m_data[pos_index].layer = layer_id;
+				position->m_data[pos_index].map_id = map_handle;
+				drawable->m_data[drawable_index].m_texture_resource = t.texture;
+				auto texture = cache::get_val<sf::Texture>(t.texture.get());
+				drawable->m_data[drawable_index].texture = texture;
+				drawable->m_data[drawable_index].sprite.setTexture(*texture);
+				drawable->m_data[drawable_index].sprite.setTextureRect(t.get_rect(tile_id));
+				auto x = tile_index % md.mapsize.x * md.tilesize.x;
+				auto y = tile_index / md.mapsize.y * md.tilesize.y;
+				drawable->m_data[drawable_index].screen_coords = sf::Vector2f{ static_cast<float>(tile_index % md.mapsize.x * md.tilesize.x), static_cast<float>(tile_index / md.mapsize.y * md.tilesize.y) };
+				drawable->m_data[drawable_index].sprite.setPosition(drawable->m_data[drawable_index].screen_coords);
+
 				++tile_index;
 			}
 		}
+		m_context->m_maps->maps.emplace(map_handle, md);
 	}
 }

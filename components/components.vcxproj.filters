@@ -66,6 +66,9 @@
     <ClInclude Include="entity_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tile_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="entity_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tile_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

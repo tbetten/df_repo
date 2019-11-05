@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -154,9 +154,12 @@
   <ItemGroup>
     <ClInclude Include="ai.h" />
     <ClInclude Include="animation_system.h" />
+    <ClInclude Include="attribute_system.h" />
     <ClInclude Include="controller.h" />
     <ClInclude Include="directions.h" />
+    <ClInclude Include="facing_payload.h" />
     <ClInclude Include="facing_system.h" />
+    <ClInclude Include="icon_composer.h" />
     <ClInclude Include="movement.h" />
     <ClInclude Include="move_payload.h" />
     <ClInclude Include="renderer.h" />
@@ -168,8 +171,10 @@
     <ClCompile Include="..\map\directions.cpp" />
     <ClCompile Include="ai.cpp" />
     <ClCompile Include="animation_system.cpp" />
+    <ClCompile Include="attribute_system.cpp" />
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="facing_system.cpp" />
+    <ClCompile Include="icon_composer.cpp" />
     <ClCompile Include="movement.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="stdafx.cpp">

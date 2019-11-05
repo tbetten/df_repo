@@ -3,6 +3,7 @@
 
 struct Tile_type
 {
+	void reset() {}
 	std::string name;
 	std::string description;
 	bool accessible;

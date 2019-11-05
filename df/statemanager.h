@@ -3,24 +3,16 @@
 #include <unordered_map>
 #include <functional>
 #include <memory>
-#include "state.h"
-#include "shared_context.h"
-/*#include "state_intro.h"
-#include "state_main_menu.h"
-#include "state_game.h"
-#include "state_paused.h"*/
+#include <SFML/System/Time.hpp>
+#include <SFML/Window/Event.hpp>
+#include "game_states.h"
 
-/*enum class State_type
-{
-All_states, Intro, Main_menu, Game, Paused, Game_over, Credits
-};*/
+struct Shared_context;
+class State;
 
 using State_ptr = std::unique_ptr<State>;
-//using State_container = std::vector<std::pair<State_type, State_ptr>>;
 using State_container = std::unordered_map<Game_state, State_ptr>;
-//using State_elem = std::pair<State_type, State_ptr>;
 using Type_container = std::vector<Game_state>;
-//using State_factory = std::unordered_map<State_type, std::function<State_ptr (void)>>;
 
 class State_manager
 {
@@ -30,6 +22,7 @@ public:
 
 	void insert_state(Game_state id, State_ptr state);
 	void update(const sf::Time time);
+	void handle_event(sf::Event& e);
 	void draw();
 
 	void process_requests();
@@ -42,18 +35,8 @@ private:
 	void create_state(Game_state id);
 	void remove_state(Game_state id);
 
-	/*template <class T>
-	void register_state(const State_type type)
-	{
-	m_state_factory[type] = [this]()->State_ptr {return std::make_unique<T>(this); };//new T(this); }
-	}*/
-
-	//void register_state(const State_type type, const State& state);
-
-	
 	State_container m_states;
 	std::vector<Game_state> m_state_stack;
 	Type_container m_to_remove;
 	Shared_context* m_shared;
-	//State_factory m_state_factory;
 };

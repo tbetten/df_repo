@@ -13,16 +13,18 @@
 
 namespace systems
 {
-	Controller::Controller (ecs::System_type type, ecs::System_manager* mgr) : S_base (type, mgr)
+	Controller::Controller(ecs::System_type type, ecs::System_manager* mgr, messaging::Messenger* m) : S_base(type, mgr), messaging::Sender{ m }, m_messenger{ m }
 	{
 		ecs::Bitmask b;
 		b.set (static_cast<int>(ecs::Component_type::Position));
 		b.set(static_cast<int>(ecs::Component_type::Character));
 		m_requirements.push_back (b);
-		m_dispatchers.emplace("change_position", Dispatcher{});
+		add_message("changed_position");
+		add_message("switched_current_entity");
+/*		m_dispatchers.emplace("change_position", Dispatcher{});
 		m_system_manager->register_events(ecs::System_type::Controller, { "change_position" });
 		m_dispatchers.emplace("switched_current_entity", Dispatcher{});
-		m_system_manager->register_events(ecs::System_type::Controller, { "switched_current_entity" });
+		m_system_manager->register_events(ecs::System_type::Controller, { "switched_current_entity" });*/
 	}
 
 	void Controller::setup_events ()
@@ -38,10 +40,12 @@ namespace systems
 		eventmgr->add_command (Game_state::Game, "CMD_move_left", [this](auto data) {move (Direction::Left); });
 		eventmgr->add_command (Game_state::Game, "CMD_move_right", [this](auto data) {move (Direction::Right); });
 
-		m_system_manager->get_entity_mgr()->get_event().bind([this](auto val) {register_entity(val); });
+		m_messenger->bind("entity_modified", [this](auto val) {register_entity(val); });
+//		m_system_manager->get_entity_mgr()->get_event().bind([this](auto val) {register_entity(val); });
 		
-		auto sys = m_system_manager->find_event("move");
-		m_system_manager->get_event(sys, "move").bind([this](auto val) {move_ai(val); });
+		m_messenger->bind("move", [this](auto val) {move_ai(val); });
+	//	auto sys = m_system_manager->find_event("move");
+	//	m_system_manager->get_event(sys, "move").bind([this](auto val) {move_ai(val); });
 	}
 
 	void Controller::register_entity(std::any val)
@@ -62,7 +66,8 @@ namespace systems
 		m_current_entity = entity;
 		auto character_comp = m_system_manager->get_entity_mgr()->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
 		m_player_controlled = character_comp->user_controlled;
-		m_dispatchers["switched_current_entity"].notify(entity);
+		notify("switched_current_entity", entity);
+//		m_dispatchers["switched_current_entity"].notify(entity);
 		if (!m_player_controlled)
 		{
 			return ai->take_turn(entity);
@@ -74,10 +79,10 @@ namespace systems
 	void Controller::update(sf::Int64 dt)
 	{}
 
-	Dispatcher& Controller::get_event (const std::string& event)
+/*	Dispatcher& Controller::get_event (const std::string& event)
 	{
 		return m_dispatchers[event];
-	}
+	}*/
 
 	void Controller::move_ai(std::any val)
 	{
@@ -89,10 +94,11 @@ namespace systems
 	void Controller::move (Direction d)
 	{
 		std::cout << "move " << static_cast<int>(d) << std::endl;
-		Move_payload m;
-		m.entity = m_current_entity;
-		m.direction = d;
-		m_dispatchers["change_position"].notify (m);
+	//	Move_payload m;
+	//	m.entity = m_current_entity;
+	//	m.direction = d;
+		notify("changed_position", Move_payload{m_current_entity, d});
+//		m_dispatchers["change_position"].notify (m);
 		if (m_player_controlled)
 		{
 			m_system_manager->get_context()->m_scheduler->async_response(50);

@@ -31,7 +31,7 @@ public:
 	void update();
 private:
 	void load_bindings();
-	Game_state m_current_state;
+	Game_state m_current_state = Game_state::Game;
 	Bindings m_bindings;
 	Commands m_commands;
 	bool m_focus;

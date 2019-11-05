@@ -11,13 +11,13 @@ struct Drawable;
 
 namespace systems
 {
-	class Renderer : public ecs::S_base
+	class Renderer : public ecs::S_base, private messaging::Sender
 	{
 	public:
-		Renderer (ecs::System_type type, ecs::System_manager* mgr);
+		Renderer (ecs::System_type type, ecs::System_manager* mgr, messaging::Messenger* m);
 		void update (sf::Int64 dt) override;
 		void setup_events () override;
-		Dispatcher& get_event (const std::string& event) override;
+//		Dispatcher& get_event (const std::string& event) override;
 		void render (sf::RenderWindow* win);
 	private:
 		ecs::Component<Position>* m_position = nullptr;

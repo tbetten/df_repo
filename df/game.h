@@ -24,7 +24,9 @@ public:
 	void restart_clock() { m_elapsed = m_clock.restart(); }
 
 private:
+	//
 	Shared_context m_context;
+	messaging::Messenger m_messenger;
 	Window m_window;
 	State_manager m_statemanager;
 	cache::Cache m_cache;

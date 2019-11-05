@@ -28,7 +28,7 @@ namespace cache
 
 	Texture_resource::Resource (fs::path file)
 	{
-		val.loadFromFile (file.string ());
+		if (!val.loadFromFile(file.string())) std::cout << "error reading texture " << file << "\n";
 	}
 
 /*	Tileset_resource::Resource (fs::path file)

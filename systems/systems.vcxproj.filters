@@ -48,6 +48,15 @@
     <ClInclude Include="animation_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="attribute_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="facing_payload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="icon_composer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +84,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="animation_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="attribute_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="icon_composer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

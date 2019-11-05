@@ -39,6 +39,7 @@ void Window::update()
 	sf::Event event;
 	while (m_window.pollEvent(event))
 	{
+		m_state_manager->handle_event(event);
 		if (event.type == sf::Event::LostFocus)
 		{
 			m_focus = false;

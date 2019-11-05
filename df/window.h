@@ -4,12 +4,16 @@
 #include <SFML\Graphics.hpp>
 #include "eventmanager.h"
 
+class State_manager;
+
 class Window 
 {
 public:
 	Window();
 	Window(const std::string& title, const sf::Vector2u& size);
 	~Window();
+
+	void set_statemanager(State_manager* sm) { m_state_manager = sm; }
 
 	void begin_draw();
 	void end_draw();
@@ -35,6 +39,7 @@ private:
 
 	
 	Eventmanager m_eventmanager;
+	State_manager* m_state_manager;
 	sf::Vector2u m_windowsize;
 	std::string m_title;
 	bool m_done = false;

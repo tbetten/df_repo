@@ -10,12 +10,12 @@ struct Attribute_data
 	int max;
 };
 
-enum class Attribute { ST, DX, IQ, HT, HP, Will, Per, FP, ST_Lift, ST_Strike, BM, BS };
+enum class Attribute : unsigned int { ST, DX, IQ, HT, HP, Will, Per, FP, ST_Lift, ST_Strike, BM, BS };
 Attribute& operator++(Attribute& a);
 
 struct Attributes
 {
 	Attributes();
 	void reset();
-	std::vector<Attribute_data> data;
+	std::vector<Attribute_data> data{ 12 };
 };

@@ -7,15 +7,15 @@
 
 namespace systems
 {
-	Animation_system::Animation_system(ecs::System_type type, ecs::System_manager* mgr) : S_base(type, mgr), m_drawable{ nullptr }, m_animation{ nullptr }
+	Animation_system::Animation_system(ecs::System_type type, ecs::System_manager* mgr) : S_base(type, mgr), m_drawable{ nullptr }, m_animation{ nullptr }, m_i{ 0 }
 	{
 		ecs::Bitmask b;
 		b.set(static_cast<int>(ecs::Component_type::Animation));
 		b.set(static_cast<int>(ecs::Component_type::Drawable));
 		m_requirements.push_back(b);
-	//	auto m_mgr = mgr->get_context()->m_entity_manager;
-	//	m_drawable = m_mgr->get_component<ecs::Component<Drawable>>(ecs::Component_type::Drawable);
-	//	m_animation = m_mgr->get_component<ecs::Component<Animation>>(ecs::Component_type::Animation);
+		//	auto m_mgr = mgr->get_context()->m_entity_manager;
+		//	m_drawable = m_mgr->get_component<ecs::Component<Drawable>>(ecs::Component_type::Drawable);
+		//	m_animation = m_mgr->get_component<ecs::Component<Animation>>(ecs::Component_type::Animation);
 	}
 
 	void Animation_system::setup_events()
@@ -24,10 +24,10 @@ namespace systems
 
 	}
 
-	Dispatcher& Animation_system::get_event(const std::string& event)
+/*	Dispatcher& Animation_system::get_event(const std::string& event)
 	{
 		throw "don't have events";
-	}
+	}*/
 
 	void Animation_system::update(sf::Int64 dt)
 	{

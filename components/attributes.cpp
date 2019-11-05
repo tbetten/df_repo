@@ -2,7 +2,7 @@
 
 Attributes::Attributes()
 {
-	data.reserve(12);
+	//data.reserve(12);
 	reset();
 }
 void Attributes::reset()
