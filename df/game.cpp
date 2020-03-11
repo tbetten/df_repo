@@ -18,7 +18,7 @@ Game::Game() : m_window{ "Theotris", sf::Vector2u(1600, 600) }, m_statemanager{ 
 
 	m_window.set_statemanager(&m_statemanager);
 	m_context.m_wind = &m_window;
-	m_context.m_event_manager = m_window.get_eventmanager();
+	m_context.m_event_manager = m_window.get_eventmanager ();
 
 	m_statemanager.insert_state(Game_state::Game, std::move(std::make_unique<State_game>(&m_context)));
 	m_statemanager.insert_state(Game_state::Main_menu, std::move(std::make_unique<State_main_menu>(&m_context)));
@@ -29,7 +29,8 @@ Game::Game() : m_window{ "Theotris", sf::Vector2u(1600, 600) }, m_statemanager{ 
 	comps::add_components (&m_entity_mgr);
 	m_context.m_entity_manager = &m_entity_mgr;
 	m_system_mgr.add_entity_manager (&m_entity_mgr);
-	m_system_mgr.setup_events ();
+	std::cout << "sys mgr setup events\n";
+//	m_system_mgr.setup_events ();
 	systems::add_systems (&m_system_mgr);
 	
 //	m_system_mgr.set_context (&m_context);

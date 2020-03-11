@@ -1,6 +1,8 @@
 #pragma once
 #include "ecs_types.h"
-#include "directions.h"
+//#include "directions.h"
+
+enum class Compass : int;
 
 struct Facing_payload
 {

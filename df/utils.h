@@ -59,3 +59,7 @@ private:
 	std::map<std::string, T> m_mappings;
 	std::size_t m_num_specials;
 };
+
+bool iequal(std::string_view s1, std::string_view s2);
+
+std::string to_lower(std::string s);

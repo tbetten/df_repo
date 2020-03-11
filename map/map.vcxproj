@@ -162,7 +162,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="directions.h" />
     <ClInclude Include="grid.h" />
     <ClInclude Include="hexlib.h" />
     <ClInclude Include="hexmap.h" />

@@ -10,6 +10,11 @@
 	class Messenger;
 }*/
 
+namespace event
+{
+	struct Event_info;
+}
+
 enum class Direction : int;
 
 namespace systems
@@ -31,5 +36,6 @@ namespace systems
 		void move_ai(std::any val);
 		void move (Direction d);
 		void register_entity(std::any val);
+		void get(event::Event_info data);
 	};
 }

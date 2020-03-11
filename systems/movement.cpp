@@ -10,7 +10,6 @@
 #include "tile_type.h"
 #include "systems.h"
 #include "facing_payload.h"
-//#include "tilemap.h"
 #include <iostream>
 
 namespace systems
@@ -24,24 +23,15 @@ namespace systems
 		m_requirements.push_back (b);
 
 		add_message("changed_facing");
-//		m_dispatchers.emplace("changed_facing", Dispatcher{});
-//		m_system_manager->register_events(ecs::System_type::Movement, { "changed_facing" });
 	}
 
 	void Movement::setup_events ()
 	{
 		m_messenger->bind("changed_position"s, [this](auto val) {move(val); });
-//		auto sys = m_system_manager->find_event ("change_position");
-//		m_system_manager->get_event (sys, "change_position").bind ([this](auto val) {move (val); });
 	}
 
 	void Movement::update(sf::Int64 dt)
 	{}
-
-/*	Dispatcher& Movement::get_event (const std::string& event)
-	{
-		return m_dispatchers[event];
-	}*/
 
 	void Movement::move (std::any val)
 	{
@@ -61,13 +51,13 @@ namespace systems
 		{
 			std::cout << "facing changed\n";
 			notify("changed_facing", Facing_payload{ entity, new_facing });
-//			m_dispatchers["changed_facing"].notify(Facing_payload{ entity, new_facing });
 			facing->facing = new_facing;
 		}
+		if (payload.direction == Direction::Turn_left || payload.direction == Direction::Turn_right) return;
 
 		auto coords = pos_comp->coords;
 		auto delta = Compass_util::get_direction_vector (move_dir);
-		sf::Vector2u new_coords { coords.x + delta.x, coords.y + delta.y };
+		sf::Vector2i new_coords { coords.x + delta.x, coords.y + delta.y };
 		auto tile_index = new_coords.y * width + new_coords.x;
 		auto& map_data = context->m_maps->maps[context->m_current_map];
 		auto entities = map_data.get_entities_at(tile_index);

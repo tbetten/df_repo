@@ -29,9 +29,11 @@ public:
 	static Compass find_move_direction(Direction dir, Compass facing);
 	static sf::Vector2i get_direction_vector(Compass c);
 	static int get_direction_angle(Compass c);
+	static Compass from_string(const std::string& dir);
 private:
 	static const std::unordered_map<Compass, sf::Vector2i> direction_vec;
 	static const std::unordered_map<Compass, int> direction_angle;
+	static const std::unordered_map<std::string, Compass> string_to_compass;
 };
 
 //Compass find_new_facing (Direction dir, Compass facing);

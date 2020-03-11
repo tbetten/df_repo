@@ -42,9 +42,6 @@
     <ClInclude Include="ai.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="directions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="animation_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -55,6 +52,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="icon_composer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lighting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inventory_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pickup_payload.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,9 +86,6 @@
     <ClCompile Include="ai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\map\directions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="animation_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +93,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="icon_composer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

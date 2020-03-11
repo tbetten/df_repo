@@ -1,6 +1,7 @@
-#include "stdafx.h"
 #include "directions.h"
 
+#include <algorithm>
+#include <cctype>
 
 Compass& operator++ (Compass& c)
 {
@@ -76,15 +77,15 @@ Compass operator- (Compass& c)
 	return res;
 }
 
-Compass Compass_util::find_new_facing (Direction dir, Compass facing)
+Compass Compass_util::find_new_facing(Direction dir, Compass facing)
 {
 	switch (dir)
 	{
-	case Direction::Right_forward:	[[fallthrough]];
+	case Direction::Right_forward: [[fallthrough]];
 	case Direction::Turn_right:
 		return ++facing;
 		break;
-	case Direction::Left_forward:	[[fallthrough]];
+	case Direction::Left_forward: [[fallthrough]];
 	case Direction::Turn_left:
 		return --facing;
 	default:
@@ -92,7 +93,7 @@ Compass Compass_util::find_new_facing (Direction dir, Compass facing)
 	}
 }
 
-Compass Compass_util::find_move_direction (Direction dir, Compass facing)
+Compass Compass_util::find_move_direction(Direction dir, Compass facing)
 {
 	switch (dir)
 	{
@@ -106,7 +107,7 @@ Compass Compass_util::find_move_direction (Direction dir, Compass facing)
 		return ++facing;
 	case Direction::Right:
 		return facing + 2;
-	case Direction::Left: 
+	case Direction::Left:
 		return facing - 2;
 	case Direction::Left_backward:
 		return facing - 3;
@@ -117,18 +118,27 @@ Compass Compass_util::find_move_direction (Direction dir, Compass facing)
 	}
 }
 
-sf::Vector2i Compass_util::get_direction_vector (Compass c)
+sf::Vector2i Compass_util::get_direction_vector(Compass c)
 {
-	return direction_vec.at (c);
+	return direction_vec.at(c);
 }
 
-int Compass_util::get_direction_angle (Compass c)
+int Compass_util::get_direction_angle(Compass c)
 {
-	return direction_angle.at (c);
+	return direction_angle.at(c);
 }
+
+Compass Compass_util::from_string(const std::string& s)
+{
+	return string_to_compass.at(s);
+}
+
+const std::unordered_map<std::string, Compass> Compass_util::string_to_compass = { {"north", Compass::North}, {"northeast", Compass::North_east}, {"east", Compass::East}, {"southeast", Compass::South_east},
+{"south", Compass::South}, {"southwest", Compass::South_west}, {"west", Compass::West}, {"northwest", Compass::North_west} };
+
 
 const std::unordered_map<Compass, sf::Vector2i> Compass_util::direction_vec{ {Compass::North, {0, -1}}, {Compass::North_east, {1, -1}}, {Compass::East, {1, 0}}, {Compass::South_east, {1, 1}},
-														                     {Compass::South, {0, 1}}, {Compass::South_west, {-1, 1}}, {Compass::West, {-1, 0}}, {Compass::North_west, {-1, -1}} };
+																			 {Compass::South, {0, 1}}, {Compass::South_west, {-1, 1}}, {Compass::West, {-1, 0}}, {Compass::North_west, {-1, -1}} };
 
 const std::unordered_map<Compass, int> Compass_util::direction_angle{ {Compass::North, 0}, { Compass::North_east, 45 }, { Compass::East, 90 }, { Compass::South_east, 135 }, { Compass::South, 180 },
 																	  {Compass::South_west, 225}, {Compass::West, 270}, {Compass::North_west, 315} };

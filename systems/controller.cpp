@@ -5,9 +5,11 @@
 #include "shared_context.h"
 #include "eventmanager.h"
 #include "move_payload.h"
+#include "pickup_payload.h"
 #include "scheduler.h"
 #include "ai.h"
 #include "character.h"
+#include "map_data.h"
 
 #include <iostream>
 
@@ -21,6 +23,7 @@ namespace systems
 		m_requirements.push_back (b);
 		add_message("changed_position");
 		add_message("switched_current_entity");
+		add_message("pickup");
 /*		m_dispatchers.emplace("change_position", Dispatcher{});
 		m_system_manager->register_events(ecs::System_type::Controller, { "change_position" });
 		m_dispatchers.emplace("switched_current_entity", Dispatcher{});
@@ -31,14 +34,17 @@ namespace systems
 	{
 
 		auto eventmgr = m_system_manager->get_context ()->m_event_manager;
-		eventmgr->add_command (Game_state::Game, "CMD_move_forward", [this](auto data) {move (Direction::Forward); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_right_forward", [this](auto data) {move (Direction::Right_forward); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_right_backward", [this](auto data) {move (Direction::Right_backward); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_backward", [this](auto data) {move (Direction::Backward); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_left_backward", [this](auto data) {move (Direction::Left_backward); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_left_forward", [this](auto data) {move (Direction::Left_forward); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_left", [this](auto data) {move (Direction::Left); });
-		eventmgr->add_command (Game_state::Game, "CMD_move_right", [this](auto data) {move (Direction::Right); });
+		eventmgr->add_command ("CMD_move_forward", [this](auto data) {move (Direction::Forward); });
+		eventmgr->add_command ("CMD_move_right_forward", [this](auto data) {move (Direction::Right_forward); });
+		eventmgr->add_command ("CMD_move_right_backward", [this](auto data) {move (Direction::Right_backward); });
+		eventmgr->add_command ("CMD_move_backward", [this](auto data) {move (Direction::Backward); });
+		eventmgr->add_command ("CMD_move_left_backward", [this](auto data) {move (Direction::Left_backward); });
+		eventmgr->add_command ("CMD_move_left_forward", [this](auto data) {move (Direction::Left_forward); });
+		eventmgr->add_command ("CMD_move_left", [this](auto data) {move (Direction::Left); });
+		eventmgr->add_command ("CMD_move_right", [this](auto data) {move (Direction::Right); });
+		eventmgr->add_command ("CMD_turn_left", [this](auto data) {move(Direction::Turn_left); });
+		eventmgr->add_command ("CMD_turn_right", [this](auto data) {move(Direction::Turn_right); });
+		eventmgr->add_command("CMD_get", [this](auto data) {get(data); });
 
 		m_messenger->bind("entity_modified", [this](auto val) {register_entity(val); });
 //		m_system_manager->get_entity_mgr()->get_event().bind([this](auto val) {register_entity(val); });
@@ -103,6 +109,23 @@ namespace systems
 		{
 			m_system_manager->get_context()->m_scheduler->async_response(50);
 		}
+	}
+
+	void Controller::get(event::Event_info data)
+	{
+		sf::Vector2i coords;
+		if (std::holds_alternative<event::Mouse_info>(data.info))
+		{
+			auto mouse_data = std::get<event::Mouse_info>(data.info);
+			auto context = m_system_manager->get_context();
+			auto& topology = context->m_maps->maps[context->m_current_map].topology;
+			coords = topology->to_tile_coords(sf::Vector2i{ mouse_data.x, mouse_data.y });
+		}
+		auto entity_mgr = m_system_manager->get_entity_mgr();
+		std::cout << "(" << coords.x << ", " << coords.y << ")\n";
+		Pickup_payload p{ m_current_entity, coords };
+		notify("pickup", p);
+//		notify("pickup", Pickup_payload{ m_current_entity, coords });
 	}
 
 }

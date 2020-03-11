@@ -90,14 +90,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;C:\Users\T. Betten\source\repos\ecs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ecs.lib;db.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>db.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\sfgui\sfgui-0.4.0-install\include;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\db\db;D:\sfgui\sfgui-0.4.0-install\include;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -165,13 +165,14 @@
   <ItemGroup>
     <ClInclude Include="character_sheet.h" />
     <ClInclude Include="eventmanager.h" />
-    <ClInclude Include="eventmanager_impl.h" />
     <ClInclude Include="event_types.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="game_states.h" />
+    <ClInclude Include="entity_at.h" />
     <ClInclude Include="keynames.h" />
     <ClInclude Include="map_data.h" />
     <ClInclude Include="mousebutton.h" />
+    <ClInclude Include="random_generator.h" />
     <ClInclude Include="resource_cache.h" />
     <ClInclude Include="scheduler.h" />
     <ClInclude Include="shared_context.h" />
@@ -189,12 +190,14 @@
   <ItemGroup>
     <ClCompile Include="character_sheet.cpp" />
     <ClCompile Include="df.cpp" />
-    <ClCompile Include="eventmanager_impl.cpp" />
+    <ClCompile Include="entity_at.cpp" />
+    <ClCompile Include="eventmanager.cpp" />
     <ClCompile Include="event_types.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="keynames.cpp" />
     <ClCompile Include="map_data.cpp" />
     <ClCompile Include="mousebutton.cpp" />
+    <ClCompile Include="random_generator.cpp" />
     <ClCompile Include="resource_cache.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="shared_context.cpp" />
@@ -208,6 +211,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utils.cpp" />
     <ClCompile Include="util_types.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>

@@ -30,9 +30,6 @@
     <ClInclude Include="grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="directions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tile_info.h">
       <Filter>Header Files</Filter>
     </ClInclude>

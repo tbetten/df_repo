@@ -31,26 +31,10 @@ namespace systems
 	void Facing_system::setup_events ()
 	{
 		m_messenger->bind("changed_facing", [this](auto val) {change_facing(val); });
-//		auto sys = m_system_manager->find_event("changed_facing");
-//		m_system_manager->get_event(sys, "changed_facing").bind([this](auto val) {change_facing(val); });
 	}
 
 	void Facing_system::update(sf::Int64 dt)
 	{
-/*		auto entity_mgr = m_system_manager->get_entity_mgr ();
-		for (auto entity : m_entities)
-		{
-			auto pos_comp = entity_mgr->get_data<ecs::Component<Position>> (ecs::Component_type::Position, entity);
-			auto facing = entity_mgr->get_data<ecs::Component<Facing>> (ecs::Component_type::Facing, entity);
-			auto drawable = entity_mgr->get_data<ecs::Component<Drawable>> (ecs::Component_type::Drawable, entity);
-			auto coords = drawable->screen_coords;
-			auto angle = Compass_util::get_direction_angle (facing->facing);
-			auto vector = Compass_util::get_direction_vector (facing->facing) * 5;
-			facing->facing_indicator.setRotation (static_cast<float> (angle));
-			coords.x += vector.x;
-			coords.y += vector.y;
-			facing->facing_indicator.setPosition (coords);
-		}*/
 	}
 
 	const std::unordered_map<Compass, std::string> facing = { {Compass::North, "facing_n"}, {Compass::North_east, "facing_ne"}, {Compass::East, "facing_e"},
@@ -62,13 +46,14 @@ namespace systems
 		const auto [entity, new_facing] = std::any_cast<Facing_payload>(val);
 		auto cache = m_system_manager->get_context()->m_cache;
 		auto key = facing.at(new_facing);
-		auto res = cache->get_obj(facing.at(new_facing));
-		auto facing_index = m_entity_manager->get_index(ecs::Component_type::Facing, entity);
-		if (!facing_index) return;
-		auto facing = &m_facing_comp->m_data[*facing_index];
-		facing->m_texture_resource = res;
-		facing->facing_texture = cache::get_val<sf::Texture>(res.get());
-		facing->facing_indicator.setTexture(*facing->facing_texture);
+		fill_icon_part(m_system_manager->get_entity_mgr(), cache, key, "facing_indicator", entity);
+//		auto res = cache->get_obj(facing.at(new_facing));
+//		auto facing_index = m_entity_manager->get_index(ecs::Component_type::Facing, entity);
+//		if (!facing_index) return;
+//		auto facing = &m_facing_comp->m_data[*facing_index];
+//		facing->m_texture_resource = res;
+//		facing->facing_texture = cache::get_val<sf::Texture>(res.get());
+//		facing->facing_indicator.setTexture(*facing->facing_texture);
 		//m_dispatchers["icon_changed"].notify(entity);
 		notify("icon_changed", entity);
 	//	auto angle = Compass_util::get_direction_angle(facing->facing);
@@ -76,8 +61,4 @@ namespace systems
 	//	facing->facing_indicator.setRotation(static_cast<float>(angle));
 	}
 
-/*	Dispatcher& Facing_system::get_event (const std::string& event)
-	{
-		throw "I don't have events";
-	}*/
 }

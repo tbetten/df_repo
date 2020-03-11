@@ -49,7 +49,8 @@ private:
 	unsigned int m_cp;
 	std::vector<Attrib_value> m_attrib_values;
 	std::unordered_map<std::string, sfg::RadioButton::Ptr> m_race_buttons;
-	std::unique_ptr<db::db_connection> m_db;
+	//std::unique_ptr<db::db_connection> m_db;
+	db::DB_connection m_db;
 	sfg::SFGUI m_sfgui;
 	sfg::Window::Ptr m_gui_window;
 	sfg::Desktop m_desktop;

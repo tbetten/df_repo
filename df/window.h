@@ -24,10 +24,10 @@ public:
 	bool is_focused() { return m_focus; }
 
 	sf::Vector2u get_windowsize() { return m_windowsize; }
-	Eventmanager* get_eventmanager() { return &m_eventmanager; }
+	event::Event_manager* get_eventmanager() { return &m_eventmanager; }
 	sf::RenderWindow* get_renderwindow() { return &m_window; }
 
-	void toggle_fullscreen(std::any details);
+	void toggle_fullscreen(event::Event_info details);
 //	void close(const Event_details& details);
 	void close ();// { m_done = true; }
 	void draw(sf::Drawable& drawable) { m_window.draw(drawable); }
@@ -38,7 +38,7 @@ private:
 	void create();
 
 	
-	Eventmanager m_eventmanager;
+	event::Event_manager m_eventmanager;
 	State_manager* m_state_manager;
 	sf::Vector2u m_windowsize;
 	std::string m_title;

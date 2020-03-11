@@ -13,9 +13,10 @@ namespace cache
 	void Cache::init ()
 	{
 		std::string sql = "select key, type, path from resource";
-		auto db = db::db_connection::create("assets/database/gamedat.db");
-		auto stmt = db->prepare(sql);
-		auto data = stmt->fetch_table();
+		//auto db = db::db_connection::create("assets/database/gamedat.db");
+		auto db = db::DB_connection{ "assets/database/gamedat.db" };
+		auto stmt = db.prepare(sql);
+		auto data = stmt.fetch_table();
 		for (auto row : data)
 		{
 			std::string key = std::get<std::string>(row["key"]);

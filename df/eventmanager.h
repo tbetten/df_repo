@@ -1,64 +1,83 @@
-
 #pragma once
-#include <memory>
 #include <string>
-#include <any>
+#include <variant>
+#include <optional>
+#include <unordered_map>
+#include <vector>
 #include <functional>
-#include <SFML/Graphics.hpp>
-#include "game_states.h"
-//#include "messaging.h"
+#include <SFML/Window.hpp>
 
+enum class Game_state : int;
 
-class Actor;
-
-struct Event_details
+namespace event
 {
-	using Ptr = std::unique_ptr<Event_details>;
-	Event_details(const std::string& bind_name) : m_name{ bind_name }
+	struct Modifiers
 	{
-		clear();
-	}
+		bool ctrl;
+		bool alt;
+		bool shift;
+	};
 
-	void clear()
+	struct Key
 	{
-		m_size = sf::Vector2i{ 0,0 };
-		m_text_entered = 0;
-		m_mouse = sf::Vector2i{ 0,0 };
-		m_mousewheel_delta = 0;
-		m_keycode = sf::Keyboard::Unknown;
-	}
+		sf::Keyboard::Key keycode;
+		Modifiers modifiers;
+	};
 
-	std::string m_name;
-	sf::Vector2i m_size;
-	sf::Uint32 m_text_entered = 0;
-	sf::Vector2i m_mouse;
-	int m_mousewheel_delta = 0;
-	int m_keycode = 0;
-};
+	struct Mousebutton
+	{
+		sf::Mouse::Button button;
+		Modifiers modifiers;
+	};
 
-using Command = std::function<void (std::any)>;
+	struct Mouse_info
+	{
+		sf::Mouse::Button button;
+		int x;
+		int y;
+	};
 
-class Eventmanager;
-struct Shared_context;
-const int All_states = 0;
+	struct Size_info
+	{
+		unsigned int new_width;
+		unsigned int new_height;
+	};
 
-class Eventmanager
-{
-public:
-	Eventmanager();
-	~Eventmanager();
-	void add_command(Game_state state, std::string name, Command command);
-	void remove_command(Game_state state, std::string name);
-	void handle_event(sf::Event);
-	void update();
-	void set_focus(const bool focus);
-	void set_current_state(Game_state type);
-private:
-	class impl;
-	std::unique_ptr<impl> p_impl;
-};
+	using Event_params = std::variant<std::monostate, Key, Mousebutton>;
+
+	struct Event_info
+	{
+		std::string command;
+		std::variant<std::monostate, sf::Keyboard::Key, Mouse_info, Size_info> info;
+	};
 
 
+	class Binding
+	{
+	public:
+		Binding(std::string command, sf::Event::EventType event_type, Event_params params) :m_command{ std::move(command) }, m_type{ event_type }, m_params{ params }{}
+		std::optional<Event_info> match_binding(sf::Event event, Modifiers m) const;
+	private:
+		std::string m_command;
+		sf::Event::EventType m_type;
+		Event_params m_params;
+	};
 
+	class Event_manager
+	{
+	public:
+		using Callback = std::function<void(Event_info)>;
+		Event_manager() { load_bindings(); }
+		void set_current_state(Game_state s) { m_current_state = s; }
+		void add_command(const std::string& name, Callback callback);
+		void handle_event(sf::Event event) const;
+		void set_focus(const bool focus) { m_focus = focus; }
+	private:
+		void load_bindings();
 
-
+		Game_state m_current_state;
+		std::unordered_map<Game_state, std::vector<Binding>> m_bindings;
+		std::unordered_map<std::string, Callback> m_commands;
+		bool m_focus;
+	};
+}

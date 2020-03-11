@@ -42,12 +42,6 @@
     <ClInclude Include="state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eventmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="eventmanager_impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="event_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +75,15 @@
     <ClInclude Include="character_sheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="random_generator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eventmanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entity_at.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,9 +99,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="statemanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="eventmanager_impl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="state_game.cpp">
@@ -135,6 +135,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="character_sheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="random_generator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eventmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="entity_at.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

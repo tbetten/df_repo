@@ -10,6 +10,11 @@
 struct Tilemap;
 //class Character_sheet;
 
+namespace event
+{
+	struct Event_info; 
+}
+
 class State_game : public State
 {
 public:
@@ -37,7 +42,7 @@ private:
 
 	bool m_first{ true };
 	std::shared_ptr<Tilemap> m_map;
-	Eventmanager* m_event_mgr = nullptr;
+	event::Event_manager* m_event_mgr = nullptr;
 	std::unordered_map<std::string, ecs::Entity_id> m_party;
 //	std::shared_ptr<cache::Resource_base> m_font_resource;
 	sf::Font m_font;

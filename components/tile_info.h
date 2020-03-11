@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+//#include "directions.h"
+enum class Compass : int;
 namespace tile_info
 {
 	struct Tile_info
@@ -11,6 +13,9 @@ namespace tile_info
 		std::string description;
 		bool accessible;
 		bool transparant;
+		bool ignited;
+		Compass direction;
+		int brightness;
 	};
 
 	using Tile_data = std::vector<Tile_info>;

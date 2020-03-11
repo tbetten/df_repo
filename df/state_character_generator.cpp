@@ -2,7 +2,7 @@
 #include "shared_context.h"
 #include "window.h"
 #include "statemanager.h"
-#include "db.h"
+//#include "db.h"
 #include "ecs.h"
 #include "components.h"
 #include "systems.h"
@@ -12,20 +12,23 @@
 #include "attributes.h"
 #include "attribute_system.h"
 #include "entity_loader.h"
+#include "facing_payload.h"
+#include "tileset.h"
+#include "random_generator.h"
 
 #include <iostream>
 #include <string_view>
 
 using rect_32 = sf::Rect<sf::Uint32>;
 
-State_character_generator::State_character_generator(Shared_context* context) : State{ context }, m_cp{ 0 }
+State_character_generator::State_character_generator(Shared_context* context) : State{ context }, m_cp{ 0 }, m_db{"assets/database/gamedat.db"}
 {
-	m_db = db::db_connection::create("assets/database/gamedat.db");
+	//m_db = db::db_connection::create("assets/database/gamedat.db");
 	auto sql = "select charpoints from gamesettings";
-	auto stmt = m_db->prepare(sql);
-	auto rs = stmt->fetch_table();
+	auto stmt = m_db.prepare(sql);
+	auto rs = stmt.fetch_table();
 	m_cp = std::get<int>(rs[0]["charpoints"]);
-	stmt->reset();
+	stmt.reset();
 }
 
 void State_character_generator::on_create()
@@ -82,8 +85,8 @@ void State_character_generator::on_create()
 void State_character_generator::read_attributes()
 {
 	auto sql = "select id, base from attribute";
-	auto stmt = m_db->prepare(sql);
-	auto attribs = stmt->fetch_table();
+	auto stmt = m_db.prepare(sql);
+	auto attribs = stmt.fetch_table();
 	for (auto attrib : attribs)
 	{
 		auto name = std::get<std::string>(attrib["id"]);
@@ -95,8 +98,8 @@ void State_character_generator::read_attributes()
 sfg::Box::Ptr State_character_generator::read_races()
 {
 	const std::string sql = "select name, is_default, template_cost from race";
-	auto stmt = m_db->prepare(sql);
-	auto data = stmt->fetch_table();
+	auto stmt = m_db.prepare(sql);
+	auto data = stmt.fetch_table();
 
 	auto table = sfg::Table::Create();
 	table->SetRowSpacings(10.0f);
@@ -130,14 +133,14 @@ sfg::Box::Ptr State_character_generator::read_races()
 	return outer;
 }
 
-std::string get_icon_key(db::db_connection_ptr& db, const std::string& race, const std::string& gender)
+std::string get_icon_key(db::DB_connection& db, const std::string& race, const std::string& gender)
 {
-	auto stmt = db->prepare("select icon_key from player_icons where race = ? and gender = ?");
-	stmt->bind(1, race);
-	stmt->bind(2, gender);
-	stmt->execute_row();
-	auto row = stmt->fetch_row();
-	stmt->reset();
+	auto stmt = db.prepare("select icon_key from player_icons where race = ? and gender = ?");
+	stmt.bind(1, race);
+	stmt.bind(2, gender);
+	stmt.execute_row();
+	auto row = stmt.fetch_row();
+	stmt.reset();
 	return std::get<std::string>(row["icon_key"]);
 }
 
@@ -176,6 +179,7 @@ void State_character_generator::on_keep()
 	b.set(static_cast<int>(ecs::Component_type::Position));
 	b.set(static_cast<int>(ecs::Component_type::Facing));
 	b.set(static_cast<int>(ecs::Component_type::Attributes));
+	b.set(static_cast<int>(ecs::Component_type::Container));
 	auto entity = em->add_entity(b);
 	m_context->m_party.push_back(entity);
 	auto character = em->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
@@ -189,23 +193,36 @@ void State_character_generator::on_keep()
 	auto icon_key = get_icon_key(m_db, race, gender_string);
 	std::cout << "icon is " << icon_key << "\n";
 	init_drawable(m_context->m_entity_manager, entity, icon_key, m_context->m_cache);
-
-//	auto attribute_system = m_context->m_system_manager->get_system<systems::Attribute_system>(ecs::System_type::Attributes);
+	fill_icon_part(m_context->m_entity_manager, m_context->m_cache, "facing_ne", "facing_indicator", entity);
+	if (character->male)
+	{
+		int beard_index = -1;
+		if (character->race == Race::Human)
+		{
+			if (Random_generator::generate_discrete({ 70, 30 }) == 0)
+			{
+				beard_index = Random_generator::generate_uniform(0, 10);
+			}
+		}
+		if (character->race == Race::Dwarf)
+		{
+			beard_index = Random_generator::generate_discrete({ 15, 15, 15, 15, 15, 2, 4, 4, 4, 4, 4 });
+		}
+		if (beard_index > -1)
+		{
+			std::cout << "beard index: " << beard_index << "\n";
+			tileset::Tileset ts{};
+			tileset::load_tileset("assets/sprite/player_icon/beard/beards.tsx", ts, m_context);
+			auto rect = ts.get_rect(beard_index);
+			fill_icon_part(m_context->m_entity_manager, ts.texture, rect, "beard", entity);
+		}
+	}
 	auto last = std::remove_if(m_attrib_values.begin(), m_attrib_values.end(), [](auto attrib_val) {return attrib_val.modifier == 0; });
 	std::for_each(m_attrib_values.begin(), last, [this, entity](auto attrib_val) {buy_attrib(attrib_val, entity); });
-
-//	attribute_system->buy_attribute(Attribute::ST, entity, 2);
-
 	el::Entity_loader el{m_context};
 	el.load_map("test");
 	m_context->m_current_map = "test";
-	el.set_position(entity, sf::Vector2u{ 4,6 }, 2, "test");
-/*	auto position = em->get_data<ecs::Component<Position>>(ecs::Component_type::Position, entity);
-	position->current_map = "test";
-	position->layer = 2;
-	position->coords = sf::Vector2u{ 4,3 };
-	position->moved = true;*/
-
+	el.set_position(entity, sf::Vector2i{ 4,6 }, 2, "test");
 	m_context->m_state_manager->switch_to(Game_state::Game);
 	m_done = true;
 }
@@ -270,9 +287,9 @@ void State_character_generator::read_attrib_modifiers(const std::string& race)
 		attrib.modifier = 0;
 	}
 	const std::string sql = "select attribute, modifier from race_attribute where race = ?";
-	auto stmt = m_db->prepare(sql);
-	stmt->bind(1, race);
-	auto modifiers = stmt->fetch_table();
+	auto stmt = m_db.prepare(sql);
+	stmt.bind(1, race);
+	auto modifiers = stmt.fetch_table();
 	for (auto modifier : modifiers)
 	{
 		auto attribute = std::get<std::string>(modifier["attribute"]);

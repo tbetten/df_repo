@@ -3,6 +3,7 @@
 #include "tinyxml2.h"
 #include <variant>
 #include <iostream>
+#include "directions.h"
 
 namespace tile_info
 {
@@ -14,7 +15,7 @@ namespace tile_info
 	};
 
 	using Properties = std::vector<Property>;
-	using value_type = std::variant <std::string, bool>;
+	using value_type = std::variant <std::string, bool, int>;
 
 	void fill_attrib(Tile_info& ti, value_type val, const std::string& name)
 	{
@@ -29,6 +30,18 @@ namespace tile_info
 		if (name == "transparent")
 		{
 			ti.transparant = std::get<bool>(val);
+		}
+		if (name == "direction")
+		{
+			ti.direction = Compass_util::from_string(std::get<std::string>(val));
+		}
+		if (name == "ignited")
+		{
+			ti.ignited = std::get<bool>(val);
+		}
+		if (name == "brightness")
+		{
+			ti.brightness = std::get<int>(val);
 		}
 	}
 

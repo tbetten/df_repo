@@ -14,9 +14,6 @@
 #include "ecs.h"
 #include "drawable.h"
 #include "attribute_system.h"
-#include "attribute_comp.h"
-#include "drawable_comp.h"
-#include "position_comp.h"
 #include "character.h"
 #include "attributes.h"
 #include "tile_type.h"
@@ -40,7 +37,7 @@ void State_game::on_create()
 	m_text.setFont(m_font);
 	m_text.setString("hello world");
 	m_text.setPosition(sf::Vector2f{ 100.0f, 10.0f });
-	m_event_mgr->add_command(Game_state::Game, "CMD_show_party", [this](auto data) {show_party(); });
+	m_event_mgr->add_command("CMD_show_party", [this](auto data) {show_party(); });
 //	auto gui_window = sfg::Window::Create(sfg::Window::Style::TOPLEVEL);
 //	auto label = sfg::Label::Create("hoi pipeloi");
 //	gui_window->Add(label);
@@ -61,21 +58,21 @@ void State_game::update(const sf::Time& time)
 		ecs::Entity_id id2{ 0 };
 		ecs::Entity_id id3{ 0 };
 //		el.load_map("test");
-		if (auto opt = el.load_entity("big_kobold"))
+/*		if (auto opt = el.load_entity("big_kobold"))
 		{
 			id = *opt;
-			el.set_position(id, sf::Vector2u{ 1,1 }, 2, "test");
+			el.set_position(id, sf::Vector2u{ 9,12 }, 2, "test");
 			el.set_player_controlled(id, true);
-		}
+		}*/
 		if (auto opt = el.load_entity("big_kobold"))
 		{
 			id2 = *opt;
-			el.set_position(id2, sf::Vector2u{ 5,5 }, 2, "test");
+			el.set_position(id2, sf::Vector2i{ 5,5 }, 2, "test");
 		}
 		if (auto opt = el.load_entity("sword"))
 		{
 			id3 = *opt;
-			el.set_position(id3, sf::Vector2u{ 4,5 }, 1, "test");
+			el.set_position(id3, sf::Vector2i{ 4,5 }, 1, "test");
 		}
 
 		std::cout << id << "\t " << id2 << "\n";

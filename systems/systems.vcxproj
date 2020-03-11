@@ -91,12 +91,18 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>ecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\ecs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,25 +162,28 @@
     <ClInclude Include="animation_system.h" />
     <ClInclude Include="attribute_system.h" />
     <ClInclude Include="controller.h" />
-    <ClInclude Include="directions.h" />
     <ClInclude Include="facing_payload.h" />
     <ClInclude Include="facing_system.h" />
     <ClInclude Include="icon_composer.h" />
+    <ClInclude Include="inventory_system.h" />
+    <ClInclude Include="lighting.h" />
     <ClInclude Include="movement.h" />
     <ClInclude Include="move_payload.h" />
+    <ClInclude Include="pickup_payload.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systems.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\map\directions.cpp" />
     <ClCompile Include="ai.cpp" />
     <ClCompile Include="animation_system.cpp" />
     <ClCompile Include="attribute_system.cpp" />
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="facing_system.cpp" />
     <ClCompile Include="icon_composer.cpp" />
+    <ClCompile Include="Inventory_system.cpp" />
+    <ClCompile Include="lighting.cpp" />
     <ClCompile Include="movement.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -18,8 +18,8 @@ Window::~Window()
 
 void Window::setup()
 {
-	m_eventmanager.add_command (Game_state::All_states, "CMD_fullscreen_toggle", [this](auto data) {toggle_fullscreen (data); });
-	m_eventmanager.add_command (Game_state::All_states, "CMD_close_window", [this](auto data) {close (); });
+	m_eventmanager.add_command ("CMD_fullscreen_toggle", [this](auto data) {toggle_fullscreen (data); });
+	m_eventmanager.add_command ("CMD_close_window", [this](auto data) {close (); });
 	create ();
 }
 
@@ -52,10 +52,10 @@ void Window::update()
 		}
 		m_eventmanager.handle_event(event);
 	}
-	m_eventmanager.update();
+	//m_eventmanager.update();
 }
 
-void Window::toggle_fullscreen(std::any details)
+void Window::toggle_fullscreen(event::Event_info details)
 {
 	std::cout << "toggle fullscreen " << std::endl;
 	m_fullscreen = !m_fullscreen;

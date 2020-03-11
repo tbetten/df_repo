@@ -5,10 +5,14 @@
 #include "ecs_types.h"
 
 class Window;
-class Eventmanager;
 class State_manager;
 class Scheduler;
 struct Maps;
+
+namespace event
+{
+	class Event_manager;
+}
 
 namespace cache
 {
@@ -26,7 +30,7 @@ struct Shared_context
 	~Shared_context();
 
 	Window * m_wind;
-	Eventmanager* m_event_manager;
+	event::Event_manager* m_event_manager;
 	State_manager* m_state_manager;
 	cache::Cache* m_cache;
 	ecs::Entity_manager* m_entity_manager;

@@ -5,7 +5,10 @@
 #include "facing_system.h"
 #include "animation_system.h"
 #include "attribute_system.h"
+#include "icon_composer.h"
 #include "ai.h"
+#include "lighting.h"
+#include "inventory_system.h"
 
 namespace messaging
 {
@@ -22,4 +25,7 @@ void systems::add_systems (ecs::System_manager* mgr)
 	mgr->add_system(ecs::System_type::AI, std::unique_ptr<ecs::S_base>(new AI(ecs::System_type::AI, mgr, m)));
 	mgr->add_system(ecs::System_type::Animation, std::unique_ptr<ecs::S_base>(new Animation_system(ecs::System_type::Animation, mgr)));
 	mgr->add_system(ecs::System_type::Attributes, std::unique_ptr<ecs::S_base>(new Attribute_system(ecs::System_type::Attributes, mgr)));
+	mgr->add_system(ecs::System_type::Icon_composer, std::unique_ptr<ecs::S_base>(new Icon_composer(ecs::System_type::Icon_composer, mgr, m)));
+	mgr->add_system(ecs::System_type::Lighting, std::unique_ptr<ecs::S_base>(new Lighting(ecs::System_type::Lighting, mgr, m)));
+	mgr->add_system(ecs::System_type::Inventory, std::unique_ptr<ecs::S_base>(new Inventory_system(ecs::System_type::Inventory, mgr, m)));
 }

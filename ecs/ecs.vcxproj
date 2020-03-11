@@ -197,11 +197,6 @@
     <ClCompile Include="system.cpp" />
     <ClCompile Include="system_manager.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\db\db.vcxproj">
-      <Project>{3a331d50-8fb2-4f76-9efb-e401fa586a17}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
