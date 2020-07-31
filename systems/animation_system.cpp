@@ -4,6 +4,7 @@
 #include "components.h"
 #include "ecs.h"
 #include "shared_context.h"
+#include <iostream>
 
 namespace systems
 {
@@ -47,6 +48,7 @@ namespace systems
 			auto drawable_index = m_mgr->get_index(ecs::Component_type::Drawable, entity);
 			auto drawable = &m_drawable->m_data[*drawable_index];
 			auto animation = &m_animation->m_data[*anim_index];
+			if (!animation->active) continue;
 			auto duration = animation->frames[animation->current_frame].duration;
 			if (animation->time_in_frame + delay > duration)
 			{
@@ -59,9 +61,11 @@ namespace systems
 				{
 					animation->current_frame++;
 				}
-				auto rect1 = drawable->sprite.getTextureRect();
+				
+				//auto rect1 = drawable->sprite.getTextureRect();
 				auto rect2 = animation->frames[animation->current_frame].frame_rect;
-				drawable->sprite.setTextureRect(animation->frames[animation->current_frame].frame_rect);
+				//drawable->sprite.setTextureRect(animation->frames[animation->current_frame].frame_rect);
+				change_icon_area(m_mgr, "base_icon", entity, animation->frames[animation->current_frame].frame_rect);
 			}
 			else
 			{

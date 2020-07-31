@@ -3,7 +3,7 @@
 namespace ecs
 {
 	class Entity_manager;
-	enum class Component_type : size_t { Position, Drawable, Facing, Character, Item, Container, Attributes, Animation, Tile_type, Lightsource };
+	enum class Component_type : size_t { Position, Drawable, Facing, Character, Item, Container, Attributes, Animation, Tile_type, Lightsource, Sensor, Reactor };
 }
 
 struct Tilemap;

@@ -63,3 +63,20 @@ private:
 bool iequal(std::string_view s1, std::string_view s2);
 
 std::string to_lower(std::string s);
+
+/*
+Conversion from tuple to struct. First template is helper, use 
+tuple_to_struct<S, Tup>(tup);
+*/
+template <typename S, std::size_t... Is, typename Tup>
+S tuple_to_struct(std::index_sequence<Is...>, Tup&& tup)
+{
+	return { std::get<Is>(std::forward<Tup>(tup))... };
+}
+
+template <typename S, typename Tup>
+S tuple_to_struct(Tup&& tup)
+{
+	using T = std::remove_reference_t<Tup>;
+	return tuple_to_struct(std::make_index_sequence < std::tuple_size<T>{} > {}, std::forward<Tup>(tup));
+}

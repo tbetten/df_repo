@@ -63,6 +63,18 @@
     <ClInclude Include="pickup_payload.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="interaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sensor_payload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="db_queries.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="encumbrance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +111,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Inventory_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="interaction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="db_queries.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="encumbrance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

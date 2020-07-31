@@ -5,7 +5,8 @@
 #include <memory>
 #include <map>
 #include <SFML/Graphics.hpp>
-//#include "tileset.h"
+#include "tileset.h"
+#include "Tilesheet.h"
 #include <functional>
 
 namespace fs = std::filesystem;
@@ -73,7 +74,9 @@ namespace cache
 
 	using Texture_resource = Resource<sf::Texture>;
 
-//	using Tileset_resource = Resource<Tileset>;
+	using Tileset_resource = Resource<tileset::Tileset>;
 
 	using Font_resource = Resource<sf::Font>;
+
+	using Tilesheet_resource = Resource<tiled::Tilesheet>;
 }

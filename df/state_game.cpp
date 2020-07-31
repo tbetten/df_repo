@@ -1,14 +1,7 @@
-#include "stdafx.h"
 #include "state_game.h"
 #include "window.h"
 #include "game_states.h"
-#include "keynames.h"
-#include <iostream>
-#include <string>
-#include <filesystem>
 #include "resource_cache.h"
-//#include "ecs_base.h"
-//#include "system.h"
 #include "systems.h"
 #include "renderer.h"
 #include "ecs.h"
@@ -18,13 +11,31 @@
 #include "attributes.h"
 #include "tile_type.h"
 #include "statemanager.h"
-#include "entity_loader.h"
 #include "map_data.h"
 #include "character_sheet.h"
 
+#include <iostream>
+#include <string>
+//#include <filesystem>
 #include <SFGUI/Widgets.hpp>
+#include <SFML/Window.hpp>
 
-namespace fs = std::filesystem;
+//namespace fs = std::filesystem;
+
+State_game::State_game(Shared_context* context) : State{ context }
+{
+	m_current_entity = 0;
+	m_arrow_cursor.loadFromSystem(sf::Cursor::Arrow);
+	m_hand_cursor.loadFromSystem(sf::Cursor::Hand);
+	m_not_allowed_cursor.loadFromSystem(sf::Cursor::NotAllowed);
+	m_current_cursor = &m_arrow_cursor;
+	context->m_wind->get_renderwindow()->setMouseCursor(*m_current_cursor);
+
+	m_font.loadFromFile("assets/fonts/arial.ttf");
+	m_text.setFont(m_font);
+	m_text.setString("hello world");
+	m_text.setPosition(sf::Vector2f{ 100.0f, 10.0f });
+}
 
 void State_game::on_create()
 {
@@ -32,16 +43,9 @@ void State_game::on_create()
 //	auto view = sf::View{ sf::Vector2f{32 * 10, 32 * 10}, sf::Vector2f{32 * 20, 32 * 20} };
 //	view.setViewport(sf::FloatRect{ 0.1f , 0.1f, 0.5f, 0.5f });
 //	window->setView(view);
-	m_event_mgr = m_context ->m_event_manager;
-	m_font.loadFromFile("assets/fonts/arial.ttf");
-	m_text.setFont(m_font);
-	m_text.setString("hello world");
-	m_text.setPosition(sf::Vector2f{ 100.0f, 10.0f });
+	m_event_mgr = m_context->m_event_manager;  // has to be done here, at construction the eventmanager is not yet added to the context
 	m_event_mgr->add_command("CMD_show_party", [this](auto data) {show_party(); });
-//	auto gui_window = sfg::Window::Create(sfg::Window::Style::TOPLEVEL);
-//	auto label = sfg::Label::Create("hoi pipeloi");
-//	gui_window->Add(label);
-//	m_desktop.Add(gui_window);
+	m_context->m_system_manager->get_messenger()->bind("switched_current_entity", [this](auto val) {m_current_entity = std::any_cast<ecs::Entity_id>(val); });
 }
 
 void State_game::on_destroy()
@@ -51,43 +55,45 @@ void State_game::on_destroy()
 void State_game::update(const sf::Time& time)
 {
 	m_desktop.Update(time.asSeconds());
-	if (m_first)
-	{
-		el::Entity_loader el{ m_context };
-		ecs::Entity_id id{ 0 };
-		ecs::Entity_id id2{ 0 };
-		ecs::Entity_id id3{ 0 };
-//		el.load_map("test");
-/*		if (auto opt = el.load_entity("big_kobold"))
-		{
-			id = *opt;
-			el.set_position(id, sf::Vector2u{ 9,12 }, 2, "test");
-			el.set_player_controlled(id, true);
-		}*/
-		if (auto opt = el.load_entity("big_kobold"))
-		{
-			id2 = *opt;
-			el.set_position(id2, sf::Vector2i{ 5,5 }, 2, "test");
-		}
-		if (auto opt = el.load_entity("sword"))
-		{
-			id3 = *opt;
-			el.set_position(id3, sf::Vector2i{ 4,5 }, 1, "test");
-		}
 
-		std::cout << id << "\t " << id2 << "\n";
-		m_first = false;
-	}
 	auto window = m_context->m_wind->get_renderwindow();
 	auto mousepos = sf::Mouse::getPosition(*window);
 	auto worldpos = window->mapPixelToCoords(mousepos);
 	auto& map_data = m_context->m_maps->maps[m_context->m_current_map];
-	sf::Vector2i coords{ mousepos.x / map_data.tilesize.x, mousepos.y / map_data.tilesize.y };
-	auto tile_index = coords.y * map_data.mapsize.y + coords.x;
+	sf::Vector2i coords{ mousepos.x / map_data.m_tilesize.x, mousepos.y / map_data.m_tilesize.y };
+	int tile_index{ 0 };
+	try
+	{
+		tile_index = map_data.m_topology->tile_index(coords);
+	}
+	catch (std::out_of_range& e)
+	{
+		tile_index = 0;
+	}
 	m_text.setString("(" + std::to_string(coords.x) + ", " + std::to_string(coords.y) + ")");
 	auto entities = map_data.get_entities_at(tile_index);
 	auto em = m_context->m_entity_manager;
-	for (auto layer : entities)
+
+	auto itr = std::find_if(std::cbegin(entities), std::cend(entities), [em](const ecs::Entity_id e) {return em->has_component(e, ecs::Component_type::Sensor); });
+	if (itr != std::cend(entities))
+	{
+		if (m_current_cursor != &m_hand_cursor)
+		{
+			auto pos = em->get_data<ecs::Component<Position>>(ecs::Component_type::Position, m_current_entity);
+			m_current_cursor = map_data.m_topology->are_neighbours(coords, pos->coords) ? &m_hand_cursor : &m_not_allowed_cursor;
+			window->setMouseCursor(*m_current_cursor);
+		}
+	}
+	else
+	{
+		if (m_current_cursor != &m_arrow_cursor)
+		{
+			m_current_cursor = &m_arrow_cursor;
+			window->setMouseCursor(*m_current_cursor);
+		}
+	}
+	
+/*	for (auto layer : entities)
 	{
 		for (auto entity : layer)
 		{
@@ -102,7 +108,7 @@ void State_game::update(const sf::Time& time)
 				m_text.setString(data->description);
 			}
 		}
-	}
+	}*/
 	auto dt = time.asMicroseconds();
 	m_context->m_system_manager->update (time.asMicroseconds());
 }
@@ -156,15 +162,9 @@ void State_game::on_select(sfg::ComboBox::Ptr cb)
 	auto name = cb->GetSelectedText();
 	auto entity = m_party[name];
 	auto character = em->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
-	auto widget = sfg::Context().Get().GetActiveWidget();
-	while (widget->GetName() != "Box")
-	{
-		widget = widget->GetParent();
-	}
-	auto x = sfg::Widget::GetWidgetById("name_label");
-	auto name_label = std::dynamic_pointer_cast<sfg::Label>(x);
+	auto name_label = std::dynamic_pointer_cast<sfg::Label>(sfg::Widget::GetWidgetById("name_label"));
 	auto cp_label = std::dynamic_pointer_cast<sfg::Label>(sfg::Widget::GetWidgetById("cp_label"));
-	auto gender = character->male ? "male" : "female";
+	auto gender = character->gender == Gender::Male ? "male" : "female";
 	auto race = race_to_string(character->race);
 	auto cp = character->character_points;
 	name_label->SetText(name + ", " + gender + " " + race);

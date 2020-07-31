@@ -13,12 +13,13 @@ struct Container;
 
 namespace systems
 {
-	class Inventory_system : public ecs::S_base
+	class Inventory_system : public ecs::S_base, private messaging::Sender
 	{
 	public:
 		Inventory_system(ecs::System_type type, ecs::System_manager* mgr, messaging::Messenger* m);
 		void update(sf::Int64 dt) override;
 		void setup_events() override;
+		void drop_item(ecs::Entity_id holder, ecs::Entity_id item);
 	private:
 		messaging::Messenger* m_messenger;
 		ecs::Entity_manager* m_entity_mgr;

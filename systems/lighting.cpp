@@ -65,7 +65,7 @@ namespace systems
 
 	bool check_tile(int index, const Map_data& map, ecs::Entity_manager* mgr)
 	{
-		auto entities = map.get_entities_at(2, static_cast<unsigned int>(index));
+/*		auto entities = map.get_entities_at(2, static_cast<unsigned int>(index));
 		for (auto entity : entities)
 		{
 			if (mgr->has_component(entity, ecs::Component_type::Tile_type))
@@ -73,7 +73,7 @@ namespace systems
 				auto data = mgr->get_data<ecs::Component<Tile_type>>(ecs::Component_type::Tile_type, entity);
 				if (!data->transparent) return false;
 			}
-		}
+		}*/
 		return true;
 	}
 
@@ -83,7 +83,7 @@ namespace systems
 		auto current_map = m_system_manager->get_context()->m_current_map;
 		auto& map_info = m_system_manager->get_context()->m_maps->maps[current_map];
 		auto& lighting_map = map_info.lighting_map;
-		auto map_size = map_info.mapsize.x * map_info.mapsize.y;
+		auto map_size = map_info.m_mapsize.x * map_info.m_mapsize.y;
 		for (auto i = 0; i < map_size; ++i)
 		{
 			lighting_map.push_back(0);
@@ -96,7 +96,7 @@ namespace systems
 			if (lightsource.ignited)
 			{
 				auto position = m_entity_manager->get_data<ecs::Component<Position>>(ecs::Component_type::Position, entity);
-				auto tile_index = position->coords.x + position->coords.y * map_info.mapsize.x;
+				auto tile_index = position->coords.x + position->coords.y * map_info.m_mapsize.x;
 				lighting_map[tile_index] += lightsource.brightness;
 				auto dir = lightsource.direction;
 				auto direction_vec = Compass_util::get_direction_vector(dir);

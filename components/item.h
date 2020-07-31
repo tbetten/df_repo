@@ -7,4 +7,5 @@ struct Item
 	std::string item_name = "";
 	std::string description = "";
 	int weight = 0;
+	int value;
 };

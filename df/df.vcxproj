@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\df\entity_loader;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -164,6 +164,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="character_sheet.h" />
+    <ClInclude Include="damage_table.h" />
+    <ClInclude Include="entity_loader.h" />
     <ClInclude Include="eventmanager.h" />
     <ClInclude Include="event_types.h" />
     <ClInclude Include="game.h" />
@@ -189,8 +191,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character_sheet.cpp" />
+    <ClCompile Include="damage_table.cpp" />
     <ClCompile Include="df.cpp" />
     <ClCompile Include="entity_at.cpp" />
+    <ClCompile Include="entity_loader.cpp" />
     <ClCompile Include="eventmanager.cpp" />
     <ClCompile Include="event_types.cpp" />
     <ClCompile Include="game.cpp" />

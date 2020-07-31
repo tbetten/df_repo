@@ -24,7 +24,7 @@ namespace systems
 
 	sf::Vector2i grid_to_pixel(Shared_context* context, std::string map, sf::Vector2i grid_coords)
 	{
-		return context->m_maps->maps[map].topology->center(grid_coords);
+		return context->m_maps->maps[map].m_topology->center(grid_coords);
 	}
 
 	void Renderer::update (sf::Int64 dt)
@@ -58,13 +58,13 @@ namespace systems
 		m_messenger->bind("switched_current_entity"s, [this](std::any val) { m_current_entity = std::any_cast<ecs::Entity_id>(val); });
 	}
 
-	struct 
+/*	struct 
 	{
 		bool operator() (ecs::Entity_id e1, ecs::Entity_id e2)
 		{
 
 		}
-	} Entity_compare;
+	} Entity_compare;*/
 
 	bool Renderer::compare_entities(ecs::Entity_id e1, ecs::Entity_id e2)
 	{
@@ -81,7 +81,7 @@ namespace systems
 	void Renderer::order_entities()
 	{
 		
-		std::sort(std::begin(m_entities), std::end(m_entities), [this](ecs::Entity_id e1, ecs::Entity_id e2) {return compare_entities(e1, e2); });
+		//std::sort(std::begin(m_entities), std::end(m_entities), [this](ecs::Entity_id e1, ecs::Entity_id e2) {return compare_entities(e1, e2); });
 
 /*		auto entity_mgr = m_system_manager->get_entity_mgr();
 		for (auto layer : m_maps)
@@ -103,10 +103,51 @@ namespace systems
 		}*/
 	}
 
+	class Comparator
+	{
+	public:
+		explicit Comparator(ecs::Entity_manager* entity_mgr) : mgr{entity_mgr}
+		{
+			position_comp = mgr->get_component<ecs::Component<Position>>(ecs::Component_type::Position);
+		}
+		bool operator()(ecs::Entity_id e1, ecs::Entity_id e2)
+		{
+			auto index1 = mgr->get_index(ecs::Component_type::Position, e1);
+			auto index2 = mgr->get_index(ecs::Component_type::Position, e2);
+			auto& layer1 = position_comp->m_data.at(*index1).layer;
+			auto& layer2 = position_comp->m_data.at(*index2).layer;
+			return static_cast<int>(layer1) < static_cast<int>(layer2);
+		}
+	private:
+		ecs::Entity_manager* mgr;
+		ecs::Component<Position>* position_comp;
+		std::unordered_map<std::string, int> rank;
+	};
+
 	void Renderer::render (sf::RenderWindow* win)
 	{
 		auto mgr = m_system_manager->get_entity_mgr ();
+		auto context = m_system_manager->get_context();
 		auto map = m_system_manager->get_context ()->m_current_map;
+		auto& map_data = context->m_maps->maps[map].m_map_index;
+		Comparator cp{ mgr };
+		
+		for (auto cell_data : map_data)
+		{
+			//std::sort(std::begin(cell_data), std::end(cell_data), cp);
+			for (auto& [layer, entities] : cell_data)
+			{
+				for (auto entity : entities)
+				{
+					if (mgr->has_component(entity, ecs::Component_type::Drawable))
+					{
+						auto drawable = mgr->get_data<ecs::Component<Drawable>>(ecs::Component_type::Drawable, entity);
+						win->draw(*drawable);
+					}
+				}
+			}
+
+		}
 		//auto index_current_entity = *mgr->get_index(ecs::Component_type::Drawable, m_current_entity);
 		//auto current = &m_drawable->m_data[index_current_entity];
 		//auto view = win->getView();
@@ -139,18 +180,20 @@ namespace systems
 
 		//win->draw (*map);
 		//auto target = win->get_renderwindow ();
-		for (auto& entity : m_entities)
-		{
+
+//		for (auto& entity : m_entities)
+//		{
+
 			//auto drawable = mgr->get_data<ecs::Component<Drawable>> (ecs::Component_type::Drawable, entity);
-			auto drawable = &m_drawable->m_data[*mgr->get_index(ecs::Component_type::Drawable, entity)];
+	//		auto drawable = &m_drawable->m_data[*mgr->get_index(ecs::Component_type::Drawable, entity)];
 			//drawable->sprite.setTexture (*drawable->texture);
-			win->draw(drawable->sprite);
+	//		win->draw(drawable->sprite);
 	/*		if (mgr->has_component (entity, ecs::Component_type::Facing))
 			{
 				auto facing = mgr->get_data<ecs::Component<Facing>> (ecs::Component_type::Facing, entity);
 				facing->facing_indicator.setTexture (facing->facing_texture);
 				win->draw (facing->facing_indicator);
 			}*/
-		}
+//		}
 	}
 }

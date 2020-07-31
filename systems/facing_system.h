@@ -1,6 +1,7 @@
 #pragma once
 #include "system.h"
 #include <SFML/System.hpp>
+#include <map>
 
 namespace ecs
 {
@@ -25,5 +26,6 @@ namespace systems
 	//	std::unordered_map<std::string, Dispatcher> m_dispatchers;
 		ecs::Entity_manager* m_entity_manager;
 		ecs::Component<Facing>* m_facing_comp;
+		std::map<std::string, int> m_tile_indices;
 	};
 }

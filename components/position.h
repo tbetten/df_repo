@@ -7,11 +7,12 @@ struct Tilemap;
 
 struct Position
 {
+	enum class Layer { Invalid = -1, Interactive_objects, Floor, Floor_decoration, On_floor, Creature, Wall, Wall_decoration };
 	void reset ();
 	std::string map_id = "";
 	sf::Vector2i coords;
 	std::string current_map;
-	int layer = 2;
+	Layer layer;
 	bool moved = false;
 };
 

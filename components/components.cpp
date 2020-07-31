@@ -10,6 +10,8 @@
 #include "attributes.h"
 #include "tile_type.h"
 #include "lightsource.h"
+#include "sensor.h"
+#include "reactor.h"
 
 void comps::add_components (ecs::Entity_manager* mgr)
 {
@@ -23,6 +25,8 @@ void comps::add_components (ecs::Entity_manager* mgr)
 	mgr->add_component(ecs::Component_type::Animation, std::unique_ptr<ecs::C_base>(new ecs::Component<Animation>()));
 	mgr->add_component(ecs::Component_type::Tile_type, std::unique_ptr<ecs::C_base>(new ecs::Component<Tile_type>()));
 	mgr->add_component(ecs::Component_type::Lightsource, std::unique_ptr<ecs::C_base>(new ecs::Component<Lightsource>()));
+	mgr->add_component(ecs::Component_type::Sensor, std::unique_ptr<ecs::C_base>(new ecs::Component<Sensor>()));
+	mgr->add_component(ecs::Component_type::Reactor, std::unique_ptr<ecs::C_base>(new ecs::Component<Reactor>()));
 }
 
 

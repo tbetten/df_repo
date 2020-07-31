@@ -14,4 +14,5 @@ struct Animation
 	std::vector<Frame> frames;
 	int current_frame;
 	float time_in_frame;
+	bool active{ true };
 };

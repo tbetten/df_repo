@@ -9,6 +9,7 @@
 #include "shared_context.h"
 #include "resource_cache.h"
 #include "systems.h"
+#include "db_queries.h"
 #include <iostream>
 
 namespace systems
@@ -24,8 +25,11 @@ namespace systems
 		m_requirements.push_back (b);
 
 		add_message("icon_changed");
-//		m_dispatchers.emplace("icon_changed", Dispatcher{});
-//		m_system_manager->register_events(ecs::System_type::Facing, { "icon_changed" });
+		auto table = DB_queries::query_tiles("facing");
+		for (auto [tile_name, tile_index] : table)
+		{
+			m_tile_indices.emplace(tile_name, tile_index);
+		}
 	}
 
 	void Facing_system::setup_events ()
@@ -46,19 +50,9 @@ namespace systems
 		const auto [entity, new_facing] = std::any_cast<Facing_payload>(val);
 		auto cache = m_system_manager->get_context()->m_cache;
 		auto key = facing.at(new_facing);
-		fill_icon_part(m_system_manager->get_entity_mgr(), cache, key, "facing_indicator", entity);
-//		auto res = cache->get_obj(facing.at(new_facing));
-//		auto facing_index = m_entity_manager->get_index(ecs::Component_type::Facing, entity);
-//		if (!facing_index) return;
-//		auto facing = &m_facing_comp->m_data[*facing_index];
-//		facing->m_texture_resource = res;
-//		facing->facing_texture = cache::get_val<sf::Texture>(res.get());
-//		facing->facing_indicator.setTexture(*facing->facing_texture);
-		//m_dispatchers["icon_changed"].notify(entity);
+		int tile_index = m_tile_indices[key];
+		fill_icon_part(m_system_manager->get_entity_mgr(), cache, "facing", tile_index, "facing_indicator", entity);
 		notify("icon_changed", entity);
-	//	auto angle = Compass_util::get_direction_angle(facing->facing);
-	//	auto vector = Compass_util::get_direction_vector(facing->facing) * 5;
-	//	facing->facing_indicator.setRotation(static_cast<float>(angle));
 	}
 
 }

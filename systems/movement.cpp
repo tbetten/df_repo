@@ -3,6 +3,8 @@
 #include "component.h"
 #include "position.h"
 #include "facing.h"
+#include "attributes.h"
+#include "character.h"
 #include "ecs.h"
 #include "move_payload.h"
 #include "shared_context.h"
@@ -11,6 +13,8 @@
 #include "systems.h"
 #include "facing_payload.h"
 #include <iostream>
+
+
 
 namespace systems
 {
@@ -27,57 +31,53 @@ namespace systems
 
 	void Movement::setup_events ()
 	{
-		m_messenger->bind("changed_position"s, [this](auto val) {move(val); });
+//		m_messenger->bind("changed_position"s, [this](auto val) {move(val); });
 	}
 
 	void Movement::update(sf::Int64 dt)
 	{}
 
-	void Movement::move (std::any val)
+	//void Movement::move (std::any val)
+	int Movement::move (ecs::Entity_id entity, Direction direction)
 	{
+		int time{ 0 };
 		auto context = m_system_manager->get_context();
 		auto map = context->m_current_map;
-		auto& mapsize = context->m_maps->maps[map].mapsize;
+		if (map == "") return 0;
+		auto& map_data = context->m_maps->maps[map];
+		auto& mapsize = context->m_maps->maps[map].m_mapsize;
 		int width = mapsize.x;
-		auto payload = std::any_cast<Move_payload>(val);
-		auto entity = payload.entity;
+		//auto payload = std::any_cast<Move_payload>(val);
+		//auto entity = payload.entity;
 		auto entity_mgr = m_system_manager->get_entity_mgr ();
 		auto pos_comp = entity_mgr->get_data<ecs::Component<Position>> (ecs::Component_type::Position, entity);
 		auto facing = entity_mgr->get_data<ecs::Component<Facing>> (ecs::Component_type::Facing, entity);
 
-		Compass move_dir = Compass_util::find_move_direction (payload.direction, facing->facing);
-		auto new_facing = Compass_util::find_new_facing (payload.direction, facing->facing);
+		auto new_facing = Compass_util::find_new_facing(direction, facing->facing);
 		if (facing->facing != new_facing)
 		{
+			time += 50;
 			std::cout << "facing changed\n";
 			notify("changed_facing", Facing_payload{ entity, new_facing });
 			facing->facing = new_facing;
 		}
-		if (payload.direction == Direction::Turn_left || payload.direction == Direction::Turn_right) return;
+		//if (direction == Direction::Turn_left || direction == Direction::Turn_right) return time;
 
-		auto coords = pos_comp->coords;
-		auto delta = Compass_util::get_direction_vector (move_dir);
-		sf::Vector2i new_coords { coords.x + delta.x, coords.y + delta.y };
-		auto tile_index = new_coords.y * width + new_coords.x;
-		auto& map_data = context->m_maps->maps[context->m_current_map];
-		auto entities = map_data.get_entities_at(tile_index);
-		bool accessible{ false };
-		for (auto layer : entities)
+		Compass move_dir = Compass_util::find_move_direction (direction, facing->facing);
+		auto new_pos = map_data.move(entity, pos_comp->coords , move_dir);
+		if (new_pos != pos_comp->coords)
 		{
-			for (auto entity : layer)
-			{
-				if (entity_mgr->has_component(entity, ecs::Component_type::Tile_type))
-				{
-					auto data = entity_mgr->get_data<ecs::Component<Tile_type>>(ecs::Component_type::Tile_type, entity);
-					accessible = data->accessible;
-				}
-			}
-		}
-		if (accessible)
-		{
-			pos_comp->coords.x = new_coords.x;
-			pos_comp->coords.y = new_coords.y;
+			double stepsize = map_data.m_topology->is_diagonal_step(pos_comp->coords, new_pos) ? std::sqrt(2.0) : 1.0;
+			pos_comp->coords = new_pos;
 			pos_comp->moved = true;
+			auto attributes = entity_mgr->get_data<ecs::Component<Attributes>>(ecs::Component_type::Attributes, entity);
+			auto character = entity_mgr->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
+			auto [move, _] = attributes::get_encumbered_value(attributes->transactions, character->encumbrance);
+			time += stepsize * 1000 / move;
+			
+			
 		}
+		std::cout << time << "\n";
+		return time;
 	}
 }

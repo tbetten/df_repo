@@ -29,7 +29,7 @@ namespace systems
 
 	void Icon_composer::compose_icon(std::any val)
 	{
-		std::cout << "icon composer\n";
+		//std::cout << "icon composer\n";
 		auto entity = std::any_cast<ecs::Entity_id> (val);
 		auto drawable_index = m_entity_mgr->get_index(ecs::Component_type::Drawable, entity);
 		if (!drawable_index) return;

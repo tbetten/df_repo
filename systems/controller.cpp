@@ -10,6 +10,7 @@
 #include "ai.h"
 #include "character.h"
 #include "map_data.h"
+#include "movement.h"
 
 #include <iostream>
 
@@ -24,10 +25,7 @@ namespace systems
 		add_message("changed_position");
 		add_message("switched_current_entity");
 		add_message("pickup");
-/*		m_dispatchers.emplace("change_position", Dispatcher{});
-		m_system_manager->register_events(ecs::System_type::Controller, { "change_position" });
-		m_dispatchers.emplace("switched_current_entity", Dispatcher{});
-		m_system_manager->register_events(ecs::System_type::Controller, { "switched_current_entity" });*/
+		add_message("use");
 	}
 
 	void Controller::setup_events ()
@@ -44,7 +42,8 @@ namespace systems
 		eventmgr->add_command ("CMD_move_right", [this](auto data) {move (Direction::Right); });
 		eventmgr->add_command ("CMD_turn_left", [this](auto data) {move(Direction::Turn_left); });
 		eventmgr->add_command ("CMD_turn_right", [this](auto data) {move(Direction::Turn_right); });
-		eventmgr->add_command("CMD_get", [this](auto data) {get(data); });
+		eventmgr->add_command("CMD_get", [this](auto data) {select(data, Select_action::Pickup); });
+		eventmgr->add_command("CMD_use", [this](auto data) {select(data, Select_action::Use); });
 
 		m_messenger->bind("entity_modified", [this](auto val) {register_entity(val); });
 //		m_system_manager->get_entity_mgr()->get_event().bind([this](auto val) {register_entity(val); });
@@ -104,28 +103,37 @@ namespace systems
 	//	m.entity = m_current_entity;
 	//	m.direction = d;
 		notify("changed_position", Move_payload{m_current_entity, d});
+		auto movenemt = m_system_manager->get_system<Movement>(ecs::System_type::Movement);
+		auto time = movenemt->move(m_current_entity, d);
 //		m_dispatchers["change_position"].notify (m);
 		if (m_player_controlled)
 		{
-			m_system_manager->get_context()->m_scheduler->async_response(50);
+			m_system_manager->get_context()->m_scheduler->async_response(time);
 		}
 	}
 
-	void Controller::get(event::Event_info data)
+	void Controller::select(event::Event_info data, Select_action a)
 	{
+		auto context = m_system_manager->get_context();
 		sf::Vector2i coords;
 		if (std::holds_alternative<event::Mouse_info>(data.info))
 		{
 			auto mouse_data = std::get<event::Mouse_info>(data.info);
 			auto context = m_system_manager->get_context();
-			auto& topology = context->m_maps->maps[context->m_current_map].topology;
+			auto& topology = context->m_maps->maps[context->m_current_map].m_topology;
 			coords = topology->to_tile_coords(sf::Vector2i{ mouse_data.x, mouse_data.y });
 		}
-		auto entity_mgr = m_system_manager->get_entity_mgr();
 		std::cout << "(" << coords.x << ", " << coords.y << ")\n";
-		Pickup_payload p{ m_current_entity, coords };
-		notify("pickup", p);
-//		notify("pickup", Pickup_payload{ m_current_entity, coords });
+		auto entity_mgr = m_system_manager->get_entity_mgr();
+		switch (a)
+		{
+		case Select_action::Pickup:
+			notify("pickup", Pickup_payload{ m_current_entity, coords });
+			break;
+		case Select_action::Use:
+			notify("use", Pickup_payload{ m_current_entity, coords });
+			break;
+		}
 	}
 
 }

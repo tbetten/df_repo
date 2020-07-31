@@ -32,10 +32,11 @@ namespace systems
 		ecs::Entity_id m_current_entity{ 0 };
 		bool m_player_controlled{ true };
 		messaging::Messenger* m_messenger;
+		enum class Select_action { Pickup, Use };
 
 		void move_ai(std::any val);
 		void move (Direction d);
 		void register_entity(std::any val);
-		void get(event::Event_info data);
+		void select(event::Event_info data, Select_action a);
 	};
 }

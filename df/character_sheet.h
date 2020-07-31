@@ -26,6 +26,7 @@ struct Party_member
 	Character* character = nullptr;
 	Attributes* attributes = nullptr;
 	Container* container = nullptr;
+	sf::Vector2i coords;
 };
 
 struct Inventory_item
@@ -46,9 +47,12 @@ private:
 	Party_member get_party_member(ecs::Entity_id entity) const;
 	sfg::Widget::Ptr create_character_page() const;
 	sfg::Widget::Ptr create_attribute_page() const;
-	sfg::Widget::Ptr create_inventory_page() const;
+	sfg::Widget::Ptr create_inventory_page();
 	void on_select();
-	std::string get_attribute(Attributes* attribs, Attribute attrib) const;
+	void on_drop_item();
+	void on_equip();
+	void on_use_item();
+	std::string get_attribute(Attributes* attribs, attributes::Attrib attrib) const;
 
 	sfg::Widget::Ptr m_root;
 	ecs::Component<Character>* m_character;
@@ -56,6 +60,7 @@ private:
 	ecs::Component<Container>* m_container;
 	Shared_context* m_context;
 	ecs::Entity_manager* m_em;
+	ecs::Entity_id m_current_member;
 	std::vector<Party_member> m_party;
 	std::vector<Inventory_item> m_inventory;
 };

@@ -1,14 +1,13 @@
 #pragma once
 #include "state.h"
-#include "resource_cache.h"
 #include "character_sheet.h"
 #include <SFGUI/SFGUI.hpp>
 #include <SFGUI/Widgets.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
+#include <any>
 #include <memory>
-
-struct Tilemap;
-//class Character_sheet;
 
 namespace event
 {
@@ -18,7 +17,7 @@ namespace event
 class State_game : public State
 {
 public:
-	State_game(Shared_context* context) : State{ context } {}
+	explicit State_game(Shared_context* context);
 
 	void on_create() override;
 	void on_destroy() override;
@@ -40,13 +39,15 @@ private:
 	sfg::Box::Ptr create_charsheet();
 	void close_window();
 
-	bool m_first{ true };
-	std::shared_ptr<Tilemap> m_map;
 	event::Event_manager* m_event_mgr = nullptr;
 	std::unordered_map<std::string, ecs::Entity_id> m_party;
-//	std::shared_ptr<cache::Resource_base> m_font_resource;
+	ecs::Entity_id m_current_entity;
 	sf::Font m_font;
 	sf::Text m_text;
+	sf::Cursor m_hand_cursor;
+	sf::Cursor m_arrow_cursor;
+	sf::Cursor m_not_allowed_cursor;
+	sf::Cursor* m_current_cursor{ nullptr };
 	std::unique_ptr<Character_sheet> m_charsheet;
 	sfg::Widget::Ptr m_remove = nullptr;
 

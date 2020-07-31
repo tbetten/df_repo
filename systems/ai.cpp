@@ -4,6 +4,7 @@
 #include "controller.h"
 #include "systems.h"
 #include "directions.h"
+#include "movement.h"
 
 namespace systems
 {
@@ -30,8 +31,10 @@ namespace systems
 */
 	int AI::take_turn(ecs::Entity_id entity)
 	{
-		notify("move", Direction::Backward);
+		auto movement = m_system_manager->get_system<Movement>(ecs::System_type::Movement);
+		auto time = movement->move(entity, Direction::Backward);
+		//notify("move", Direction::Backward);
 		//m_dispatchers["move"].notify(Direction::Backward);
-		return 40;
+		return time;
 	}
 }

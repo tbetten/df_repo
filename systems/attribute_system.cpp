@@ -23,10 +23,6 @@ namespace systems
 		// no events
 	}
 
-/*	Dispatcher& Attribute_system::get_event(const std::string& event)
-	{
-		throw Messaging_exception("don't have events");
-	}*/
 
 	void Attribute_system::update(sf::Int64 time)
 	{
@@ -47,15 +43,22 @@ namespace systems
 		current_cp -= cp;
 	}
 
+	void Attribute_system::add_transaction(attributes::Transaction transaction, ecs::Entity_id entity)
+	{
+		auto attribute_index = m_em->get_index(ecs::Component_type::Attributes, entity);
+		if (!attribute_index) return;
+		m_attribs->m_data[*attribute_index].transactions.push_back(transaction);
+	}
+
 	void Attribute_system::buy_attribute(Attribute a, ecs::Entity_id entity, int cp)
 	{
 		if (check_cp(cp, entity))
 		{
-			auto attrib_index = m_em->get_index(ecs::Component_type::Attributes, entity);
-			auto attrib_vec = m_attribs->m_data[*attrib_index].data;
-			int units_per_point = attrib_vec[static_cast<int>(a)].units_per_point;
-			auto units = units_per_point * cp;
-			buy_units(a, entity, units);
+//			auto attrib_index = m_em->get_index(ecs::Component_type::Attributes, entity);
+//			auto attrib_vec = m_attribs->m_data[*attrib_index].data;
+//			int units_per_point = attrib_vec[static_cast<int>(a)].units_per_point;
+//			auto units = units_per_point * cp;
+//			buy_units(a, entity, units);
 
 		}
 		
@@ -63,7 +66,7 @@ namespace systems
 
 	void Attribute_system::buy_units(Attribute a, ecs::Entity_id entity, int units)
 	{
-		auto attrib_index = m_em->get_index(ecs::Component_type::Attributes, entity);
+/*		auto attrib_index = m_em->get_index(ecs::Component_type::Attributes, entity);
 		auto& attrib_vec = m_attribs->m_data[*attrib_index].data;
 		int units_per_point = m_attribs->m_data[*attrib_index].data[static_cast<int>(a)].units_per_point;
 		auto cp = units / static_cast<int>(units_per_point);
@@ -81,6 +84,6 @@ namespace systems
 		}
 		attrib_vec[static_cast<int>(a)].bought += units;
 		//	m_attribs->m_data[*attrib_index].data[static_cast<int>(a)].bought += units;
-		pay_cp(cp, entity);
+		pay_cp(cp, entity);*/
 	}
 }

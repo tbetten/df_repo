@@ -3,9 +3,15 @@
 #include "character.h"
 #include "attributes.h"
 #include "container.h"
+#include "position.h"
 #include "ecs_types.h"
 #include "state_game.h"
 #include "component.h"
+#include "drawable.h"
+#include "map_data.h"
+#include "systems.h"
+#include "inventory_system.h"
+
 #include <sstream>
 #include <iomanip>
 
@@ -47,8 +53,10 @@ sfg::Widget::Ptr Character_sheet::create_character_page() const
 	gender_label->SetId("gender_label");
 	auto race_label = sfg::Label::Create("race");
 	race_label->SetId("race_label");
-	auto cp_label = sfg::Label::Create("cp");
+	auto cp_label = sfg::Label::Create("");
 	cp_label->SetId("cp_label");
+	auto sm_label = sfg::Label::Create("");
+	sm_label->SetId("sm_label");
 	table->Attach(sfg::Label::Create("Name"), sf::Rect<sf::Uint32>{0, 0, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	table->Attach(name_label, sf::Rect<sf::Uint32>{1, 0, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	table->Attach(sfg::Label::Create("Gender"), sf::Rect<sf::Uint32>{0, 1, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
@@ -57,6 +65,8 @@ sfg::Widget::Ptr Character_sheet::create_character_page() const
 	table->Attach(race_label, sf::Rect<sf::Uint32>{1, 2, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	table->Attach(sfg::Label::Create("Available character points"), sf::Rect<sf::Uint32>{0, 3, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	table->Attach(cp_label, sf::Rect<sf::Uint32>{1, 3, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(sfg::Label::Create("Size Modifier"), sf::Rect<sf::Uint32>{0, 4, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(sm_label, sf::Rect<sf::Uint32>{1, 4, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	return table;
 }
 
@@ -82,6 +92,14 @@ sfg::Widget::Ptr Character_sheet::create_attribute_page() const
 	per_label->SetId("per_label");
 	auto fp_label = sfg::Label::Create("");
 	fp_label->SetId("fp_label");
+	auto bs_label = sfg::Label::Create("");
+	bs_label->SetId("bs_label");
+	auto bm_label = sfg::Label::Create("");
+	bm_label->SetId("bm_label");
+	auto em_label = sfg::Label::Create("");
+	em_label->SetId("em_label");
+	auto dodge_label = sfg::Label::Create("");
+	dodge_label->SetId("dodge_label");
 
 	table->Attach(sfg::Label::Create("ST"), sf::Rect<sf::Uint32>{0, 0, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	table->Attach(sfg::Label::Create("DX"), sf::Rect<sf::Uint32>{0, 1, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
@@ -103,14 +121,37 @@ sfg::Widget::Ptr Character_sheet::create_attribute_page() const
 	table->Attach(per_label, sf::Rect<sf::Uint32>{3, 2, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	table->Attach(fp_label, sf::Rect<sf::Uint32>{3, 3, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 
+	table->Attach(sfg::Label::Create("Basic speed"), sf::Rect<sf::Uint32>{4, 0, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(sfg::Label::Create("Basic move"), sf::Rect<sf::Uint32>{4, 1, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(sfg::Label::Create("Encumbered move"), sf::Rect<sf::Uint32>{4, 2, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(sfg::Label::Create("Dodge"), sf::Rect<sf::Uint32>{4, 3, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+
+	table->Attach(bs_label, sf::Rect<sf::Uint32>{5, 0, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(bm_label, sf::Rect<sf::Uint32>{5, 1, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(em_label, sf::Rect<sf::Uint32>{5, 2, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach(dodge_label, sf::Rect<sf::Uint32>{5, 3, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+
 	return table;
 }
 
-sfg::Widget::Ptr Character_sheet::create_inventory_page() const
+sfg::Widget::Ptr Character_sheet::create_inventory_page() 
 {
+	auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	auto table = sfg::Table::Create();
 	table->SetId("inventory");
-	return table;
+	box->Pack(table);
+	auto inner_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
+	auto drop_button = sfg::Button::Create("drop");
+	drop_button->GetSignal(sfg::Widget::OnLeftClick).Connect([this]() {on_drop_item(); });
+	inner_box->Pack(drop_button, false, false);
+	auto equip_button = sfg::Button::Create("equip");
+	equip_button->GetSignal(sfg::Widget::OnLeftClick).Connect([this]() {on_equip(); });
+	inner_box->Pack(equip_button, false, false);
+	auto use_button = sfg::Button::Create("use");
+	use_button->GetSignal(sfg::Widget::OnLeftClick).Connect([this]() {on_use_item(); });
+	inner_box->Pack(use_button, false, false);
+	box->Pack(inner_box, false, false);
+	return box;
 }
 
 sfg::Widget::Ptr Character_sheet::get_charsheet() const
@@ -142,16 +183,13 @@ Party_member Character_sheet::get_party_member(ecs::Entity_id entity) const
 	return member;
 }
 
-std::string Character_sheet::get_attribute(Attributes* attribs, Attribute attrib) const
+std::string Character_sheet::get_attribute(Attributes* attribs, attributes::Attrib attrib) const
 {
-	auto& z = attribs->data[static_cast<int>(attrib)];
-	//std::string buf("     ");
-	float val = (z.base + z.bought) / 100.0f;
-	auto cost = z.bought / static_cast<int>(z.units_per_point);
+	auto val = static_cast<double> (attributes::get_total_value(attribs->transactions, attrib) / 100.0);
+	auto cost = "[" + std::to_string (attributes::get_spent_points(attribs->transactions, attrib)) + "]";
+	cost.insert(0, 7 - cost.size(), ' ');
 	std::stringstream ss;
-	ss << std::right << std::setw(5) << std::setfill('*') << std::fixed << std::setprecision(2) << val << " [" << cost << "]";
-	//auto res = std::to_chars(buf.data(), buf.data() + buf.size(), val, std::chars_format::fixed);
-	//return buf;
+	ss << std::right << std::setw(5) << std::setfill(' ') << std::fixed << std::setprecision(2) << val << cost;
 	return ss.str();
 }
 
@@ -160,33 +198,86 @@ sfg::Label::Ptr find_label(const std::string& id)
 	return std::dynamic_pointer_cast<sfg::Label>(sfg::Widget::GetWidgetById(id));
 }
 
+void Character_sheet::on_drop_item()
+{
+	auto inventory_system = m_context->m_system_manager->get_system<systems::Inventory_system>(ecs::System_type::Inventory);
+	std::for_each(std::begin(m_inventory), std::end(m_inventory), [this, inventory_system](Inventory_item& item)
+		{
+			if (item.button != nullptr && item.button->IsActive() && item.entity.has_value())
+			{
+				auto member = get_party_member(m_current_member);
+				ecs::Entity_id entity = item.entity.value();
+				item.button->ClearImage();
+				inventory_system->drop_item(member.id, item.entity.value());
+				// don't need entity ref anymore, remove from inventory item
+				item.entity = std::nullopt;
+			}
+		});
+}
+
+void Character_sheet::on_equip()
+{
+	std::for_each(std::begin(m_inventory), std::end(m_inventory), [this](Inventory_item& item)
+		{
+			if (item.button != nullptr && item.button->IsActive() && item.entity.has_value())
+			{
+				std::cout << "equipping item " << item.entity.value() << "\n";
+			}
+		});
+}
+
+void Character_sheet::on_use_item()
+{
+	auto entity_itr = std::find_if(std::cbegin(m_inventory), std::cend(m_inventory), [this](const Inventory_item& item) {return item.button != nullptr && item.button->IsActive() && item.entity.has_value(); });
+	if (entity_itr != std::cend(m_inventory))
+	{
+		auto ent = entity_itr->entity.value();
+		m_context->m_active_object = ent;
+		std::cout << "selected obj " << ent <<"\n";
+	}
+}
+
 void Character_sheet::on_select() 
 {
 	auto combobox = std::dynamic_pointer_cast<sfg::ComboBox> (sfg::Widget::GetWidgetById("party_combobox"));
 	auto name = combobox->GetSelectedText().toAnsiString();
 	//auto em = m_context->m_entity_manager;
-	Party_member member{};
-	auto party_member = std::find_if(std::cbegin(m_party), std::cend(m_party), [name](Party_member member) {return member.name == name; });
-	if (party_member != std::cend(m_party)) member = *party_member;
-	auto entity = member.id;
+	
+	auto party_member = std::find_if(std::begin(m_party), std::end(m_party), [name](Party_member member) {return member.name == name; });
+	if (party_member == std::end(m_party)) return;
+	auto entity = party_member->id;
+	m_current_member = entity;
+	auto position = m_em->get_data<ecs::Component<Position>>(ecs::Component_type::Position, entity);
+	party_member->coords = position->coords;
+	auto [move, dodge] = attributes::get_encumbered_value(party_member->attributes->transactions, party_member->character->encumbrance);
+	auto dodge_str = std::to_string(dodge / 100) + " (" + std::to_string(attributes::get_total_value(party_member->attributes->transactions, attributes::Attrib::Dodge) / 100) + ")";
 
-	find_label("name_label")->SetText(member.name);
+	find_label("name_label")->SetText(party_member->name);
 	auto gender_label = find_label("gender_label");
-	member.character->male ? gender_label->SetText("Male") : gender_label->SetText("Female");
-	find_label("race_label")->SetText(race_to_string(member.character->race));
-	find_label("cp_label")->SetText(std::to_string(member.character->character_points));
+	party_member->character->gender == Gender::Male ? gender_label->SetText("Male") : gender_label->SetText("Female");
+	find_label("race_label")->SetText(race_to_string(party_member->character->race));
+	sf::String s = std::to_string(party_member->character->character_points);
+	find_label("cp_label")->SetText(std::to_string(party_member->character->character_points));
+	std::cout << "A " << std::string{ find_label("cp_label")->GetText() } << "\n";
+	find_label("sm_label")->SetText(std::to_string(attributes::get_total_value(party_member->attributes->transactions, attributes::Attrib::SM) / 100));
 
-	find_label("st_label")->SetText(get_attribute(member.attributes, Attribute::ST));
-	find_label("dx_label")->SetText(get_attribute(member.attributes, Attribute::DX));
-	find_label("iq_label")->SetText(get_attribute(member.attributes, Attribute::IQ));
-	find_label("ht_label")->SetText(get_attribute(member.attributes, Attribute::HT));
+	find_label("st_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::ST));
+	find_label("dx_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::DX));
+	find_label("iq_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::IQ));
+	find_label("ht_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::HT));
 
-	find_label("hp_label")->SetText(get_attribute(member.attributes, Attribute::HP));
-	find_label("will_label")->SetText(get_attribute(member.attributes, Attribute::Will));
-	find_label("per_label")->SetText(get_attribute(member.attributes, Attribute::Per));
-	find_label("fp_label")->SetText(get_attribute(member.attributes, Attribute::FP));
+	find_label("hp_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::HP));
+	find_label("will_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::Will));
+	find_label("per_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::Per));
+	find_label("fp_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::FP));
 
-	auto inventory_size = member.container->contents.size();
+	find_label("bs_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::BS));
+	find_label("bm_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::BM));
+	//find_label("dodge_label")->SetText(get_attribute(party_member->attributes, attributes::Attrib::Dodge));
+	find_label("em_label")->SetText(std::to_string(move));
+	find_label("dodge_label")->SetText(dodge_str);
+
+	auto inventory_size = party_member->container->contents.size();
 	auto num_rows = inventory_size / 10 + 1;
 	std::cout << inventory_size << "\t" << num_rows << "\n";
 	auto inventory_table = std::dynamic_pointer_cast<sfg::Table> (sfg::Widget::GetWidgetById("inventory"));
@@ -195,18 +286,24 @@ void Character_sheet::on_select()
 		for (int j{ 0 }; j < 10; ++j)
 		{
 			auto index = i * 10 + j;
-			sf::Image im;
-			im.loadFromFile("assets/sprite/long_sword_1_new.png");
+			sf::Image image;
 			std::optional<ecs::Entity_id> opt_ent{ std::nullopt };
-			if (index < member.container->contents.size()) opt_ent = member.container->contents.at(index);
-			Inventory_item item{sfg::ToggleButton::Create(), false, opt_ent};
-			if (opt_ent) item.button->SetImage(sfg::Image::Create(im));
+			if (index < party_member->container->contents.size()) opt_ent = party_member->container->contents.at(index);
+			if (opt_ent)
+			{
+				auto mgr = m_context->m_entity_manager;
+				auto dr = mgr->get_data<ecs::Component<Drawable>>(ecs::Component_type::Drawable, *opt_ent);
+				auto tex = dr->composed_icon->getTexture();
+				image = tex.copyToImage();
+				
+			}
+			auto b = sfg::ToggleButton::Create();
+			b->SetRequisition(sf::Vector2f{ 36.0f, 36.0f });
+			Inventory_item item{b, false, opt_ent};
+			if (opt_ent) item.button->SetImage(sfg::Image::Create(image));
 			inventory_table->Attach(item.button, sf::Rect<sf::Uint32>(j, i, 1, 1), sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 			m_inventory.push_back(item);
 		}
-		auto row = i / inventory_size;
-		auto column = i % inventory_size;
-		inventory_table->Attach(sfg::ToggleButton::Create(), sf::Rect<sf::Uint32>(column, row, 1, 1), sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	}
 }
 

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <optional>
 #include "ecs_types.h"
 
 class Window;
@@ -39,4 +40,5 @@ struct Shared_context
 	Scheduler* m_scheduler{ nullptr };
 	std::unique_ptr<Maps> m_maps{ nullptr };
 	std::vector<ecs::Entity_id> m_party;
+	std::optional<ecs::Entity_id> m_active_object{ std::nullopt };
 };

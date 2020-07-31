@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-std::vector<ecs::Entity_id> get_entity_at(ecs::Entity_manager* mgr, std::string map, int layer, sf::Vector2i coords)
+std::vector<ecs::Entity_id> get_entity_at(ecs::Entity_manager* mgr, std::string map, Position::Layer layer, sf::Vector2i coords)
 {
 	std::vector<ecs::Entity_id> result;
 	auto position_comp = mgr->get_component<ecs::Component<Position>>(ecs::Component_type::Position);

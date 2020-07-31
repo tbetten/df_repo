@@ -1,14 +1,14 @@
 #include "resource_cache.h"
 #include "db.h"
-#include <variant>
+//#include <variant>
 #include <ostream>
 #include <array>
 
 namespace cache
 {
-	enum class Resource_type { Texture, Tileset, Font };  // must agree with table resource_type of database
+	enum class Resource_type { Texture, Tileset, Font, Tilesheet };  // must agree with table resource_type of database
 
-	constexpr std::array<Pf, 3> funcs { &Texture_resource::load_resource, nullptr};
+	constexpr std::array<Pf, 4> funcs { &Texture_resource::load_resource, nullptr, nullptr, &Tilesheet_resource::load_resource};
 
 	void Cache::init ()
 	{
@@ -32,13 +32,18 @@ namespace cache
 		if (!val.loadFromFile(file.string())) std::cout << "error reading texture " << file << "\n";
 	}
 
-/*	Tileset_resource::Resource (fs::path file)
+	Tileset_resource::Resource (fs::path file)
 	{
-		val.loadFromFile (file.string ());
-	}*/
+		val.load (file.string ());
+	}
 
 	Font_resource::Resource(fs::path file)
 	{
 		val.loadFromFile(file.string());
+	}
+
+	Tilesheet_resource::Resource(fs::path file)
+	{
+		val.load(file.string(), false);
 	}
 }

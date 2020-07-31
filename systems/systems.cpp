@@ -9,6 +9,8 @@
 #include "ai.h"
 #include "lighting.h"
 #include "inventory_system.h"
+#include "interaction.h"
+#include "encumbrance.h"
 
 namespace messaging
 {
@@ -28,4 +30,6 @@ void systems::add_systems (ecs::System_manager* mgr)
 	mgr->add_system(ecs::System_type::Icon_composer, std::unique_ptr<ecs::S_base>(new Icon_composer(ecs::System_type::Icon_composer, mgr, m)));
 	mgr->add_system(ecs::System_type::Lighting, std::unique_ptr<ecs::S_base>(new Lighting(ecs::System_type::Lighting, mgr, m)));
 	mgr->add_system(ecs::System_type::Inventory, std::unique_ptr<ecs::S_base>(new Inventory_system(ecs::System_type::Inventory, mgr, m)));
+	mgr->add_system(ecs::System_type::Interaction, std::unique_ptr<ecs::S_base>(new Interaction(ecs::System_type::Interaction, mgr, m)));
+	mgr->add_system(ecs::System_type::Encumbrance, std::unique_ptr<ecs::S_base>(new Encumbrance(ecs::System_type::Encumbrance, mgr, m)));
 }

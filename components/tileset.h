@@ -1,10 +1,17 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <tuple>
 #include <memory>
-#include "resource_cache.h"
+#include <SFML/Graphics.hpp>
+//#include "resource_cache.h"
 
 struct Shared_context;
+
+namespace cache
+{
+	class Resource_base;
+}
 
 namespace tileset
 {
@@ -19,22 +26,40 @@ namespace tileset
 	using Animation = std::vector<Animation_frame>;
 	using Animations = std::vector<Animation>;
 
-	struct Tileset
+	class Tileset
 	{
-		Tileset() :name{ "" }, firstgid{ 0 }, lastgid{ 0 }, tilewidth{ 0 }, tileheight{ 0 }, texture{ nullptr }, columns{ 0 }, source{ "" } {}
-		Tileset(std::string source_, int firstgid_ = 0) : source{ std::move(source_) }, firstgid{ firstgid_ }, name{ "" }, lastgid{ 0 }, tilewidth{ 0 }, tileheight{ 0 }, texture{ nullptr }, columns{ 0 }{}
-		sf::IntRect get_rect(int tile_id);
-		std::string name;
-		int firstgid;
-		int lastgid;
-		int tilewidth;
-		int tileheight;
-		std::shared_ptr<cache::Resource_base> texture;
-		int columns;
-		std::string source;
+	public:
+		Tileset() : name{ "" }, source{ "" } {}
+		//Tileset(std::string source_, int firstgid_ = 0) : source{ std::move(source_) }, firstgid{ firstgid_ }, name{ "" }{}
+		void load(std::string_view filename);
+		sf::IntRect get_rect(int tile_id) const;
+		void set_first_gid(int first_gid) noexcept;
+		std::tuple<int, int> get_gids() const noexcept; 
+
+		sf::Texture texture;
 		Tile_types tile_types;
 		Animations animations;
+	private:
+		std::string name{ "" };
+		int firstgid{ 0 };
+		int lastgid{ 0 };
+		int num_tiles{ 0 };
+		int tilewidth{ 0 };
+		int tileheight{ 0 };
+		//std::shared_ptr<cache::Resource_base> texture;
+		int columns{ 0 };
+		std::string source{ "" };
+
 	};
 
-	void load_tileset(std::string_view filename, Tileset& tileset, Shared_context* context);
+	struct Tile
+	{
+		sf::Sprite get_sprite();
+
+		std::shared_ptr<cache::Resource_base> tileset_resource;
+		std::shared_ptr<Tileset> tileset;
+		int tile_index;
+	};
+
+	//load_tileset(std::string_view filename);
 }

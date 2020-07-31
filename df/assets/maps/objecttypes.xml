@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="battleaxe" color="#a0a0a4">
+  <property name="item_handle" type="string" default="battleaxe"/>
+  <property name="subtype" type="string" default="weapon"/>
+  <property name="tile_type" type="string" default="item"/>
+ </objecttype>
+ <objecttype name="blood" color="#a0a0a4">
+  <property name="description" type="string" default="splatters of blood"/>
+  <property name="tile_type" type="string" default="inert_tile"/>
+ </objecttype>
+ <objecttype name="brick_wall" color="#a0a0a4">
+  <property name="description" type="string" default="a rough brick wall"/>
+  <property name="tile_type" type="string" default="inert_tile"/>
+ </objecttype>
+ <objecttype name="closed_door" color="#a0a0a4">
+  <property name="tile_type" type="string" default="dynamic_tile"/>
+ </objecttype>
+ <objecttype name="leather_armour" color="#a0a0a4">
+  <property name="description" type="string" default="leather armour"/>
+  <property name="item_handle" type="string" default="leather_armour"/>
+  <property name="subtype" type="string" default="larmour"/>
+  <property name="tile_type" type="string" default="item"/>
+ </objecttype>
+ <objecttype name="marble_floor" color="#a0a0a4">
+  <property name="description" type="string" default="a smooth marble floor"/>
+  <property name="tile_type" type="string" default="inert_tile"/>
+ </objecttype>
+ <objecttype name="open_door" color="#a0a0a4">
+  <property name="tile_type" type="string" default="dynamic_tile"/>
+ </objecttype>
+ <objecttype name="torch" color="#a0a0a4">
+  <property name="description" type="string" default="a torch"/>
+  <property name="tile_type" type="string" default="dynamic_tile"/>
+ </objecttype>
+</objecttypes>

@@ -1,5 +1,6 @@
 #pragma once
 #include "system.h"
+#include "attributes.h"
 
 struct Attributes;
 struct Character;
@@ -22,6 +23,9 @@ namespace systems
 		void update(sf::Int64 dt) override; 
 		void setup_events() override;
 //		Dispatcher& get_event(const std::string& event) override;
+
+		void add_transaction(attributes::Transaction transaction, ecs::Entity_id entity);
+		void remove_transaction(unsigned int transaction_id, ecs::Entity_id entity);
 
 		void buy_attribute(::Attribute a, ecs::Entity_id entity, int cp);
 		void buy_units (Attribute a, ecs::Entity_id entity, int units);
