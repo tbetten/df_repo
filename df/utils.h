@@ -5,7 +5,8 @@
 #include <map>
 #include <exception>
 #include <vector>
-
+#include <SFGUI/Widget.hpp>
+#include <SFGUI/Label.hpp>
 
 template <typename T>
 class String_bimap
@@ -79,4 +80,35 @@ S tuple_to_struct(Tup&& tup)
 {
 	using T = std::remove_reference_t<Tup>;
 	return tuple_to_struct(std::make_index_sequence < std::tuple_size<T>{} > {}, std::forward<Tup>(tup));
+}
+
+constexpr int square (int num)
+{
+	return num * num;
+}
+
+constexpr double square (double num)
+{
+	return num * num;
+}
+
+namespace detail
+{
+	constexpr double sqrt_help (double x, double curr, double prev)
+	{
+		return curr == prev ? curr : sqrt_help (x, 0.5 * (curr + x / curr), curr);
+	}
+}
+
+constexpr double my_sqrt (double x)
+{
+	return x >= 0 && x < std::numeric_limits<double>::infinity ()
+		? detail::sqrt_help (x, x, 0)
+		: std::numeric_limits<double>::quiet_NaN ();
+}
+
+template <typename T = sfg::Label>
+std::shared_ptr<T> find_widget (const std::string& id)
+{
+	return std::dynamic_pointer_cast<T>(sfg::Widget::GetWidgetById (id));
 }

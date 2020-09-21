@@ -17,6 +17,7 @@
 #include "facing_payload.h"
 #include "tileset.h"
 #include "random_generator.h"
+#include "utils.h"
 
 #include <iostream>
 #include <string_view>
@@ -301,7 +302,7 @@ void State_character_generator::create_racial_talent (const std::string& race)
 	talent_description->Show (true);
 	racial_talent_chooser.cost_per_step = talent.cost_per_level;
 	racial_talent_chooser.value = 0;
-	racial_talent_chooser.widget->SetRange (static_cast<int>(talent.default_level), static_cast<int>(talent.max_levels));
+	racial_talent_chooser.widget->SetRange (static_cast<float>(talent.default_level), static_cast<float>(talent.max_levels));
 	racial_talent_chooser.widget->SetStep (1.0f);
 	racial_talent_chooser.widget->Show (true);
 
@@ -329,11 +330,13 @@ void State_character_generator::on_race_toggle (const std::string& name)
 		{
 			auto cost = attributes::points_per_unit (current->attribute) * current->amount;
 			m_cp -= cost;
-			m_attribute_transactions.emplace_back (attributes::Transaction { current->attribute, attributes::Transaction_type::Buy, attributes::Template_type::Race, name, current->amount * 100, attributes::points_per_unit (current->attribute) * current->amount });
+			//m_attribute_transactions.emplace_back (attributes::Transaction { current->attribute, attributes::Transaction_type::Buy, attributes::Template_type::Race, name, current->amount * 100, attributes::points_per_unit (current->attribute) * current->amount });
+			m_attribute_transactions.emplace_back (current->attribute, attributes::Transaction_type::Buy, attributes::Template_type::Race, name, current->amount * 100, attributes::points_per_unit (current->attribute) * current->amount, std::nullopt);
 			auto raises = attributes::raises_base (current->attribute);
 			for (auto [attribute, amount] : raises)
 			{
-				m_attribute_transactions.emplace_back (attributes::Transaction { attribute, attributes::Transaction_type::Raise_base, attributes::Template_type::Race, name, current->amount * amount, 0 });
+				//m_attribute_transactions.emplace_back (attributes::Transaction { attribute, attributes::Transaction_type::Raise_base, attributes::Template_type::Race, name, current->amount * amount, 0 });
+				m_attribute_transactions.emplace_back (attribute, attributes::Transaction_type::Raise_base, attributes::Template_type::Race, name, current->amount * amount, 0, std::nullopt);
 			}
 			current = std::next (current);
 		}
@@ -503,10 +506,14 @@ void State_character_generator::buy_attrib (Attrib_value a, ecs::Entity_id entit
 //	attribute_system->buy_attribute(string_to_attrib[name], entity, modifier);
 }
 
-std::string format_attribute_value (int points_spent, int value)
+std::string format_attribute_value (int points_spent, int value, bool with_cost)
 {
-	auto spent = "[" + std::to_string (points_spent) + "]";
-	spent.insert (0, 5 - spent.size (), ' ');
+	std::string spent {};
+	if (with_cost)
+	{
+		spent = "[" + std::to_string (points_spent) + "]";
+		spent.insert (0, 5 - spent.size (), ' ');
+	}
 	auto v = static_cast<double>(value) / 100.0;
 	std::string buffer { "xxxxx" };
 	auto res = std::to_chars (buffer.data (), buffer.data () + buffer.size (), v, std::chars_format::fixed, 2);
@@ -520,16 +527,21 @@ std::string format_attribute_value (int points_spent, int value)
 	return buffer + " " + spent;
 }
 
+void attach_attribute (sfg::Table::Ptr table, sf::Uint32 column, sf::Uint32 row, attributes::Attrib attribute, std::span<attributes::Transaction> transactions)
+{
+	auto points_spent = attributes::get_spent_points (transactions, attribute);
+	auto val = attributes::get_total_value (transactions, attribute);
+	auto label = format_attribute_value (points_spent, val, attributes::format_with_cost[attribute]);
+	table->Attach (sfg::Label::Create (attributes::attrib_to_string (attribute)), rect_32 { column, row, 1, 1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create (label), rect_32 { column + 1, row, 1, 1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+}
+
 void attach_attributes (sfg::Table::Ptr table, sf::Uint32 column, std::span<attributes::Attrib> attributes, std::span<attributes::Transaction> transactions)
 {
 	sf::Uint32 index { 0 };
 	for (auto attribute : attributes)
 	{
-		auto points_spent = attributes::get_spent_points (transactions, attribute);
-		auto val = attributes::get_total_value (transactions, attribute);
-		auto label = format_attribute_value (points_spent, val);
-		table->Attach (sfg::Label::Create (attributes::attrib_to_string (attribute)), rect_32 { column, index, 1, 1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
-		table->Attach (sfg::Label::Create (label), rect_32 { column + 1, index, 1, 1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		attach_attribute (table, column, index, attribute, transactions);
 		++index;
 	}
 }
@@ -543,6 +555,19 @@ sfg::Table::Ptr State_character_generator::create_attribute_table ()
 	attach_attributes (table, 0, attributes::primary_attributes, m_attribute_transactions);
 	attach_attributes (table, 2, attributes::secundary_attributes, m_attribute_transactions);
 	attach_attributes (table, 4, attributes::tertiary_attributes, m_attribute_transactions);
+	attach_attribute (table, 4, 3, attributes::Attrib::BL, m_attribute_transactions);
+	attach_attribute (table, 0, 6, attributes::Attrib::ST_lift, m_attribute_transactions);
+	attach_attribute (table, 2, 6, attributes::Attrib::ST_strike, m_attribute_transactions);
+	auto dodge = attributes::get_total_value (m_attribute_transactions, attributes::Attrib::Dodge);
+	constexpr damage::Damage_table t {};
+	auto strike_strength = (attributes::get_total_value (m_attribute_transactions, attributes::Attrib::ST) + attributes::get_total_value (m_attribute_transactions, attributes::Attrib::ST_strike)) / 100;
+	auto& [strength, thrust_dice, swing_dice, thrust_mean, thrust_stddev, swing_mean, swing_stddev] = t.table [strike_strength];
+	table->Attach (sfg::Label::Create ("Damage (thrust)"), sf::Rect<sf::Uint32>{0, 7, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create (format_attribute_value (0, thrust_mean * 100, false)), sf::Rect<sf::Uint32>{1, 7, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create ("Damage (swing)"), sf::Rect<sf::Uint32>{2, 7, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create (format_attribute_value (0, swing_mean * 100, false)), sf::Rect<sf::Uint32>{3, 7, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create ("Dodge"), sf::Rect<sf::Uint32>{0, 8, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create (format_attribute_value (0, dodge, false)), sf::Rect<sf::Uint32>{1, 8, 1, 1}, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
 	return table;
 }
 

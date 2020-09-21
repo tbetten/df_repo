@@ -2,81 +2,65 @@
 #include <iostream>
 #include <filesystem>
 #include <type_traits>
+#include <array>
 #include <memory>
 #include <map>
+#include <variant>
+#include <cassert>
 #include <SFML/Graphics.hpp>
-#include "tileset.h"
 #include "Tilesheet.h"
 #include <functional>
 
 namespace fs = std::filesystem;
 namespace cache
 {
-	class Resource_base
+	using Resource = std::variant < std::monostate, std::weak_ptr<sf::Texture>, std::weak_ptr<sf::Font>, std::weak_ptr<tiled::Tilesheet>>;
+
+	struct Cache_entry
 	{
-	public:
-		virtual Resource_base* clone () const = 0;
-		virtual ~Resource_base () {}
+		Cache_entry (std::string a_key, std::string a_path) : key { std::move (a_key) }, path { std::move (a_path) }, data { std::monostate{} }{}
+		std::string key;
+		std::string path;
+		Resource data;
 	};
 
-	//using Pf = std::shared_ptr<Resource_base> (*)(fs::path);  // classic way
-	using Pf = std::add_pointer_t<std::shared_ptr<Resource_base> (fs::path)>;  // C++ 14 way
-	//using Pf = std::function<std::shared_ptr<Resource_base>(fs::path)>;
+	struct Load_visitor
+	{
+		void operator()(std::monostate m) {}
+		void operator()(std::weak_ptr<sf::Font> f) { f.lock ()->loadFromFile (m_path); }
+		void operator()(std::weak_ptr<sf::Texture> t) { t.lock ()->loadFromFile (m_path); }
+		void operator()(std::weak_ptr<tiled::Tilesheet> t) { t.lock ()->load (m_path, false); }
+
+		std::string m_path;
+	};
 
 	struct Cache
 	{
-		std::map<std::string, Pf> loadfuncs;
-		std::map<std::string, fs::path> paths;
-		std::map<std::string, std::weak_ptr<Resource_base>> cache;
-
-		Cache () { init (); }
-		std::shared_ptr<Resource_base> get_obj (const std::string& key)
+		Cache ();
+		template <typename T>
+		std::shared_ptr<T> get (const std::string& key)
 		{
-			if (auto res = cache[key].lock ())
+			auto itr = std::ranges::find_if (m_cache, [&key] (const Cache_entry& ce){return ce.key == key; });
+			assert (itr != std::end (m_cache));
+
+			Cache_entry& ce = *itr;
+			auto& var = ce.data;
+			if (std::holds_alternative<std::monostate> (var))
 			{
-				return res;
+				var = std::weak_ptr<T> ();
 			}
-			if (auto f = loadfuncs[key])
-			{
-				auto path = paths.at (key);
-				auto res = f (path);
-				cache[key] = res;
-				return res;
-			}
-			return nullptr;
+			auto& wp = std::get<std::weak_ptr<T>> (var);
+			if (auto sp = wp.lock ()) return sp;
+			auto temp = std::make_shared<T> ();
+			var = temp;
+			m_lv.m_path = ce.path;
+			std::visit (m_lv, var);
+			return temp;
 		}
+	private:
+		bool load_cache_entry (const std::string& key);
 
-		void init ();
+		std::vector<Cache_entry> m_cache;
+		Load_visitor m_lv;
 	};
-
-
-
-	template <typename T>
-	struct Resource : Resource_base
-	{
-		T val;
-
-		explicit Resource (fs::path);
-		Resource* clone ()const override { return new Resource (*this); }
-		static std::shared_ptr<Resource_base> load_resource (fs::path path)
-		{
-			//		auto file = c->paths[key];
-			return std::make_shared<Resource> (path);
-		}
-	};
-
-	template <typename T>
-	T* get_val (Resource_base* p)
-	{
-		if (auto pp = dynamic_cast<Resource<T>*>(p)) return &pp->val;
-		return nullptr;
-	}
-
-	using Texture_resource = Resource<sf::Texture>;
-
-	using Tileset_resource = Resource<tileset::Tileset>;
-
-	using Font_resource = Resource<sf::Font>;
-
-	using Tilesheet_resource = Resource<tiled::Tilesheet>;
 }

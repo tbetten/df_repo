@@ -9,7 +9,7 @@
 #include "tinyxml2.h"
 #pragma warning (pop)
 
-Drawable::Drawable() : locations{"base_icon", "beard", "facing_indicator"}
+Drawable::Drawable() : locations{"base_icon", "torso", "beard", "facing_indicator"}
 {
 	composed_icon = std::make_unique<sf::RenderTexture>();
 	composed_icon->create(32, 32);
@@ -43,16 +43,16 @@ void Vertex_array::rebuild()
 		});
 }
 
-void Vertex_array::add_texture(std::shared_ptr<cache::Resource_base> res, tiled::Tilesheet* sheet)
+void Vertex_array::add_texture (std::shared_ptr<tiled::Tilesheet> sheet)
 {
-	m_res = res;
-	m_tex = sheet;
+	//m_res = res;
+	m_sheet = sheet;
 }
 
 void Vertex_array::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
-	states.texture = &m_tex->m_texture;
+	states.texture = &m_sheet->m_texture;
 	target.draw(m_array, states);
 }
 
@@ -72,10 +72,11 @@ void Drawable::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void fill_icon(Icon& icon, std::string key, cache::Cache* cache, const sf::IntRect& area)
 {
 	icon.key = std::move(key);
-	icon.resource_ptr = cache->get_obj(icon.key);
+	icon.tilesheet = cache->get<tiled::Tilesheet> (icon.key);
+	//icon.resource_ptr = cache->get_obj(icon.key);
 	//icon.texture = cache::get_val<sf::Texture>(icon.resource_ptr.get());
-	icon.tilesheet = cache::get_val<tiled::Tilesheet>(icon.resource_ptr.get());
-	icon.texture = &icon.tilesheet->m_texture;
+	//icon.tilesheet = cache::get<tiled::Tilesheet>(icon.resource_ptr);
+	icon.texture = std::make_shared<sf::Texture>(icon.tilesheet->m_texture);
 	icon.sprite.setTexture(icon.tilesheet->m_texture);
 	icon.sprite.setTextureRect(area);
 }
@@ -83,9 +84,10 @@ void fill_icon(Icon& icon, std::string key, cache::Cache* cache, const sf::IntRe
 void fill_icon(Icon& icon, std::string key, cache::Cache* cache, const int tile_index)
 {
 	icon.key = std::move(key);
-	icon.resource_ptr = cache->get_obj(icon.key);
-	icon.tilesheet = cache::get_val<tiled::Tilesheet>(icon.resource_ptr.get());
-	icon.texture = &icon.tilesheet->m_texture;
+	icon.tilesheet = cache->get<tiled::Tilesheet> (icon.key);
+//	icon.resource_ptr = cache->get_obj(icon.key);
+//	icon.tilesheet = cache::get<tiled::Tilesheet>(icon.resource_ptr);
+	icon.texture = std::make_shared<sf::Texture> (icon.tilesheet->m_texture);
 	icon.sprite.setTexture(icon.tilesheet->m_texture);
 	icon.sprite.setTextureRect(icon.tilesheet->get_rect(tile_index));
 }
@@ -93,7 +95,7 @@ void fill_icon(Icon& icon, std::string key, cache::Cache* cache, const int tile_
 void clear_icon(Icon& icon)
 {
 	icon.key = "";
-	icon.resource_ptr.reset();
+	icon.tilesheet.reset();
 	icon.texture = nullptr;
 }
 
@@ -146,12 +148,12 @@ void fill_icon_part(ecs::Entity_manager* mgr, cache::Cache* cache, std::string t
 	mgr->get_messenger()->notify("icon_changed", entity);
 }
 
-void fill_icon_part(ecs::Entity_manager* mgr, std::shared_ptr<cache::Resource_base> texture_resource, sf::IntRect area, const std::string& location, ecs::Entity_id entity)
+void fill_icon_part(ecs::Entity_manager* mgr, std::shared_ptr<sf::Texture> texture, sf::IntRect area, const std::string& location, ecs::Entity_id entity)
 {
 	auto data = mgr->get_data<ecs::Component<Drawable>>(ecs::Component_type::Drawable, entity);
 	auto& icon_part = data->icon_parts.at(location);
-	icon_part.resource_ptr = texture_resource;
-	icon_part.texture = cache::get_val<sf::Texture>(icon_part.resource_ptr.get());
+	//icon_part.resource_ptr = texture_resource;
+	icon_part.texture = texture;
 	icon_part.sprite.setTexture(*icon_part.texture);
 	icon_part.sprite.setTextureRect(area);
 	mgr->get_messenger()->notify("icon_changed", entity);

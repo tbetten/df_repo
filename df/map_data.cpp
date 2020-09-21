@@ -69,7 +69,7 @@ Map_data::Map_data(Orientation orientation, sf::Vector2i mapsize, sf::Vector2i t
 		m_topology = std::make_unique<Orthogonal>(m_mapsize, m_tilesize);
 	}
 	m_map_index.reserve(m_mapsize.x* m_mapsize.y);
-	for (size_t i = 0; i < m_mapsize.x * m_mapsize.y; ++i)
+	for (size_t i = 0; i < static_cast<size_t>(m_mapsize.x) * static_cast<size_t>(m_mapsize.y); ++i)
 	{
 		m_map_index.push_back(std::map<Position::Layer, std::vector<ecs::Entity_id>>{});
 	}

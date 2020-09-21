@@ -1,10 +1,12 @@
+#ifdef NOT_USED
+
 #pragma once
 #include <string>
 #include <vector>
 #include <tuple>
 #include <memory>
 #include <SFML/Graphics.hpp>
-//#include "resource_cache.h"
+#include "resource.h"
 
 struct Shared_context;
 
@@ -56,10 +58,11 @@ namespace tileset
 	{
 		sf::Sprite get_sprite();
 
-		std::shared_ptr<cache::Resource_base> tileset_resource;
+		//std::shared_ptr<cache::Resource> tileset_resource;
 		std::shared_ptr<Tileset> tileset;
 		int tile_index;
 	};
 
 	//load_tileset(std::string_view filename);
 }
+#endif

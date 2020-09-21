@@ -12,6 +12,7 @@
 #include "lightsource.h"
 #include "sensor.h"
 #include "reactor.h"
+#include "armour.h"
 
 void comps::add_components (ecs::Entity_manager* mgr)
 {
@@ -27,6 +28,7 @@ void comps::add_components (ecs::Entity_manager* mgr)
 	mgr->add_component(ecs::Component_type::Lightsource, std::unique_ptr<ecs::C_base>(new ecs::Component<Lightsource>()));
 	mgr->add_component(ecs::Component_type::Sensor, std::unique_ptr<ecs::C_base>(new ecs::Component<Sensor>()));
 	mgr->add_component(ecs::Component_type::Reactor, std::unique_ptr<ecs::C_base>(new ecs::Component<Reactor>()));
+	mgr->add_component (ecs::Component_type::Armour, std::unique_ptr<ecs::C_base> (new ecs::Component<Armour> ()));
 }
 
 

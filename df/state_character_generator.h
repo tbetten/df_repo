@@ -28,7 +28,7 @@ enum class Gender : int;
 
 struct Character_data
 {
-	Gender gender;
+	Gender gender { Gender::Male };
 	std::string name;
 	Race race;
 	std::string tile_sheet;

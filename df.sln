@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "attribute", "attribute\attribute.vcxproj", "{E54DF222-91A8-4B4A-83E5-A4A74FFD66A7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entitybuilder", "entitybuilder\entitybuilder.vcxproj", "{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "df", "df\df.vcxproj", "{CAC438C2-0278-4973-9826-2F345F5CAB96}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "map", "map\map.vcxproj", "{9D98AFF6-4F64-4436-B6D2-AF61169D8D18}"
@@ -33,13 +31,6 @@ Global
 		{E54DF222-91A8-4B4A-83E5-A4A74FFD66A7}.Release|x64.Build.0 = Release|x64
 		{E54DF222-91A8-4B4A-83E5-A4A74FFD66A7}.Release|x86.ActiveCfg = Release|Win32
 		{E54DF222-91A8-4B4A-83E5-A4A74FFD66A7}.Release|x86.Build.0 = Release|Win32
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Debug|x64.ActiveCfg = Debug|x64
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Debug|x64.Build.0 = Debug|x64
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Debug|x86.ActiveCfg = Debug|Win32
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Release|x64.ActiveCfg = Release|x64
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Release|x64.Build.0 = Release|x64
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Release|x86.ActiveCfg = Release|Win32
-		{A9AF55D3-BD3B-4B6C-B7DF-C8763C0B8DF9}.Release|x86.Build.0 = Release|Win32
 		{CAC438C2-0278-4973-9826-2F345F5CAB96}.Debug|x64.ActiveCfg = Debug|x64
 		{CAC438C2-0278-4973-9826-2F345F5CAB96}.Debug|x64.Build.0 = Debug|x64
 		{CAC438C2-0278-4973-9826-2F345F5CAB96}.Debug|x86.ActiveCfg = Debug|Win32

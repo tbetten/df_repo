@@ -1,5 +1,6 @@
 #include "db_queries.h"
 #include <algorithm>
+#include <iterator>
 
 int DB_queries::query_tile_index(std::string tilesheet, std::string tile)
 {

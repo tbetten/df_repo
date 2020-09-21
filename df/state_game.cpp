@@ -13,6 +13,7 @@
 #include "statemanager.h"
 #include "map_data.h"
 #include "character_sheet.h"
+#include "utils.h"
 
 #include <iostream>
 #include <string>
@@ -44,8 +45,22 @@ void State_game::on_create()
 //	view.setViewport(sf::FloatRect{ 0.1f , 0.1f, 0.5f, 0.5f });
 //	window->setView(view);
 	m_event_mgr = m_context->m_event_manager;  // has to be done here, at construction the eventmanager is not yet added to the context
-	m_event_mgr->add_command("CMD_show_party", [this](auto data) {show_party(); });
-	m_context->m_system_manager->get_messenger()->bind("switched_current_entity", [this](auto val) {m_current_entity = std::any_cast<ecs::Entity_id>(val); });
+//	m_event_mgr->add_command("CMD_show_party", [this](auto data) {show_party(); });
+	m_context->m_system_manager->get_messenger ()->bind ("switched_current_entity", [this] (auto val) {on_change_entity (std::any_cast<ecs::Entity_id>(val)); });
+	auto win = sfg::Window::Create (sfg::Window::Style::NO_STYLE);
+	win->SetRequisition (sf::Vector2f (m_context->m_wind->get_renderwindow ()->getSize ()));
+	auto alignment = sfg::Alignment::Create ();
+	alignment->SetScale (sf::Vector2f { 0.0f, 0.0f });
+	alignment->SetAlignment (sf::Vector2f { 0.8f, 0.0f });
+	//alignment->Add (sfg::Label::Create ("hidehi"));
+	m_charsheet = std::make_unique<Character_sheet> (m_context);
+	//m_charsheet->populate_party ();
+	auto box = sfg::Box::Create (sfg::Box::Orientation::VERTICAL);
+	box->Pack (m_charsheet->get_charsheet ());
+	alignment->Add (box);
+	win->Add (alignment);
+	m_desktop.Add (win);
+
 }
 
 void State_game::on_destroy()
@@ -113,6 +128,22 @@ void State_game::update(const sf::Time& time)
 	m_context->m_system_manager->update (time.asMicroseconds());
 }
 
+void State_game::on_change_entity (ecs::Entity_id entity)
+{
+	m_current_entity = entity;
+	auto combo = find_widget<sfg::ComboBox> ("party_combobox");
+	auto entity_mgr = m_context->m_entity_manager;
+	auto character_comp = entity_mgr->get_data<ecs::Component<Character>> (ecs::Component_type::Character, entity);
+	for (auto itr = combo->Begin (); itr != combo->End (); ++itr)
+	{
+		if (*itr == character_comp->name)
+		{
+			combo->SelectItem (std::distance(combo->Begin(), itr));
+			m_charsheet->on_select ();
+		}
+	}
+}
+
 void State_game::draw()
 {
 	auto window = m_context->m_wind->get_renderwindow();
@@ -134,7 +165,8 @@ void State_game::show_party()
 	auto gui_window = sfg::Window::Create(sfg::Window::Style::BACKGROUND | sfg::Window::Style::TITLEBAR);
 	gui_window->SetTitle("Party");
 
-	m_charsheet = std::make_unique<Character_sheet>(m_context);
+	if (m_charsheet == nullptr) m_charsheet = std::make_unique<Character_sheet>(m_context);
+	m_charsheet->populate_party ();
 	auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	auto sheet = m_charsheet->get_charsheet();
 	box->Pack(sheet, false);

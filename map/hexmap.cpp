@@ -20,7 +20,7 @@ namespace map
 	coords Map::get_coords()
 	{
 		coords res;
-		for (auto hex : _map)
+		for (const auto& hex : _map)
 		{
 			sf::Vector3i hexcoords{ hex.q, hex.r, hex.s };
 			auto center = hexlib::hex_to_pixel(_layout, hex);
@@ -36,14 +36,14 @@ namespace map
 		int size = map.size() * 6 * 2;
 
 		int i{ 0 };
-		for (auto hex : map)
+		for (const auto& hex : map)
 		{
 			auto corners = hexlib::polygon_corners(layout, hex);
 			int vertexindex = i * 6 * 2;
 			for (int j = 0; j < 6; ++j)
 			{
 				_vertices[vertexindex].position = sf::Vector2f(corners[j].x, corners[j].y);
-				_vertices[vertexindex + 1].position = sf::Vector2f(corners[(j + 1) % 6].x, corners[(j + 1) % 6].y);
+				_vertices[vertexindex + 1].position = sf::Vector2f(static_cast<float>(corners[(j + 1) % 6].x), static_cast<float>(corners[(j + 1) % 6].y));
 				vertexindex += 2;
 			}
 			++i;

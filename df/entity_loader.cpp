@@ -20,6 +20,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#pragma warning (disable:26812)
+
 namespace fs = std::filesystem;
 using namespace std::string_literals;
 
@@ -70,12 +72,12 @@ namespace el
 		return Position::Layer::Invalid;
 	}
 
-	Reactor::On_trigger convert_action(const std::string_view action)
+/*	Reactor::On_trigger convert_action(const std::string_view action)
 	{
 		if (action == "activate") return Reactor::On_trigger::Activate;
 		if (action == "change_tile") return Reactor::On_trigger::Change_tile;
 		return Reactor::On_trigger::No_action;
-	}
+	}*/
 
 	void fill_position(Position* position, const std::string_view layer, sf::Vector2i coords, const std::string_view map_handle)
 	{
@@ -130,9 +132,12 @@ namespace el
 		for (auto [key, array_data] : m_arrays)
 		{
 			array_data.array.rebuild();
-			auto res = m_context->m_cache->get_obj(array_data.tilesheet);
-			auto tex = cache::get_val<tiled::Tilesheet>(res.get());
-			array_data.array.add_texture(res, tex);
+			//auto res = m_context->m_cache->get_obj(array_data.tilesheet);
+			//auto tex = cache::get_val<tiled::Tilesheet>(res.get());
+			//auto tex = cache::get<tiled::Tilesheet> (res);
+			//auto tex = m_context->m_cache->get<tiled::Tilesheet> (array_data.tilesheet);
+			//array_data.array.
+			array_data.array.add_texture(m_context->m_cache->get<tiled::Tilesheet> (array_data.tilesheet));
 			auto [entity, position, drawable, animation] = make_entity(m_context->m_entity_manager);
 			fill_position(position, array_data.layer, sf::Vector2i{ 0,0 }, array_data.map);
 			drawable->type = Drawable::Type::Vertex_array;
@@ -150,21 +155,15 @@ namespace el
 		if (tile.animation.has_value())
 		{
 			auto& source = tile.animation.value();
-			for (auto source_frame : source)
-			{
-				auto& sheet = map.tilesets[tile.tileset_index].sheet;
-				auto rect = sheet.get_rect(tile.tile_index);
-				Frame f{ sheet.get_rect(source_frame.tile_id), source_frame.duration };
-				animation->frames.emplace_back(Frame{ sheet.get_rect(source_frame.tile_id), source_frame.duration });
-			}
+			std::vector<Frame> frames {};
+			std::transform (std::cbegin (source), std::cend (source), std::back_inserter (frames), [sheet = map.tilesets [tile.tileset_index].sheet] (tiled::Animation_frame f){return Frame { sheet.get_rect (f.tile_id), f.duration }; });
+			animation->load (frames);
 		}
 		if (position) fill_position(position, tile, map_name, map.metadata.map_size.x);
 		if (drawable) init_drawable(mgr, entity, tile.tilesheet_name, m_context->m_cache, tile.area);
 
-		md->add_to_map(entity, tile.map_index, position->layer);
+		if (position) md->add_to_map(entity, tile.map_index, position->layer);
 		return entity;
-//		auto& cell = md->m_map_index[tile.map_index];
-//		cell.push_back(entity);
 	}
 
 	void Entity_loader::load_item_properties(ecs::Entity_id entity, const std::string& handle)
@@ -194,10 +193,36 @@ namespace el
 		auto a = tile.properties;
 		std::cout << tiled::get_property_value<std::string>(tile.properties, "item_handle").value() << "\n";
 
-		load_item_properties(entity, tiled::get_property_value<std::string>(tile.properties, "item_handle").value_or(""));
+		auto key = tiled::get_property_value<std::string> (tile.properties, "item_handle").value_or ("");
+		auto db = db::DB_connection (m_context->m_database_path);
+		auto stmt = db.prepare ("select id from components inner join entity_component on components.name = entity_component.component where entity_component.entity = ?");
+		stmt.bind (1, key);
+		auto table = stmt.fetch_table ();
+		for (auto row : table)
+		{
+			auto t = std::get<int>(row ["id"]);
+			assert (t >= 0);
+			std::cout << key << "\t" << t << "\n";
+			size_t component_id = static_cast<size_t>(t);
+			if (!m_context->m_entity_manager->has_component (entity, static_cast<ecs::Component_type>(component_id)))
+			{
+				if (!m_context->m_entity_manager->add_component_to_entity (entity, static_cast<ecs::Component_type>(component_id), key, false))
+				{
+					auto index = m_context->m_entity_manager->get_index (static_cast<ecs::Component_type>(component_id), entity);
+					auto component_base = m_context->m_entity_manager->get_component_by_id (component_id);
+					component_base->m_context = m_context;
+					component_base->load (index.value (), key);
+				}
+			}
+			
+			
+			
+		}
+
+/*		load_item_properties(entity, tiled::get_property_value<std::string>(tile.properties, "item_handle").value_or(""));
 		m_context->m_entity_manager->add_component_to_entity(entity, ecs::Component_type::Item);
 		auto item = m_context->m_entity_manager->get_data<ecs::Component<Item>>(ecs::Component_type::Item, entity);
-		item->item_name = tiled::get_property_value<std::string>(tile.properties, "item_handle").value();
+		item->item_name = tiled::get_property_value<std::string>(tile.properties, "item_handle").value();*/
 		return entity;
 	}
 
@@ -210,11 +235,13 @@ namespace el
 			break;
 		case Tile_type::Inert_tile:
 			create_inert_tile(map, tile, map_name);
+			return 0;
 			break;
 		case Tile_type::Item:
 			return create_item(map, tile, map_name, md);
 			break;
 		default:
+			return 0;
 			break;
 		}
 	}
@@ -229,13 +256,13 @@ namespace el
 		return res;
 	}
 
-	Sensor::Trigger convert_trigger(std::string_view trigger)
+/*	Sensor::Trigger convert_trigger(std::string_view trigger)
 	{
 		if (trigger == "use") return Sensor::Trigger::Use;
 		if (trigger == "use_with_item") return Sensor::Trigger::Use_with_item;
 		if (trigger == "enter") return Sensor::Trigger::Enter;
 		return Sensor::Trigger::Invalid;
-	}
+	}*/
 
 	void Entity_loader::load_map(const std::string& handle)
 	{
@@ -298,7 +325,7 @@ namespace el
 					if (position && !entity_manager->has_component(*entity, ecs::Component_type::Position))
 					{
 						if (tiles.empty()) throw std::out_of_range{ "can not fill position component if there are no coordinates" };
-						entity_manager->add_component_to_entity(*entity, ecs::Component_type::Position, false);
+						entity_manager->add_component_to_entity(*entity, ecs::Component_type::Position, "", false);
 						auto pos_comp = entity_manager->get_data<ecs::Component<Position>>(ecs::Component_type::Position, *entity);
 						auto layer = tiled::get_property_value<std::string>(props, "layer").value_or("interactive");
 						
@@ -307,27 +334,19 @@ namespace el
 
 					if (sensor)
 					{
-						entity_manager->add_component_to_entity(*entity, ecs::Component_type::Sensor, false);
+						entity_manager->add_component_to_entity(*entity, ecs::Component_type::Sensor, "", false);
 						auto sensor_comp = entity_manager->get_data<ecs::Component<Sensor>>(ecs::Component_type::Sensor, *entity);
-						sensor_comp->active = tiled::get_property_value<bool>(props, "active").value();
-						sensor_comp->id = object.id;
-						sensor_comp->state = tiled::get_property_value<bool>(props, "state").value();
-						sensor_comp->trigger = convert_trigger(tiled::get_property_value<std::string>(props, "activation").value());
-						sensor_comp->item = tiled::get_property_value<std::string>(props, "item_handle").value_or("");
+						props.emplace_back ("object_id", object.id);
+						sensor_comp->load (props);
 					}
 
 					if (reactor)
 					{
-						entity_manager->add_component_to_entity(*entity, ecs::Component_type::Reactor, false);
+						entity_manager->add_component_to_entity(*entity, ecs::Component_type::Reactor, "", false);
 						auto reactor_comp = entity_manager->get_data<ecs::Component<Reactor>>(ecs::Component_type::Reactor, *entity);
-						reactor_comp->id = object.id;
-						reactor_comp->triggered_by = tiled::get_property_value<int>(props, "triggered_by").value();
-						reactor_comp->tile_true = tiled::get_property_value<std::string>(props, "tile_true").value_or("");
-						reactor_comp->tile_false = tiled::get_property_value<std::string>(props, "tile_false").value_or("");
-						reactor_comp->make_accessible = tiled::get_property_value<bool>(props, "make_accessible").value_or(false);
-						reactor_comp->make_transparant = tiled::get_property_value<bool>(props, "make_transparant").value_or(false);
-						reactor_comp->action = convert_action(tiled::get_property_value<std::string>(props, "on_trigger").value_or("no_action"));
-						reactor_comp->entity = *entity;
+						props.emplace_back ("entity", entity.value ());
+						props.emplace_back ("object_id", object.id);
+						reactor_comp->load (props);
 					}
 
 					if (!tiles.empty()&& entity.has_value())

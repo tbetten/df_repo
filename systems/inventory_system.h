@@ -20,6 +20,7 @@ namespace systems
 		void update(sf::Int64 dt) override;
 		void setup_events() override;
 		void drop_item(ecs::Entity_id holder, ecs::Entity_id item);
+		void equip_item (ecs::Entity_id holder, ecs::Entity_id item);
 	private:
 		messaging::Messenger* m_messenger;
 		ecs::Entity_manager* m_entity_mgr;

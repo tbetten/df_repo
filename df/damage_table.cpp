@@ -1,6 +1,6 @@
 #include "damage_table.h"
 #include <limits>
-
+/*
 constexpr int square(int num)
 {
 	return num * num;
@@ -25,13 +25,13 @@ constexpr double my_sqrt(double x)
 		? detail::sqrt_help(x, x, 0)
 		: std::numeric_limits<double>::quiet_NaN();
 }
-
-constexpr double dice_mean(int dice)
+*/
+/*constexpr double dice_mean(int dice)
 {
 	return 3.5 * dice;
-}
+}*/
 
-constexpr double dice_stddev(int dice)
+/*constexpr double dice_stddev(int dice)
 {
 	return my_sqrt((square(5 * dice + 1) - 1) / 12);
-}
+}*/

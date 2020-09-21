@@ -37,6 +37,7 @@ struct Shared_context
 	ecs::Entity_manager* m_entity_manager;
 	ecs::System_manager* m_system_manager;
 	std::string m_current_map;
+	std::string m_database_path { "./assets/database/gamedat.db" };
 	Scheduler* m_scheduler{ nullptr };
 	std::unique_ptr<Maps> m_maps{ nullptr };
 	std::vector<ecs::Entity_id> m_party;

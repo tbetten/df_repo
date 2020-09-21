@@ -18,7 +18,7 @@
  </objecttype>
  <objecttype name="leather_armour" color="#a0a0a4">
   <property name="description" type="string" default="leather armour"/>
-  <property name="item_handle" type="string" default="leather_armour"/>
+  <property name="item_handle" type="string" default="medium_hardened_leather_armour"/>
   <property name="subtype" type="string" default="larmour"/>
   <property name="tile_type" type="string" default="item"/>
  </objecttype>

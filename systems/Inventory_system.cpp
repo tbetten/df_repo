@@ -7,10 +7,14 @@
 #include "pickup_payload.h"
 #include "shared_context.h"
 #include "map_data.h"
+#include "armour.h"
+#include "drawable.h"
 //#include "entity_at.h"
 
 #include <iostream>
 #include <cassert>
+#include <span>
+#include <numeric>
 
 namespace systems
 {
@@ -26,6 +30,7 @@ namespace systems
 		m_container = m_entity_mgr->get_component<ecs::Component<Container >> (ecs::Component_type::Container);
 
 		add_message("encumbrance_changed");
+		add_message ("inventory_changed");
 	}
 
 	void Inventory_system::setup_events()
@@ -84,10 +89,11 @@ namespace systems
 				{
 					auto& container = m_container->m_data[container_index.value()];
 					map_data.remove_entity(entity, coords);
-					container.contents.push_back(entity);
+					container.contents.push_back (entity);
 					container.total_weight += weight;
 					m_entity_mgr->remove_component_from_entity(entity, ecs::Component_type::Position, true);
-					notify("encumbrance_changed", character);
+					notify ("encumbrance_changed", character);
+					notify ("inventory_changed", character);
 				}
 			}
 		}
@@ -128,6 +134,15 @@ namespace systems
 			pos->current_map = context->m_current_map;
 			pos->layer = Position::Layer::On_floor;
 			pos->moved = true;
+		}
+	}
+
+	void Inventory_system::equip_item (ecs::Entity_id holder, ecs::Entity_id item)
+	{
+		if (m_entity_mgr->has_component (item, ecs::Component_type::Armour) && m_entity_mgr->has_component(holder, ecs::Component_type::Drawable))
+		{
+			auto armour_data = m_entity_mgr->get_data<ecs::Component<Armour>> (ecs::Component_type::Armour, item);
+			fill_icon_part (m_entity_mgr, m_system_manager->get_context ()->m_cache, armour_data->tilesheet, armour_data->tile_index, "torso", holder);
 		}
 	}
 }

@@ -6,6 +6,7 @@
 #include <map>
 #include <tuple>
 #include <span>
+#include <optional>
 
 namespace ecs
 {
@@ -13,6 +14,7 @@ namespace ecs
 }
 
 struct Attributes;
+struct Shared_context;
 
 namespace attributes
 {
@@ -22,6 +24,7 @@ namespace attributes
 	static std::vector<Attrib> tertiary_attributes{ Attrib::BS, Attrib::BM, Attrib::SM };
 	static std::vector<Attrib> strength_modifiers{ Attrib::ST_lift, Attrib::ST_strike };
 	static std::vector<Attrib> derived_attributes{ Attrib::BL, Attrib::Dodge };
+	static std::map<Attrib, bool> format_with_cost { {Attrib::ST, true}, {Attrib::DX, true}, {Attrib::IQ, true}, {Attrib::HT, true}, {Attrib::HP, true}, {Attrib::Will, true}, {Attrib::Per, true}, {Attrib::FP, true}, {Attrib::ST_lift, false}, {Attrib::ST_strike, false}, {Attrib::SM, false}, {Attrib::BL, false}, {Attrib::BS, true}, {Attrib::BM, true} };
 	//enum class Primary_attribute { ST, DX, IQ, HT };
 	//enum class Secundaty_attribute { HP, Will, Per, FP };
 	//enum class Strength_modifiers { ST_lift, ST_strike };
@@ -31,13 +34,14 @@ namespace attributes
 
 	struct Transaction
 	{
+		Transaction (Attrib a, Transaction_type t, Template_type tt, std::string name, int u, int p, std::optional<unsigned int> id) : attribute { a }, type { t }, template_type { tt }, template_name { std::move (name) }, units { u }, points_spent { p }, transaction_id { id }{}
 		Attrib attribute;
 		Transaction_type type;
 		Template_type template_type;
 		std::string template_name;
 		int units;
 		int points_spent;
-		unsigned int transaction_id; // used for removing transactions, is entity id for equipment and effect id for effects, not used for buy or raise base.
+		std::optional<unsigned int> transaction_id; // used for removing transactions, is entity id for equipment and effect id for effects, not used for buy or raise base.
 	};
 
 	using Transactions = std::vector<Transaction>;
@@ -57,5 +61,6 @@ namespace attributes
 struct Attributes
 {
 	void reset() {}
+	void load (const std::string& key, Shared_context* context) {}
 	std::vector<attributes::Transaction> transactions;
 };

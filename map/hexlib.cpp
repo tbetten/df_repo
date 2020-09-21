@@ -2,7 +2,7 @@
 #include "hexlib.h"
 #include <stdexcept>
 
-
+#pragma warning (disable: 26812)
 
 constexpr double pi = 3.141592653589793;
 
@@ -141,11 +141,12 @@ namespace hexlib
 		return map;
 	}
 
+
 	sf::VertexArray to_vertex_array (const HexMap& map, Layout layout)
 	{
 		sf::VertexArray vertices{ sf::Lines, map.size () * 6 * 2 };
 		int i{ 0 };
-		for (auto hex : map)
+		for (const auto& hex : map)
 		{
 			sf::Vertex* current_hex = &vertices[i * 6 * 2];
 			auto corners = hexlib::polygon_corners (layout, hex);
@@ -164,7 +165,7 @@ namespace hexlib
 
 	void fill_graph(HexMap& map, Hex_graph& graph)
 	{
-		for (auto node : map)
+		for (const auto& node : map)
 		{
 			for (int dir = 0; dir < 6; ++dir)
 			{
@@ -186,7 +187,7 @@ namespace hexlib
 
 		while (!frontier.empty())
 		{
-			auto current = frontier.front();
+			const auto& current = frontier.front();
 			frontier.pop();
 			if (current == goal)
 			{

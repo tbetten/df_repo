@@ -1,3 +1,4 @@
+#ifdef NOT_USED
 #include "tileset.h"
 #include "tinyxml2.h"
 #include "shared_context.h"
@@ -69,7 +70,8 @@ namespace tileset
 
 	sf::Sprite Tile::get_sprite()
 	{
-		auto tileset = cache::get_val<Tileset>(tileset_resource.get());
+		//auto tileset = cache::get<Tileset>(tileset_resource);
 		return sf::Sprite{ tileset->texture, tileset->get_rect(tile_index) };
 	}
 }
+#endif

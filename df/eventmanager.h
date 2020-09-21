@@ -55,6 +55,7 @@ namespace event
 	class Binding
 	{
 	public:
+#pragma warning (suppress: 26812)
 		Binding(std::string command, sf::Event::EventType event_type, Event_params params) :m_command{ std::move(command) }, m_type{ event_type }, m_params{ params }{}
 		std::optional<Event_info> match_binding(sf::Event event, Modifiers m) const;
 	private:

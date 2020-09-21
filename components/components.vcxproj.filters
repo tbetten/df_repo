@@ -90,6 +90,9 @@
     <ClInclude Include="skill.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="armour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -141,6 +144,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="reactor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Armour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

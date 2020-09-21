@@ -9,10 +9,14 @@ namespace cache
 	class Resource_base;
 }
 
+struct Shared_context;
+
 struct Facing
 {
 	Facing () { reset (); }
 	void reset ();
+	void load (const std::string& key, Shared_context* context) {}
+
 	Compass facing = Compass::North;
 	sf::Sprite facing_indicator;
 	sf::Texture* facing_texture;

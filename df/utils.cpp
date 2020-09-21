@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <limits>
 
 bool iequal(std::string_view s1, std::string_view s2)
 {
@@ -15,3 +16,4 @@ std::string to_lower(std::string s)
 	std::transform(std::begin(s), std::end(s), std::begin(s), [](unsigned char s) {return std::tolower(s); });
 	return s;
 }
+

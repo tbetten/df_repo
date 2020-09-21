@@ -1,3 +1,4 @@
+#ifdef BLA
 #pragma once
 #include <optional>
 #include <SFML/System/Vector2.hpp>
@@ -26,3 +27,4 @@ namespace el_old
 		Shared_context* m_context;
 	};
 }
+#endif

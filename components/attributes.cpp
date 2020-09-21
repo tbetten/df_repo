@@ -10,7 +10,7 @@
 
 namespace attributes
 {
-	static std::map<std::string, Attrib> string_to_attribute = { {"ST", Attrib::ST}, {"DX", Attrib::DX}, {"IQ", Attrib::IQ}, {"HT", Attrib::HT}, {"HP", Attrib::HP}, {"Will", Attrib::Will}, {"Per", Attrib::Per}, {"FP", Attrib::FP}, {"Basic speed", Attrib::BS}, {"Basic move", Attrib::BM}, {"Size Modifier", Attrib::SM} };
+	static std::map<std::string, Attrib> string_to_attribute = { {"ST", Attrib::ST}, {"DX", Attrib::DX}, {"IQ", Attrib::IQ}, {"HT", Attrib::HT}, {"HP", Attrib::HP}, {"Will", Attrib::Will}, {"Per", Attrib::Per}, {"FP", Attrib::FP}, {"Basic speed", Attrib::BS}, {"Basic move", Attrib::BM}, {"Size Modifier", Attrib::SM}, {"Basic Lift", Attrib::BL}, {"Lifting Strenth", Attrib::ST_lift}, {"Striking Strength", Attrib::ST_strike} };
 	static std::map<Attrib, int> base_values{ {Attrib::ST, 1000}, {Attrib::DX, 1000}, {Attrib::IQ, 1000}, {Attrib::HT, 1000}, {Attrib::HP, 1000}, {Attrib::Will, 1000}, {Attrib::Per, 1000}, {Attrib::FP, 1000}, {Attrib::BS, 500}, {Attrib::BM, 500}, {Attrib::SM, 0} };
 	static std::map<Attrib, int> units_per_point_map{ {Attrib::ST, 10}, {Attrib::DX, 5}, {Attrib::IQ, 5}, {Attrib::HT, 10}, {Attrib::HP, 50}, {Attrib::Will, 20 }, { Attrib::Per, 20 }, { Attrib::FP, 25}, {Attrib::BS, 5}, {Attrib::BM,20}, {Attrib::SM, 0} };
 
@@ -48,7 +48,7 @@ namespace attributes
 			lifting_str = get_total_value(transactions, Attrib::ST_lift);
 			return (strength + lifting_str) * (strength + lifting_str) / 500;
 		case Attrib::Dodge:
-			return ((get_total_value(transactions, Attrib::BS) + 300) / 100) * 100;
+			return (get_total_value(transactions, Attrib::BS) + 300);
 		default:
 			return 0;
 		}
@@ -73,19 +73,19 @@ namespace attributes
 		case Character::Encumbrance::No:
 			break;
 		case Character::Encumbrance::Light:
-			move *= 0.8;
+			move = static_cast<int>(move * 0.8);
 			dodge -= 100;
 			break;
 		case Character::Encumbrance::Medium:
-			move *= 0.6;
+			move = static_cast<int>(move * 0.6);
 			dodge -= 200;
 			break;
 		case Character::Encumbrance::Heavy:
-			move *= 0.4;
+			move = static_cast<int>(move * 0.4);
 			dodge -= 300;
 			break;
 		case Character::Encumbrance::Extra_heavy:
-			move *= 0.2;
+			move = static_cast<int>(move * 0.2);
 			dodge -= 400;
 			break;
 		default:

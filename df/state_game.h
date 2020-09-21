@@ -38,6 +38,7 @@ private:
 	void on_select(sfg::ComboBox::Ptr cb);
 	sfg::Box::Ptr create_charsheet();
 	void close_window();
+	void on_change_entity (ecs::Entity_id entity);
 
 	event::Event_manager* m_event_mgr = nullptr;
 	std::unordered_map<std::string, ecs::Entity_id> m_party;

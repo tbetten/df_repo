@@ -1,9 +1,21 @@
 #pragma once
 #include <array>
+#include "utils.h"
 
 
-extern constexpr double dice_mean (int dice);
-extern constexpr double dice_stddev (int dice);
+//extern constexpr double dice_mean (int dice);
+//extern constexpr double dice_stddev (int dice);
+
+constexpr double dice_mean (int dice)
+{
+	return 3.5 * dice;
+}
+
+constexpr double dice_stddev (int dice)
+{
+	return my_sqrt ((square (5 * dice + 1) - 1) / 12);
+}
+
 namespace damage
 {
 
@@ -108,7 +120,7 @@ namespace damage
 	{
 		constexpr Damage_table ()
 		{
-			for (int i = 0; i < 42; ++i)
+			for (int i = 0; i < 41; ++i)
 			{
 				table [i] = Damage_entry { i };
 			}

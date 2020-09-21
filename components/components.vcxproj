@@ -121,7 +121,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -129,7 +129,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,6 +167,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
+    <ClInclude Include="armour.h" />
     <ClInclude Include="attributes.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="components.h" />
@@ -193,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
+    <ClCompile Include="Armour.cpp" />
     <ClCompile Include="attributes.cpp" />
     <ClCompile Include="components.cpp" />
     <ClCompile Include="container.cpp" />

@@ -73,7 +73,7 @@ namespace systems
 			auto attributes = entity_mgr->get_data<ecs::Component<Attributes>>(ecs::Component_type::Attributes, entity);
 			auto character = entity_mgr->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
 			auto [move, _] = attributes::get_encumbered_value(attributes->transactions, character->encumbrance);
-			time += stepsize * 1000 / move;
+			time += static_cast<int> (stepsize * 1000 / move);
 			
 			
 		}

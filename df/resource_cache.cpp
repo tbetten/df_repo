@@ -6,44 +6,31 @@
 
 namespace cache
 {
-	enum class Resource_type { Texture, Tileset, Font, Tilesheet };  // must agree with table resource_type of database
-
-	constexpr std::array<Pf, 4> funcs { &Texture_resource::load_resource, nullptr, nullptr, &Tilesheet_resource::load_resource};
-
-	void Cache::init ()
+	Cache::Cache ()
 	{
-		std::string sql = "select key, type, path from resource";
-		//auto db = db::db_connection::create("assets/database/gamedat.db");
-		auto db = db::DB_connection{ "assets/database/gamedat.db" };
-		auto stmt = db.prepare(sql);
-		auto data = stmt.fetch_table();
-		for (auto row : data)
+		db::DB_connection db { "./assets/database/gamedat.db" };
+		//auto db = db::DB_factory::create (R"("assets\database\gamedat.db")");
+		auto sql = "select key, path from resource";
+		auto stmt = db.prepare (sql);
+		auto result = stmt.fetch_table ();
+		m_cache.reserve (result.size ());
+		for (auto row : result)
 		{
-			std::string key = std::get<std::string>(row["key"]);
-			auto type = std::get<int>(row["type"]);
-			std::string path = std::get<std::string>(row["path"]);
-			loadfuncs[key] = funcs [type];
-			paths[key] = path;
+			m_cache.emplace_back (std::get<std::string> (row ["key"]), std::get<std::string> (row ["path"]));
 		}
 	}
 
-	Texture_resource::Resource (fs::path file)
+	bool Cache::load_cache_entry (const std::string& key)
 	{
-		if (!val.loadFromFile(file.string())) std::cout << "error reading texture " << file << "\n";
-	}
-
-	Tileset_resource::Resource (fs::path file)
-	{
-		val.load (file.string ());
-	}
-
-	Font_resource::Resource(fs::path file)
-	{
-		val.loadFromFile(file.string());
-	}
-
-	Tilesheet_resource::Resource(fs::path file)
-	{
-		val.load(file.string(), false);
+	//	auto db = db::DB_factory::create (R"("assets\database\gamedat.db")");
+		db::DB_connection db { "./assets/database/gamedat.db" };
+		auto sql = "select path from resource where key = ?";
+		auto stmt = db.prepare (sql);
+		stmt.bind (1, key);
+		if (stmt.execute_row () != db::Prepared_statement::Row_result::Row) return false;
+		auto row = stmt.fetch_row ();
+		auto path = std::get<std::string> (row ["path"]);
+		m_cache.emplace_back (key, path);
+		return true;
 	}
 }

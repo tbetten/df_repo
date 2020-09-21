@@ -1,3 +1,5 @@
+#ifdef BLA
+
 #include "entity_loader_old.h"
 #include "shared_context.h"
 #include "resource_cache.h"
@@ -132,8 +134,8 @@ namespace el_old
 
 	void Entity_loader::load_map(const std::string& map_handle)
 	{
-		using Tileset_data = std::pair<std::shared_ptr<cache::Resource_base>, tileset::Tileset*>;
-		std::vector<std::pair<std::shared_ptr<cache::Resource_base>, tileset::Tileset*>> tilesets;
+		using Tileset_data = std::pair<std::shared_ptr<cache::Resource>, tileset::Tileset*>;
+		std::vector<std::pair<std::shared_ptr<cache::Resource>, tileset::Tileset*>> tilesets;
 //		std::vector<ts::Tileset> tilesets;
 		auto cache = m_context->m_cache;
 
@@ -170,7 +172,7 @@ namespace el_old
 			//ts::Tileset ts{ source, tileset_elem->IntAttribute("firstgid") };
 			filename = get_filename(source);
 			auto tileset_resource = m_context->m_cache->get_obj(filename);
-			auto tileset = cache::get_val<tileset::Tileset>(tileset_resource.get());
+			auto tileset = cache::get<tileset::Tileset>(tileset_resource);
 			//ts::Tileset ts = ts::load_tileset(filename);
 			//ts.firstgid = tileset_elem->IntAttribute("firstgid");
 			tileset->set_first_gid(tileset_elem->IntAttribute("firstgid"));
@@ -290,3 +292,4 @@ namespace el_old
 		m_context->m_maps->maps.emplace(map_handle, std::move(md));
 	}
 }
+#endif
