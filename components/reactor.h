@@ -24,7 +24,7 @@ struct Reactor
 	std::string tile_false;
 	sf::Vector2i tile_coords;
 	ecs::Entity_id entity;
-	bool make_accessible;
-	bool make_transparant;
-	On_trigger action;
+	bool make_accessible { false };
+	bool make_transparant { false };
+	On_trigger action { On_trigger::No_action };
 };

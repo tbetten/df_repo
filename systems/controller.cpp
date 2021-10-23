@@ -118,9 +118,9 @@ namespace systems
 		sf::Vector2i coords;
 		if (std::holds_alternative<event::Mouse_info>(data.info))
 		{
-			auto mouse_data = std::get<event::Mouse_info>(data.info);
+			const auto& mouse_data = std::get<event::Mouse_info>(data.info);
 			auto context = m_system_manager->get_context();
-			auto& topology = context->m_maps->maps[context->m_current_map].m_topology;
+			const auto& topology = context->m_maps->maps[context->m_current_map].m_topology;
 			coords = topology->to_tile_coords(sf::Vector2i{ mouse_data.x, mouse_data.y });
 		}
 		std::cout << "(" << coords.x << ", " << coords.y << ")\n";

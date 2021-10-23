@@ -9,6 +9,11 @@
   <property name="description" type="string" default="splatters of blood"/>
   <property name="tile_type" type="string" default="inert_tile"/>
  </objecttype>
+ <objecttype name="boots" color="#a0a0a4">
+  <property name="description" type="string" default="boots"/>
+  <property name="item_handle" type="string" default="boots"/>
+  <property name="tile_type" type="string" default="item"/>
+ </objecttype>
  <objecttype name="brick_wall" color="#a0a0a4">
   <property name="description" type="string" default="a rough brick wall"/>
   <property name="tile_type" type="string" default="inert_tile"/>

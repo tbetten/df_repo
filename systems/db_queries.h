@@ -18,5 +18,5 @@ public:
 	static std::vector<std::string> get_skills_by_talent(std::string talent);
 	static std::vector<std::tuple<std::string, std::string, std::string, int, int, int, int, std::optional<int>>> get_racial_advantages();
 private:
-	inline static db::DB_connection connection{ "./assets/database/gamedat.db" };
+	inline static db::DB_connection::Ptr connection = db::DB_connection::create ("./assets/database/gamedat.db");//{ "./assets/database/gamedat.db" };
 };

@@ -5,7 +5,7 @@
  <tileset firstgid="41" source="../sprite/dungeon/torch/torch.tsx"/>
  <tileset firstgid="51" source="../sprite/dungeon/floor/blood/blood.tsx"/>
  <tileset firstgid="61" source="../sprite/item/item.tsx"/>
- <tileset firstgid="81" source="../sprite/dungeon/door/door.tsx"/>
+ <tileset firstgid="91" source="../sprite/dungeon/door/door.tsx"/>
  <layer id="1" name="floor" width="20" height="20" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -59,7 +59,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,83,69,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -251,7 +251,7 @@
     <property name="position" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="44" gid="97" x="256" y="320" width="32" height="32">
+  <object id="44" gid="107" x="256" y="320" width="32" height="32">
    <properties>
     <property name="drawable" type="bool" value="true"/>
     <property name="layer" value="wall"/>

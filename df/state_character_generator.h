@@ -81,6 +81,15 @@ struct Advantage
 	std::optional<int> self_control;
 };
 
+struct Attrib_modifier_entry
+{
+	Attrib_modifier_entry () : racial_value { sfg::Label::Create ("0") }, racial_cost { sfg::Label::Create ("0") }, occupational_value { sfg::Label::Create ("0") }, occupational_cost { sfg::Label::Create ("0") }{}
+	sfg::Label::Ptr racial_value;
+	sfg::Label::Ptr racial_cost;
+	sfg::Label::Ptr occupational_value;
+	sfg::Label::Ptr occupational_cost;
+};
+
 class State_character_generator : public State
 {
 public:
@@ -102,6 +111,8 @@ private:
 	void read_attributes();
 	void read_attrib_modifiers();
 	void apply_attrib_modifier(const std::string& name, int modifier);
+	sfg::Widget::Ptr create_attrib_adjustment_table (bool racial);
+	void populate_attrib_adjustment_table (Race race);
 	sfg::Table::Ptr create_attribute_table();
 	void create_racial_talent(const std::string& race);
 	void on_race_toggle(const std::string& name);
@@ -125,7 +136,7 @@ private:
 	std::vector<Attrib_value> m_attrib_values;
 	std::unordered_map<std::string, sfg::RadioButton::Ptr> m_race_buttons;
 	//std::unique_ptr<db::db_connection> m_db;
-	db::DB_connection m_db;
+	db::DB_connection::Ptr m_db;
 	sfg::SFGUI m_sfgui;
 	sfg::Window::Ptr m_gui_window;
 	sfg::Desktop m_desktop;
@@ -146,6 +157,8 @@ private:
 
 	std::vector<Modifier> m_modifiers;
 	std::vector<Character_data> m_party;
+
+	std::unordered_map<attributes::Attrib, Attrib_modifier_entry> m_attrib_modifier_entries;
 
 	bool m_done{ false };
 };

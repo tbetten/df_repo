@@ -17,7 +17,7 @@ namespace ecs
 
 struct Character;
 struct Attributes;
-struct Container;
+struct Inventory;
 struct Drawable;
 //enum class Attribute : unsigned int;
 
@@ -30,7 +30,7 @@ struct Party_member
 	ecs::Entity_manager* m_em;
 	Character* character = nullptr;
 	Attributes* attributes = nullptr;
-	Container* container = nullptr;
+	Inventory* inventory = nullptr;
 	Drawable* drawable = nullptr;
 	sf::Vector2i coords;
 //	sfg::Widget::Ptr character_view = nullptr;
@@ -51,11 +51,15 @@ public:
 	enum class Sheet_view { Character_view, Attributes_view, Inventory_view };
 	using Itr = std::vector<Party_member>::iterator;
 
-	explicit Character_sheet(Shared_context* context);
+	Character_sheet(Shared_context* context, sfg::Desktop* desktop);
 	void populate_party ();
 	void fill_data(ecs::Entity_id entity);
 	sfg::Widget::Ptr get_charsheet() const;
 	void on_select ();
+
+	void remove_widgets ();
+
+	std::vector<std::weak_ptr<sfg::Window>> m_remove;
 private:
 //	std::vector<Party_member> get_party_data() const;
 	void add_sheets (Party_member& member);
@@ -63,27 +67,32 @@ private:
 	sfg::Widget::Ptr create_attribute_page(const Party_member& m) const;
 	sfg::Widget::Ptr create_inventory_page(const Party_member& m);
 
+	void populate_inventory_page (const Party_member& m);
+	void show_description (size_t index, bool equipped);
 
 	void on_inventory_changed (const std::any& val);
 	
 	void on_drop_item();
 	void on_equip();
 	void on_use_item();
+	void destroy (std::weak_ptr<sfg::Window> w);
 	
-
+	
 	sfg::Widget::Ptr m_root;
-	ecs::Component<Character>* m_character;
-	ecs::Component<Attributes>* m_attributes;
-	ecs::Component<Container>* m_container;
+	sfg::Desktop* m_desktop;
+//	ecs::Component<Character>* m_character;
+//	ecs::Component<Attributes>* m_attributes;
+//	ecs::Component<Container>* m_container;
 	Shared_context* m_context;
 	ecs::Entity_manager* m_em;
 	ecs::Entity_id m_current_member;
 	std::vector<Party_member> m_party;
 	std::vector<Inventory_item> m_inventory;
 	std::map<Sheet_view, sfg::Notebook::IndexType> m_sheet_indices;
+	sfg::Window::Ptr m_description_popup;
 };
 
 void populate_character_page (const Party_member& m);
 void populate_attribute_page (const Party_member& m);
-void populate_inventory_page (const Party_member& m);
+
 std::string get_attribute (Attributes* attribs, attributes::Attrib attrib);

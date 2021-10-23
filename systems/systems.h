@@ -4,7 +4,7 @@
 
 namespace ecs
 {
-	enum class System_type : size_t { Renderer, Controller, Movement, Facing, AI, Animation, Attributes, Icon_composer, Lighting, Inventory, Interaction, Encumbrance };
+	enum class System_type : size_t { Renderer, Controller, Movement, Facing, AI, Animation, Attributes, Icon_composer, Lighting, Inventory, Interaction, Encumbrance, Cursor, Skill };
 }
 
 namespace systems

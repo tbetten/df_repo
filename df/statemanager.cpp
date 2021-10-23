@@ -33,6 +33,7 @@ void State_manager::draw()
 		auto r_itr = std::find_if_not(m_state_stack.crbegin(), m_state_stack.crend(), [this](Game_state id) {return m_states[id]->is_transparent(); });
 		for (; r_itr != m_state_stack.crbegin(); --r_itr)
 		{
+			m_shared->m_wind->get_renderwindow ()->setView (m_states [*r_itr]->get_view ());
 			m_states[*r_itr]->draw();
 		}
 		m_states[*m_state_stack.crbegin()]->draw();
@@ -113,13 +114,14 @@ void State_manager::process_requests()
 void State_manager::switch_to(Game_state id)
 {
 	m_shared->m_event_manager->set_current_state(id);
-	auto state = std::find(m_state_stack.cbegin(), m_state_stack.cend(), id);//std::find_if(m_states.begin(), m_states.end(), [type](State_elem& e) {return e.first == type; });
+	auto state = std::ranges::find(m_state_stack, id);//std::find_if(m_states.begin(), m_states.end(), [type](State_elem& e) {return e.first == type; });
 	if (state != m_state_stack.end())
 	{
 		m_states[m_state_stack.back()]->deactivate();
 		m_state_stack.erase(state);
 		m_state_stack.push_back(id);
 		m_states[id]->activate();
+		m_shared->m_wind->get_renderwindow ()->setView (m_states [id]->get_view ());
 		return;
 	}
 	else
@@ -130,6 +132,7 @@ void State_manager::switch_to(Game_state id)
 		}
 		create_state(id);
 		m_states[m_state_stack.back()]->activate();
+		m_shared->m_wind->get_renderwindow ()->setView (m_states [m_state_stack.back ()]->get_view ());
 	}
 }
 

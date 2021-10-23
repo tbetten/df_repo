@@ -63,6 +63,13 @@ void Window::toggle_fullscreen(event::Event_info details)
 	create();
 }
 
+sf::FloatRect Window::get_view_space () const
+{
+	sf::Vector2f center = m_window.getView ().getCenter ();
+	sf::Vector2f size = m_window.getView ().getSize ();
+	return sf::FloatRect { center - (size / 2.0f), size };
+}
+
 void Window::close()
 {
 	std::cout << "close command" << std::endl;

@@ -7,6 +7,10 @@
 //#include "grid.h"
 #include "shared_context.h"
 #include "map_data.h"
+#include "eventmanager.h"
+#include "statemanager.h"
+
+#include <iostream>
 
 namespace systems
 {
@@ -20,6 +24,7 @@ namespace systems
 		m_requirements.push_back (b);
 		m_position = m_system_manager->get_entity_mgr ()->get_component<ecs::Component<Position>> (ecs::Component_type::Position);
 		m_drawable = m_system_manager->get_entity_mgr ()->get_component<ecs::Component<Drawable>> (ecs::Component_type::Drawable);
+		//auto window_size = m_
 	}
 
 	sf::Vector2i grid_to_pixel(Shared_context* context, std::string map, sf::Vector2i grid_coords)
@@ -55,7 +60,18 @@ namespace systems
 
 	void Renderer::setup_events ()
 	{
+		auto eventmgr = m_system_manager->get_context ()->m_event_manager;
 		m_messenger->bind("switched_current_entity"s, [this](std::any val) { m_current_entity = std::any_cast<ecs::Entity_id>(val); });
+		//m_messenger->bind ("CMD_resize"s, [this] (std::any val){window_resized (val); });
+		eventmgr->add_command ("CMD_resize", [this] (auto data){window_resized (data); });
+	}
+
+	void Renderer::window_resized (std::any val)
+	{
+		auto data = std::any_cast<event::Event_info>(val);
+		auto info = data.info;
+		auto size = std::get<event::Size_info> (info);
+		std::cout << "resized " << size.new_height <<"\n";
 	}
 
 /*	struct 
@@ -66,7 +82,7 @@ namespace systems
 		}
 	} Entity_compare;*/
 
-	bool Renderer::compare_entities(ecs::Entity_id e1, ecs::Entity_id e2)
+/*	bool Renderer::compare_entities(ecs::Entity_id e1, ecs::Entity_id e2)
 	{
 		if (e1 == e2) return false;
 		auto entity_mgr = m_system_manager->get_entity_mgr();
@@ -76,10 +92,10 @@ namespace systems
 		auto pos1 = m_position->m_data[*pos_index_1];
 		auto pos2 = m_position->m_data[*pos_index_2];
 		return pos1 < pos2;
-	}
+	}*/
 
-	void Renderer::order_entities()
-	{
+//	void Renderer::order_entities()
+//	{
 		
 		//std::sort(std::begin(m_entities), std::end(m_entities), [this](ecs::Entity_id e1, ecs::Entity_id e2) {return compare_entities(e1, e2); });
 
@@ -101,9 +117,9 @@ namespace systems
 				m_maps.emplace(map, Layers{});
 			}
 		}*/
-	}
+//	}
 
-	class Comparator
+/*	class Comparator
 	{
 	public:
 		explicit Comparator(ecs::Entity_manager* entity_mgr) : mgr{entity_mgr}
@@ -122,7 +138,7 @@ namespace systems
 		ecs::Entity_manager* mgr;
 		ecs::Component<Position>* position_comp;
 		std::unordered_map<std::string, int> rank;
-	};
+	};*/
 
 	void Renderer::render (sf::RenderWindow* win)
 	{
@@ -130,7 +146,7 @@ namespace systems
 		auto context = m_system_manager->get_context();
 		auto map = m_system_manager->get_context ()->m_current_map;
 		auto& map_data = context->m_maps->maps[map].m_map_index;
-		Comparator cp{ mgr };
+//		Comparator cp{ mgr };
 		
 		for (auto cell_data : map_data)
 		{

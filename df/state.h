@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML\Window.hpp>
+#include <SFML/Graphics.hpp>
 //#include "eventmanager.h"
 #include "shared_context.h"
+#include "window.h"
 
 class State_manager;
 
@@ -9,7 +11,10 @@ class State
 {
 	friend class State_manager;
 public:
-	explicit State (Shared_context* context) : m_context{ context }, m_transparent { false }, m_transcendent{ false } {}
+	explicit State (Shared_context* context) : m_context{ context }, m_transparent { false }, m_transcendent{ false } 
+	{
+		m_view = context->m_wind->get_renderwindow()->getDefaultView();
+	}
 	virtual ~State() {}
 
 	virtual void on_create() = 0;
@@ -26,6 +31,7 @@ public:
 	bool is_transparent() const { return m_transparent; }
 	void set_transcendent(const bool transcendent) { m_transcendent = transcendent; }
 	bool is_transcendent() const { return m_transcendent; }
+	inline sf::View& get_view () { return m_view; };
 	State_manager* get_statemanager() const { return m_context->m_state_manager; }
 
 protected:
@@ -33,4 +39,5 @@ protected:
 	Shared_context* m_context;
 	bool m_transparent;
 	bool m_transcendent;
+	sf::View m_view;
 };

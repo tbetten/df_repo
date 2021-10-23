@@ -87,10 +87,19 @@
     <ClInclude Include="weapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="skill.h">
+    <ClInclude Include="armour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="armour.h">
+    <ClInclude Include="inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="equippable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inventory_slot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skill_comp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -147,6 +156,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Armour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inventory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="equippable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skill_com.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

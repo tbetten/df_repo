@@ -7,6 +7,8 @@
 #include "ecs.h"
 #include "drawable.h"
 #include "attribute_system.h"
+#include "cursor_system.h"
+#include "cursor_payload.h"
 #include "character.h"
 #include "attributes.h"
 #include "tile_type.h"
@@ -14,6 +16,7 @@
 #include "map_data.h"
 #include "character_sheet.h"
 #include "utils.h"
+#include "Skill.h"
 
 #include <iostream>
 #include <string>
@@ -23,14 +26,15 @@
 
 //namespace fs = std::filesystem;
 
-State_game::State_game(Shared_context* context) : State{ context }
+State_game::State_game (Shared_context* context) : State { context }
 {
 	m_current_entity = 0;
-	m_arrow_cursor.loadFromSystem(sf::Cursor::Arrow);
+/*	m_arrow_cursor.loadFromSystem(sf::Cursor::Arrow);
 	m_hand_cursor.loadFromSystem(sf::Cursor::Hand);
 	m_not_allowed_cursor.loadFromSystem(sf::Cursor::NotAllowed);
-	m_current_cursor = &m_arrow_cursor;
-	context->m_wind->get_renderwindow()->setMouseCursor(*m_current_cursor);
+	m_current_cursor = &m_arrow_cursor;*/
+	m_current_cursor = Cursors::Arrow;
+	//context->m_wind->get_renderwindow()->setMouseCursor(*m_current_cursor);
 
 	m_font.loadFromFile("assets/fonts/arial.ttf");
 	m_text.setFont(m_font);
@@ -44,19 +48,35 @@ void State_game::on_create()
 //	auto view = sf::View{ sf::Vector2f{32 * 10, 32 * 10}, sf::Vector2f{32 * 20, 32 * 20} };
 //	view.setViewport(sf::FloatRect{ 0.1f , 0.1f, 0.5f, 0.5f });
 //	window->setView(view);
+	
 	m_event_mgr = m_context->m_event_manager;  // has to be done here, at construction the eventmanager is not yet added to the context
 //	m_event_mgr->add_command("CMD_show_party", [this](auto data) {show_party(); });
+	auto skills = skill::load_skills (m_context->m_database_path);
+	
+	auto cursor_system = m_context->m_system_manager->get_system<systems::Cursor_system> (ecs::System_type::Cursor);
+	cursor_system->set_window (m_context->m_wind->get_renderwindow());
 	m_context->m_system_manager->get_messenger ()->bind ("switched_current_entity", [this] (auto val) {on_change_entity (std::any_cast<ecs::Entity_id>(val)); });
+	m_messenger = m_context->m_system_manager->get_messenger ();
+	add_message ("change_cursor");
 	auto win = sfg::Window::Create (sfg::Window::Style::NO_STYLE);
 	win->SetRequisition (sf::Vector2f (m_context->m_wind->get_renderwindow ()->getSize ()));
 	auto alignment = sfg::Alignment::Create ();
 	alignment->SetScale (sf::Vector2f { 0.0f, 0.0f });
 	alignment->SetAlignment (sf::Vector2f { 0.8f, 0.0f });
 	//alignment->Add (sfg::Label::Create ("hidehi"));
-	m_charsheet = std::make_unique<Character_sheet> (m_context);
+	auto frame = sfg::Frame::Create ("Description");  // frame must be initialized with id because the notebook will fire onTabChange immediately
+	frame->SetId ("description_frame");
+	frame->Show (false);
+	m_charsheet = std::make_unique<Character_sheet> (m_context, &m_desktop);
 	//m_charsheet->populate_party ();
 	auto box = sfg::Box::Create (sfg::Box::Orientation::VERTICAL);
 	box->Pack (m_charsheet->get_charsheet ());
+
+	box->Pack (frame);
+	auto description = sfg::Label::Create ("");
+	description->SetLineWrap (true);
+	description->SetId ("item_description");
+	frame->Add (description);
 	alignment->Add (box);
 	win->Add (alignment);
 	m_desktop.Add (win);
@@ -92,20 +112,40 @@ void State_game::update(const sf::Time& time)
 	auto itr = std::find_if(std::cbegin(entities), std::cend(entities), [em](const ecs::Entity_id e) {return em->has_component(e, ecs::Component_type::Sensor); });
 	if (itr != std::cend(entities))
 	{
-		if (m_current_cursor != &m_hand_cursor)
+	//	if (m_current_cursor != &m_hand_cursor)
+	//	{
+		if (m_current_cursor != Cursors::Hand)
 		{
-			auto pos = em->get_data<ecs::Component<Position>>(ecs::Component_type::Position, m_current_entity);
-			m_current_cursor = map_data.m_topology->are_neighbours(coords, pos->coords) ? &m_hand_cursor : &m_not_allowed_cursor;
-			window->setMouseCursor(*m_current_cursor);
+			auto pos = em->get_data<ecs::Component<Position>> (ecs::Component_type::Position, m_current_entity);
+			if (map_data.m_topology->are_neighbours (coords, pos->coords))
+			{
+				Cursor_payload cp { sf::Cursor::Type::Hand };
+				notify ("change_cursor", cp);
+				m_current_cursor = Cursors::Hand;
+			}
+			else
+			{
+				Cursor_payload cp { sf::Cursor::Type::NotAllowed };
+				notify ("change_cursor", cp);
+				m_current_cursor = Cursors::Not_allowed;
+			}
+			//m_current_cursor = map_data.m_topology->are_neighbours(coords, pos->coords) ? &m_hand_cursor : &m_not_allowed_cursor;
+			//window->setMouseCursor(*m_current_cursor);
 		}
+	//	}
 	}
 	else
 	{
-		if (m_current_cursor != &m_arrow_cursor)
+		if (m_current_cursor != Cursors::Arrow)
+		{
+			notify ("change_cursor", Cursor_payload { sf::Cursor::Type::Arrow });
+			m_current_cursor = Cursors::Arrow;
+		}
+/*		if (m_current_cursor != &m_arrow_cursor)
 		{
 			m_current_cursor = &m_arrow_cursor;
 			window->setMouseCursor(*m_current_cursor);
-		}
+		}*/
 	}
 	
 /*	for (auto layer : entities)
@@ -131,8 +171,13 @@ void State_game::update(const sf::Time& time)
 void State_game::on_change_entity (ecs::Entity_id entity)
 {
 	m_current_entity = entity;
-	auto combo = find_widget<sfg::ComboBox> ("party_combobox");
 	auto entity_mgr = m_context->m_entity_manager;
+	auto position = entity_mgr->get_data<ecs::Component<Position>> (ecs::Component_type::Position, entity);
+	auto c = position->coords;
+	m_view.setCenter ({ static_cast<float>(position->coords.x), static_cast<float>(position->coords.y) });
+	m_context->m_wind->get_renderwindow ()->setView (m_view);
+	auto combo = find_widget<sfg::ComboBox> ("party_combobox");
+	
 	auto character_comp = entity_mgr->get_data<ecs::Component<Character>> (ecs::Component_type::Character, entity);
 	for (auto itr = combo->Begin (); itr != combo->End (); ++itr)
 	{
@@ -151,6 +196,7 @@ void State_game::draw()
 	auto renderer = m_context->m_system_manager->get_system<systems::Renderer> (ecs::System_type::Renderer);
 	renderer->render (window);
 	window->draw(m_text);
+
 	if (m_remove != nullptr)
 	{
 		m_desktop.Remove(m_remove);
@@ -165,7 +211,7 @@ void State_game::show_party()
 	auto gui_window = sfg::Window::Create(sfg::Window::Style::BACKGROUND | sfg::Window::Style::TITLEBAR);
 	gui_window->SetTitle("Party");
 
-	if (m_charsheet == nullptr) m_charsheet = std::make_unique<Character_sheet>(m_context);
+	if (m_charsheet == nullptr) m_charsheet = std::make_unique<Character_sheet>(m_context, &m_desktop);
 	m_charsheet->populate_party ();
 	auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	auto sheet = m_charsheet->get_charsheet();
@@ -226,6 +272,17 @@ sfg::Box::Ptr State_game::create_charsheet()
 void State_game::handle_sfml_event(sf::Event& e)
 {
 	m_desktop.HandleEvent(e);
+	if (!m_charsheet->m_remove.empty ())
+	{
+		for (auto w : m_charsheet->m_remove)
+		{
+			auto x = w.lock ();
+			m_desktop.Remove (x);
+//			m_desktop.Remove (w.lock ());
+		}
+
+		m_charsheet->m_remove.clear ();
+	}
 }
 
 void State_game::to_mainmenu()

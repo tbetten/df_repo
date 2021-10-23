@@ -27,9 +27,11 @@
 #include <cassert>
 
 using rect_32 = sf::Rect<sf::Uint32>;
+using namespace std::string_literals;
 
-State_character_generator::State_character_generator (Shared_context* context) : State { context }, m_cp { 0 }, m_db { "assets/database/gamedat.db" }, m_cp_fractions (4, 0)
+State_character_generator::State_character_generator (Shared_context* context) : State { context }, m_cp { 0 }, m_cp_fractions (4, 0)
 {
+	m_db = db::DB_connection::create ("assets/database/gamedat.db");
 	m_cp = DB_queries::query_charpoints ();
 	auto talents = DB_queries::get_racial_talents ();
 	for (auto [race, name, description, max_level, default_level, cost_per_level] : talents)
@@ -43,6 +45,10 @@ State_character_generator::State_character_generator (Shared_context* context) :
 		bool sc_flag = uses_selfcontrol == 0 ? false : true;
 		m_racial_advantages.emplace_back (Advantage { advantage, description, string_to_race (race), default_level, max_level, cost_per_level, sc_flag, selfcontrol });
 	}
+	m_attrib_modifier_entries.emplace (attributes::Attrib::ST, Attrib_modifier_entry { });
+	m_attrib_modifier_entries.emplace (attributes::Attrib::DX, Attrib_modifier_entry { });
+	m_attrib_modifier_entries.emplace (attributes::Attrib::IQ, Attrib_modifier_entry { });
+	m_attrib_modifier_entries.emplace (attributes::Attrib::HT, Attrib_modifier_entry { });
 }
 
 void State_character_generator::on_create ()
@@ -130,7 +136,7 @@ void State_character_generator::on_create ()
 void State_character_generator::read_attributes ()
 {
 	auto sql = "select id, base from attribute";
-	auto stmt = m_db.prepare (sql);
+	auto stmt = m_db->prepare (sql);
 	auto attribs = stmt.fetch_table ();
 	for (auto attrib : attribs)
 	{
@@ -166,10 +172,50 @@ void State_character_generator::on_chooser_changed (const std::string& id, CP_fr
 	cost_label->SetText (make_cost_label (new_value));
 }
 
+sfg::Widget::Ptr State_character_generator::create_attrib_adjustment_table (bool racial)
+{
+	auto table = sfg::Table::Create ();
+	table->SetColumnSpacings (20.0f);
+	table->Attach (sfg::Label::Create ("ST"), rect_32 { 0,0,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create ("DX"), rect_32 { 0,1,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create ("IQ"), rect_32 { 0,2,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	table->Attach (sfg::Label::Create ("HT"), rect_32 { 0,3,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	if (racial)
+	{
+		table->Attach (m_attrib_modifier_entries[attributes::Attrib::ST].racial_value, rect_32 { 1,0,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::DX].racial_value, rect_32 { 1,1,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::IQ].racial_value, rect_32 { 1,2,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::HT].racial_value, rect_32 { 1,3,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::ST].racial_cost, rect_32 { 2,0,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::DX].racial_cost, rect_32 { 2,1,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::IQ].racial_cost, rect_32 { 2,2,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+		table->Attach (m_attrib_modifier_entries [attributes::Attrib::HT].racial_cost, rect_32 { 2,3,1,1 }, sfg::Table::AttachOption::FILL, sfg::Table::AttachOption::FILL);
+	}
+
+	return table;
+}
+
+void State_character_generator::populate_attrib_adjustment_table (Race race)
+{
+	for (auto& [attrib, entry] : m_attrib_modifier_entries)
+	{
+		entry.racial_value->SetText ("0");
+		entry.racial_cost->SetText (make_cost_label(0));
+	}
+	for (const auto& m : m_modifiers)
+	{
+		if (m.race != race) continue;
+		std::string sign = m.amount > 0 ? "+" : "";
+		m_attrib_modifier_entries [m.attribute].racial_value->SetText(sign + std::to_string(m.amount));
+		m_attrib_modifier_entries [m.attribute].racial_cost->SetText ("["s + std::to_string(attributes::points_per_unit(m.attribute) * m.amount) + "]"s);
+	}
+}
+
 sfg::Box::Ptr State_character_generator::read_races ()
 {
 	const std::string sql = "select name, is_default, template_cost from race";
-	auto stmt = m_db.prepare (sql);
+	auto stmt = m_db->prepare (sql);
 	auto data = stmt.fetch_table ();
 
 	auto table = sfg::Table::Create ();
@@ -199,6 +245,8 @@ sfg::Box::Ptr State_character_generator::read_races ()
 	update_cp_label ();
 	inner->Pack (m_cp_label);
 	inner->Pack (table, false);
+	inner->Pack (sfg::Separator::Create (), false);
+	inner->Pack (create_attrib_adjustment_table (true));
 	inner->Pack (sfg::Separator::Create (), false);
 	auto talent_table = sfg::Table::Create ();
 	talent_table->SetRequisition (sf::Vector2f { 300.0f, 0.0f });
@@ -306,7 +354,7 @@ void State_character_generator::create_racial_talent (const std::string& race)
 	racial_talent_chooser.widget->SetStep (1.0f);
 	racial_talent_chooser.widget->Show (true);
 
-	racial_talent_chooser.widget->SetValue (static_cast<int>(talent.default_level));
+	racial_talent_chooser.widget->SetValue (static_cast<float>(talent.default_level));
 	cost_label->SetText (make_cost_label (talent.default_level));
 	//m_cp -= default_level * m_cost_per_level;
 	cost_label->Show (true);
@@ -320,6 +368,7 @@ void State_character_generator::on_race_toggle (const std::string& name)
 		m_choosers [find_chooser ("racial_talent_chooser")].reset ();
 		m_race->SetText (name);
 		auto race = string_to_race (name);
+		populate_attrib_adjustment_table(race);
 		m_cp += std::accumulate (std::cbegin (m_attribute_transactions), std::cend (m_attribute_transactions), 0, [] (int points_so_far, const attributes::Transaction& transaction) {return points_so_far + transaction.points_spent; });
 		m_cp -= m_cp_fractions [static_cast<int>(CP_fractions::Racial_talent)];
 		m_cp_fractions [static_cast<int>(CP_fractions::Racial_talent)] = 0;
@@ -438,6 +487,7 @@ void State_character_generator::remove_party_members ()
 		{
 			auto button = std::dynamic_pointer_cast<sfg::CheckButton>(widget);
 			if (button->IsActive ()) return button->GetId ();
+			return std::string("");
 		});
 
 }
@@ -453,7 +503,7 @@ void State_character_generator::on_finish ()
 		b.set (static_cast<int>(ecs::Component_type::Position));
 		b.set (static_cast<int>(ecs::Component_type::Facing));
 		b.set (static_cast<int>(ecs::Component_type::Attributes));
-		b.set (static_cast<int>(ecs::Component_type::Container));
+		b.set (static_cast<int>(ecs::Component_type::Inventory));
 		auto entity = em->add_entity (b);
 		m_context->m_party.push_back (entity);
 
@@ -594,7 +644,7 @@ void State_character_generator::apply_attrib_modifier (const std::string& name, 
 
 void State_character_generator::read_attrib_modifiers ()
 {
-	auto stmt = m_db.prepare ("select race, attribute, modifier from race_attribute");
+	auto stmt = m_db->prepare ("select race, attribute, modifier from race_attribute");
 	auto modifiers = stmt.fetch_table ();
 	for (auto modifier : modifiers)
 	{

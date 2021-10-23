@@ -5,96 +5,102 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource_cache.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="window.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shared_context.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game_states.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="statemanager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="state.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="event_types.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="state_game.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="keynames.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mousebutton.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scheduler.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="util_types.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="state_character_generator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="map_data.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="state_main_menu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="character_sheet.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="random_generator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="eventmanager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entity_at.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entity_loader.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="damage_table.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="item_data.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>Source Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resize_payload.h">
+      <Filter>Source Files\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +171,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="damage_table.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skill.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

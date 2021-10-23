@@ -26,7 +26,7 @@ struct Animation
 	void load (const std::string& key, Shared_context* context) {}
 
 	std::vector<Frame> frames {};
-	int current_frame;
-	float time_in_frame;
+	int current_frame { 0 };
+	float time_in_frame { 0.0f };
 	bool active{ true };
 };

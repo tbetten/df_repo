@@ -98,7 +98,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\db\Debug;C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>db.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -178,10 +178,12 @@
     <ClInclude Include="map_data.h" />
     <ClInclude Include="mousebutton.h" />
     <ClInclude Include="random_generator.h" />
+    <ClInclude Include="resize_payload.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource_cache.h" />
     <ClInclude Include="scheduler.h" />
     <ClInclude Include="shared_context.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="statemanager.h" />
     <ClInclude Include="state_character_generator.h" />
@@ -209,6 +211,7 @@
     <ClCompile Include="resource_cache.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="shared_context.cpp" />
+    <ClCompile Include="skill.cpp" />
     <ClCompile Include="statemanager.cpp" />
     <ClCompile Include="state_character_generator.cpp" />
     <ClCompile Include="state_game.cpp" />

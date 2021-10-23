@@ -175,15 +175,18 @@
     <ClInclude Include="directions.h" />
     <ClInclude Include="drawable.h" />
     <ClInclude Include="entity_loader_old.h" />
+    <ClInclude Include="equippable.h" />
     <ClInclude Include="facing.h" />
     <ClInclude Include="floor.h" />
+    <ClInclude Include="inventory.h" />
+    <ClInclude Include="inventory_slot.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="lightsource.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="reactor.h" />
     <ClInclude Include="sensor.h" />
-    <ClInclude Include="skill.h" />
+    <ClInclude Include="skill_comp.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tile.h" />
@@ -202,13 +205,16 @@
     <ClCompile Include="directions.cpp" />
     <ClCompile Include="drawable.cpp" />
     <ClCompile Include="entity_loader_old.cpp" />
+    <ClCompile Include="equippable.cpp" />
     <ClCompile Include="facing.cpp" />
+    <ClCompile Include="inventory.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="lightsource.cpp" />
     <ClCompile Include="position.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="reactor.cpp" />
     <ClCompile Include="sensor.cpp" />
+    <ClCompile Include="skill_com.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

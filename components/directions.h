@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <compare>
 #include "SFML/System/Vector2.hpp"
 
 const enum class Compass : int { North, North_east, East, South_east, South, South_west, West, North_west };
@@ -19,6 +20,11 @@ Compass& operator+= (Compass& c, int i);
 Compass operator- (Compass& c, int i);
 
 Compass operator- (Compass& c);
+
+inline auto operator<=> (Compass lhs, Compass rhs)
+{
+	return static_cast<int>(lhs) <=> static_cast<int>(rhs);
+}
 
 enum class Direction : int { Forward, Right_forward, Right, Turn_right, Right_backward, Backward, Left_backward, Left, Turn_left, Left_forward };
 

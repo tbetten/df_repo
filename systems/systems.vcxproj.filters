@@ -75,6 +75,18 @@
     <ClInclude Include="encumbrance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cursor_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cursor_payload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skill_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="buy_skill_payload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -120,6 +132,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="encumbrance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cursor_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skill_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

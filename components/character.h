@@ -18,11 +18,11 @@ struct Character
 
 	unsigned int character_points { 0 };
 	std::string name;
-	Gender gender;
+	Gender gender { Gender::Male };
 	bool user_controlled{ false };
-	Race race;
+	Race race { Race::Human };
 	Occupation occupation;
-	Encumbrance encumbrance;
-	int hitpoints;
-	int fatigue_points;
+	Encumbrance encumbrance { Encumbrance::No };
+	int hitpoints { 0 };
+	int fatigue_points { 0 };
 };

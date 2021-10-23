@@ -9,7 +9,7 @@
 #include "tinyxml2.h"
 #pragma warning (pop)
 
-Drawable::Drawable() : locations{"base_icon", "torso", "beard", "facing_indicator"}
+Drawable::Drawable() : locations{"base_icon", "torso", "beard", "feet", "facing_indicator"}
 {
 	composed_icon = std::make_unique<sf::RenderTexture>();
 	composed_icon->create(32, 32);

@@ -31,8 +31,9 @@ namespace el
 
 	std::string get_filename(const std::string& handle)
 	{
-		db::DB_connection connection{ "./assets/database/gamedat.db" };
-		db::Prepared_statement stmt = connection.prepare("select file from maps where handle = ?"s);
+		//db::DB_connection connection{ "./assets/database/gamedat.db" };
+		auto connection = db::DB_connection::create ("./assets/database/gamedat.db");
+		db::Prepared_statement stmt = connection->prepare("select file from maps where handle = ?"s);
 		stmt.bind(1, handle);
 		stmt.execute_row();
 		auto row = stmt.fetch_row();
@@ -194,8 +195,9 @@ namespace el
 		std::cout << tiled::get_property_value<std::string>(tile.properties, "item_handle").value() << "\n";
 
 		auto key = tiled::get_property_value<std::string> (tile.properties, "item_handle").value_or ("");
-		auto db = db::DB_connection (m_context->m_database_path);
-		auto stmt = db.prepare ("select id from components inner join entity_component on components.name = entity_component.component where entity_component.entity = ?");
+		//auto db = db::DB_connection (m_context->m_database_path);
+		auto db = db::DB_connection::create (m_context->m_database_path);
+		auto stmt = db->prepare ("select id from components inner join entity_component on components.name = entity_component.component where entity_component.entity = ?");
 		stmt.bind (1, key);
 		auto table = stmt.fetch_table ();
 		for (auto row : table)
@@ -273,10 +275,20 @@ namespace el
 		Map_data md{ convert_orientation(map.metadata.orientation), convert_vector(map.metadata.map_size), convert_vector(map.metadata.tile_size) };
 		ecs::Entity_manager* mgr = m_context->m_entity_manager;
 
+		int c { 0 };
 		for (auto& tile : map.tiles)
 		{
-			auto type = tile_type_to_enum(tiled::get_property_value<std::string>(tile.properties, "tile_type").value());
-			create_entity(map, tile, type, handle, &md);
+			try
+			{
+				auto type = tile_type_to_enum (tiled::get_property_value<std::string> (tile.properties, "tile_type").value ());
+
+				create_entity (map, tile, type, handle, &md);
+			}
+			catch (std::bad_optional_access& e)
+			{
+				std::cout << e.what() << std::to_string (c) << "\n";
+			}
+			++c;
 
 		}
 		finalize_inert_tiles(&md);

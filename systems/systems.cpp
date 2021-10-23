@@ -11,6 +11,8 @@
 #include "inventory_system.h"
 #include "interaction.h"
 #include "encumbrance.h"
+#include "cursor_system.h"
+#include "skill_system.h"
 
 namespace messaging
 {
@@ -32,4 +34,6 @@ void systems::add_systems (ecs::System_manager* mgr)
 	mgr->add_system(ecs::System_type::Inventory, std::unique_ptr<ecs::S_base>(new Inventory_system(ecs::System_type::Inventory, mgr, m)));
 	mgr->add_system(ecs::System_type::Interaction, std::unique_ptr<ecs::S_base>(new Interaction(ecs::System_type::Interaction, mgr, m)));
 	mgr->add_system(ecs::System_type::Encumbrance, std::unique_ptr<ecs::S_base>(new Encumbrance(ecs::System_type::Encumbrance, mgr, m)));
+	mgr->add_system (ecs::System_type::Cursor, std::unique_ptr<ecs::S_base> (new Cursor_system (ecs::System_type::Cursor, mgr, m)));
+	mgr->add_system (ecs::System_type::Skill, std::unique_ptr<ecs::S_base> (new Skill_system (ecs::System_type::Skill, mgr, m)));
 }

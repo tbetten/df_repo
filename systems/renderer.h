@@ -5,6 +5,7 @@
 #include "messaging.h"
 #include "SFML/Graphics.hpp"
 #include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <vector>
 
@@ -24,8 +25,9 @@ namespace systems
 //		Dispatcher& get_event (const std::string& event) override;
 		void render (sf::RenderWindow* win);
 	private:
-		void order_entities() override;
-		bool compare_entities(ecs::Entity_id e1, ecs::Entity_id e2);
+		void window_resized (std::any val);
+		//void order_entities() override;
+		//bool compare_entities(ecs::Entity_id e1, ecs::Entity_id e2);
 
 		ecs::Component<Position>* m_position = nullptr;
 		ecs::Component<Drawable>* m_drawable = nullptr;

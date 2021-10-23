@@ -1,5 +1,6 @@
 #pragma once
 #include "system.h"
+#include <span>
 
 namespace ecs
 {
@@ -9,7 +10,7 @@ namespace ecs
 }
 
 struct Position;
-struct Container;
+struct Inventory;
 
 namespace systems
 {
@@ -20,12 +21,13 @@ namespace systems
 		void update(sf::Int64 dt) override;
 		void setup_events() override;
 		void drop_item(ecs::Entity_id holder, ecs::Entity_id item);
-		void equip_item (ecs::Entity_id holder, ecs::Entity_id item);
+		void equip_items (ecs::Entity_id holder, std::span<ecs::Entity_id> items);
+		void unequip_items (ecs::Entity_id holder, std::span<ecs::Entity_id> items);
 	private:
 		messaging::Messenger* m_messenger;
 		ecs::Entity_manager* m_entity_mgr;
 		ecs::Component<Position>* m_position{ nullptr };
-		ecs::Component<Container>* m_container{ nullptr };
+		ecs::Component<Inventory>* m_inventory{ nullptr };
 
 		void pickup(std::any val);
 	};

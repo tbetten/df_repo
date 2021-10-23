@@ -1,6 +1,7 @@
 #include "eventmanager.h"
 #include "db.h"
 #include "game_states.h"
+#include "resize_payload.h"
 
 #include <iostream>
 #include <algorithm>
@@ -92,8 +93,9 @@ namespace event
 	{
 		try
 		{
-			db::DB_connection db{ "assets/database/gamedat.db" };
-			auto key_bindings_stmt = db.prepare("select g.code as game_state, b.ctrl, b.alt, b.shift, k.keycode as code, b.name from key_binding b inner join keys k on k.keyname = b.keyname inner join game_states g on g.name = b.game_state;"s);
+			//db::DB_connection db{ "assets/database/gamedat.db" };
+			auto db = db::DB_connection::create ("assets/database/gamedat.db");
+			auto key_bindings_stmt = db->prepare("select g.code as game_state, b.ctrl, b.alt, b.shift, k.keycode as code, b.name from key_binding b inner join keys k on k.keyname = b.keyname inner join game_states g on g.name = b.game_state;"s);
 			auto table = key_bindings_stmt.fetch_table();
 
 			auto bindings = make_bindings(table, sf::Event::KeyPressed);
@@ -101,7 +103,7 @@ namespace event
 			{
 				m_bindings[game_state].insert(m_bindings[game_state].cbegin(), binding_vec.cbegin(), binding_vec.cend());
 			}
-			auto mouse_bindings_stmt = db.prepare("select g.code as game_state, b.name, b.ctrl, b.alt, b.shift, m.code from mouse_binding b inner join mousebutton m on m.button = b.mousebutton inner join game_states g on g.name = b.game_state;"s);
+			auto mouse_bindings_stmt = db->prepare("select g.code as game_state, b.name, b.ctrl, b.alt, b.shift, m.code from mouse_binding b inner join mousebutton m on m.button = b.mousebutton inner join game_states g on g.name = b.game_state;"s);
 			table = mouse_bindings_stmt.fetch_table();
 
 			bindings = make_bindings(table, sf::Event::MouseButtonPressed);
@@ -115,7 +117,7 @@ namespace event
 			std::cout << e.what() << "\n";
 		}
 		m_bindings[Game_state::All_states].push_back(Binding{ "CMD_close", sf::Event::Closed, std::monostate{} });
-		m_bindings[Game_state::All_states].push_back(Binding{ "CMD_resize", sf::Event::Resized, std::monostate{} });
+		m_bindings [Game_state::All_states].push_back (Binding { "CMD_resize", sf::Event::Resized, std::monostate{} });
 	}
 
 	void Event_manager::add_command(const std::string& name, Event_manager::Callback callback)
@@ -136,6 +138,10 @@ namespace event
 
 	void Event_manager::handle_event(sf::Event event) const
 	{
+		if (event.type == sf::Event::Resized)
+		{
+			std::cout << "resized\n";
+		}
 		auto m = check_modifiers();
 		if (!m_bindings.contains(m_current_state)) return;
 		auto bindings = m_bindings.at(m_current_state);

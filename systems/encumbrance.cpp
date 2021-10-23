@@ -3,6 +3,7 @@
 #include "components.h"
 #include "component.h"
 #include "character.h"
+#include "inventory.h"
 #include "container.h"
 #include "attributes.h"
 
@@ -31,10 +32,10 @@ namespace systems
 	{
 		ecs::Entity_id entity = std::any_cast<ecs::Entity_id>(val);
 		auto character = m_entity_manager->get_data<ecs::Component<Character>>(ecs::Component_type::Character, entity);
-		auto container = m_entity_manager->get_data<ecs::Component<Container>>(ecs::Component_type::Container, entity);
+		auto& container = m_entity_manager->get_data<ecs::Component<Inventory>>(ecs::Component_type::Inventory, entity)->bag;
 		auto attributes = m_entity_manager->get_data<ecs::Component<Attributes>>(ecs::Component_type::Attributes, entity);
 		auto basic_lift = attributes::get_total_value(attributes->transactions, attributes::Attrib::BL);
-		auto ratio = container->total_weight / basic_lift;
+		auto ratio = container.total_weight / basic_lift;
 		if (ratio == 0) character->encumbrance = Character::Encumbrance::No;
 		if (ratio == 1) character->encumbrance = Character::Encumbrance::Light;
 		if (ratio == 2) character->encumbrance = Character::Encumbrance::Medium;

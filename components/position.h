@@ -15,7 +15,7 @@ struct Position
 	std::string map_id = "";
 	sf::Vector2i coords;
 	std::string current_map;
-	Layer layer;
+	Layer layer { Layer::Invalid };
 	bool moved = false;
 };
 

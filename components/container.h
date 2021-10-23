@@ -11,6 +11,6 @@ struct Container
 	void load (const std::string& key, Shared_context* context) {}
 
 	std::vector<ecs::Entity_id> contents;
-	int weight;  // weight of the container itself
-	int total_weight;  // weight of container and contents
+	int weight { 0 };  // weight of the container itself
+	int total_weight { 0 };  // weight of container and contents
 };

@@ -1,3 +1,4 @@
+#ifdef NOT_USED
 #include "entity_at.h"
 #include "components.h"
 #include "position.h"
@@ -20,3 +21,4 @@ std::vector<ecs::Entity_id> get_entity_at(ecs::Entity_manager* mgr, std::string 
 	}
 	return result;
 }
+#endif

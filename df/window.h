@@ -26,6 +26,7 @@ public:
 	sf::Vector2u get_windowsize() { return m_windowsize; }
 	event::Event_manager* get_eventmanager() { return &m_eventmanager; }
 	sf::RenderWindow* get_renderwindow() { return &m_window; }
+	sf::FloatRect get_view_space () const;
 
 	void toggle_fullscreen(event::Event_info details);
 //	void close(const Event_details& details);

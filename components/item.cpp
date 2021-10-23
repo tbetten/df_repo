@@ -11,8 +11,9 @@ void Item::reset()
 
 void Item::load (const std::string& key, Shared_context* context)
 {
-	auto database = db::DB_connection { context->m_database_path };
-	auto stmt = database.prepare ("select name, description, weight, value, equippable, useable from equipment where key = ?");
+	//auto database = db::DB_connection { context->m_database_path };
+	auto database = db::DB_connection::create (context->m_database_path);
+	auto stmt = database->prepare ("select name, description, weight, value, useable from equipment where key = ?");
 	stmt.bind (1, key);
 	auto res = stmt.execute_row ();
 	if (res == db::Prepared_statement::Row_result::Row)
@@ -22,8 +23,9 @@ void Item::load (const std::string& key, Shared_context* context)
 		description = std::get<std::string> (row ["description"]);
 		weight = std::get<int> (row ["weight"]);
 		value = std::get<int> (row ["value"]);
-		equippable = std::get<int> (row ["equippable"]) != 0;
+		//equippable = std::get<int> (row ["equippable"]) != 0;
 		useable = std::get<int> (row ["useable"]) != 0;
+		//slot = equippable ? Inventory::string_to_slot.at(std::get<std::string> (row ["inventory_slot"])) : Inventory::Inventory_slot::None;
 	}
 	else
 	{
