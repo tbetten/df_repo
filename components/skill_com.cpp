@@ -1,6 +1,9 @@
 #include "skill_comp.h"
 
-void Skill_comp::reset ()
+namespace skill
 {
-	m_skills.clear ();
+	void Skill_comp::reset()
+	{
+		m_skills.clear();
+	}
 }

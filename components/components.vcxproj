@@ -23,32 +23,32 @@
     <ProjectGuid>{23FFF8E4-D958-48E9-8E8E-39AEEFB46C8E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>components</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\df\df;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\ecs\ecs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -98,26 +98,30 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>ecs.lib;tiled_parser.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ecs.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\tiled_utils\Debug;C:\Users\T. Betten\source\repos\ecs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\tbett\source\repos\ecs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\df\df;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>ecs.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -129,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\df\df;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\df\df;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,8 +143,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>ecs.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -148,7 +151,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -156,7 +159,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\df\df;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\utils;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,6 +168,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>ecs.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />

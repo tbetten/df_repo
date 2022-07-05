@@ -23,20 +23,20 @@
     <ProjectGuid>{CAC438C2-0278-4973-9826-2F345F5CAB96}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>df</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <EnableASAN>true</EnableASAN>
@@ -44,13 +44,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -92,14 +92,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\df\entity_loader;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\df\components;C:\Users\tbett\source\repos\df\attribute;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\df\entity_loader;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\T. Betten\source\repos\db\Debug;C:\Users\T. Betten\source\repos\df\components\Debug;C:\Users\T. Betten\source\repos\df\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>db.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\tbett\source\repos\tiled_parser\Debug;C:\Users\tbett\source\repos\df\Debug;C:\Users\tbett\source\repos\ecs\Debug;C:\Users\tbett\source\repos\db\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>db.lib;ecs.lib;components.lib;systems.lib;attribute.lib;tiled_parser.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,8 +110,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\db\db;D:\sfgui\sfgui-0.4.0-install\include;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\df\components;C:\Users\tbett\source\repos\df\attribute;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\db\db;D:\sfgui\sfgui-0.4.0-install\include;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\df\components;C:\Users\tbett\source\repos\df\attribute;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\tiled_utils\tiled_utils;C:\Users\T. Betten\source\repos\db\db;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,7 +144,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -152,8 +152,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\tbett\source\repos\db\db;C:\Users\tbett\source\repos\df\systems;C:\Users\tbett\source\repos\df\components;C:\Users\tbett\source\repos\df\attribute;C:\Users\tbett\source\repos\tiled_parser\tiled_utils;C:\Users\tbett\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\ecs\ecs;C:\Users\T. Betten\source\repos\df\systems;C:\Users\T. Betten\source\repos\df\components;C:\Users\T. Betten\source\repos\df\map;C:\Users\T. Betten\source\repos\df\db;C:\Users\T. Betten\source\repos\df\ecs;D:\sfml\32bit\SFML-2.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

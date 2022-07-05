@@ -67,7 +67,7 @@ std::vector<std::string> DB_queries::get_skills_by_talent(std::string talent)
 	std::transform(std::cbegin(table), std::cend(table), std::back_inserter(res), [](const db::row_t& row) {return std::get<std::string>(row.at("skill")); });
 	return res;
 }
-
+/*
 std::vector<std::tuple<std::string, std::string, std::string, int, int, int, int, std::optional<int>>> DB_queries::get_racial_advantages()
 {
 	auto stmt = connection->prepare("select advantage, description, race, default_level, max_level, cost_per_level, uses_self_control, self_control from advantage_template join advantage on advantage_template.advantage = advantage.name where race is not null");
@@ -87,4 +87,4 @@ std::vector<std::tuple<std::string, std::string, std::string, int, int, int, int
 			return std::make_tuple(std::get<std::string>(row.at("advantage")), std::get<std::string>(row.at("description")), std::get<std::string>(row.at("race")), std::get<int>(row.at("default_level")), std::get<int>(row.at("max_level")), std::get<int>(row.at("cost_per_level")), std::get<int>(row.at("uses_self_control")), selfcontrol); 
 		});
 	return res;
-}
+}*/

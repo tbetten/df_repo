@@ -30,7 +30,7 @@ namespace attributes
 	//enum class Strength_modifiers { ST_lift, ST_strike };
 
 	enum class Transaction_type { Buy, Raise_base, Equipment, Effect };
-	enum class Template_type { Race, Occupation };
+	enum class Template_type { Invalid, Race, Occupation };
 
 	struct Transaction
 	{
@@ -50,12 +50,14 @@ namespace attributes
 	Attrib string_to_attrib(const std::string& attrib_name);
 	std::string attrib_to_string(const Attrib attrib);
 	int get_base_value(const std::span<Transaction> transactions, const Attrib attrib); //(const Transactions& transactions, const Attrib attrib);
+	int get_initial_value(const Attrib attrib);
 	int get_total_value(const std::span<Transaction> transactions, const Attrib attrib);  //(const Transactions& transactions, const Attrib attrib);
 	std::tuple<int, int> get_encumbered_value(const std::span<Transaction> transactions, const Character::Encumbrance encumbrance);  //(const Transactions& transactions, const Character::Encumbrance encumbrance);
 	int get_spent_points(const std::span<Transaction>transactions, const Attrib attrib);  //(const Transactions& transactions, const Attrib attrib);
 	int units_per_point(const Attrib attrib);
 	int points_per_unit(const Attrib attrib);
 	std::vector<std::tuple<Attrib, int>> raises_base(const Attrib attrib);
+	Transactions modifier_to_transactions(Attrib attrib, Transaction_type transaction_type, Template_type template_type, const std::string& name, int units, int points_spent, std::optional<unsigned int> transaction_id);
 }
 
 struct Attributes

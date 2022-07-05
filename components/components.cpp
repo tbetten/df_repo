@@ -34,7 +34,7 @@ void comps::add_components (ecs::Entity_manager* mgr)
 	mgr->add_component (ecs::Component_type::Armour, std::unique_ptr<ecs::C_base> (new ecs::Component<Armour> ()));
 	mgr->add_component (ecs::Component_type::Inventory, std::unique_ptr<ecs::C_base> (new ecs::Component<Inventory> ()));
 	mgr->add_component (ecs::Component_type::Equippable, std::unique_ptr<ecs::C_base> (new ecs::Component<Equippable> ()));
-	mgr->add_component (ecs::Component_type::Skill, std::unique_ptr<ecs::C_base> (new ecs::Component<Skill_comp> ()));
+	mgr->add_component (ecs::Component_type::Skill, std::unique_ptr<ecs::C_base> (new ecs::Component<skill::Skill_comp> ()));
 }
 
 

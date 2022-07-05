@@ -12,7 +12,7 @@ namespace attributes
 {
 	static std::map<std::string, Attrib> string_to_attribute = { {"ST", Attrib::ST}, {"DX", Attrib::DX}, {"IQ", Attrib::IQ}, {"HT", Attrib::HT}, {"HP", Attrib::HP}, {"Will", Attrib::Will}, {"Per", Attrib::Per}, {"FP", Attrib::FP}, {"Basic speed", Attrib::BS}, {"Basic move", Attrib::BM}, {"Size Modifier", Attrib::SM}, {"Basic Lift", Attrib::BL}, {"Lifting Strenth", Attrib::ST_lift}, {"Striking Strength", Attrib::ST_strike} };
 	static std::map<Attrib, int> base_values{ {Attrib::ST, 1000}, {Attrib::DX, 1000}, {Attrib::IQ, 1000}, {Attrib::HT, 1000}, {Attrib::HP, 1000}, {Attrib::Will, 1000}, {Attrib::Per, 1000}, {Attrib::FP, 1000}, {Attrib::BS, 500}, {Attrib::BM, 500}, {Attrib::SM, 0} };
-	static std::map<Attrib, int> units_per_point_map{ {Attrib::ST, 10}, {Attrib::DX, 5}, {Attrib::IQ, 5}, {Attrib::HT, 10}, {Attrib::HP, 50}, {Attrib::Will, 20 }, { Attrib::Per, 20 }, { Attrib::FP, 25}, {Attrib::BS, 5}, {Attrib::BM,20}, {Attrib::SM, 0} };
+	static std::map<Attrib, int> units_per_point_map{ {Attrib::ST, 10}, {Attrib::DX, 5}, {Attrib::IQ, 5}, {Attrib::HT, 10}, {Attrib::HP, 50}, {Attrib::Will, 20 }, { Attrib::Per, 20 }, { Attrib::FP, 30}, {Attrib::BS, 5}, {Attrib::BM,20}, {Attrib::SM, 0} };
 
 	Attrib string_to_attrib(const std::string& attribute_name)
 	{
@@ -100,13 +100,23 @@ namespace attributes
 		return std::accumulate(std::cbegin(transactions), std::cend(transactions), base, [](int current_total, const Transaction& transaction) {return (transaction.attribute == Attrib::BM && transaction.type != Transaction_type::Raise_base) ? current_total + transaction.units : current_total; });
 	}
 
-
+	int get_initial_value(Attrib attrib)
+	{
+		return base_values.at(attrib);
+	}
 
 	int get_total_value(const std::span<Transaction> transactions, const Attrib attrib)  //(const Transactions& transactions, const Attrib attrib)
 	{
 		if (attrib == Attrib::BM) return get_basic_move(transactions);
-		if (std::find(std::cbegin(derived_attributes), std::cend(derived_attributes), attrib) != std::cend(derived_attributes)) return get_derived_attribute(transactions, attrib);
-		return std::accumulate(std::cbegin(transactions), std::cend(transactions), base_values[attrib], [attrib](int current_total, const Transaction& transaction) { return attrib == transaction.attribute ? current_total + transaction.units : current_total; });
+		auto val = base_values[attrib];
+		for (auto& trans : transactions)
+		{
+			if (trans.attribute != attrib) continue;
+			val += trans.units;
+		}
+		return val;
+		//if (std::ranges::find(derived_attributes, attrib) != std::cend(derived_attributes)) return get_derived_attribute(transactions, attrib);
+		//return std::accumulate(std::cbegin(transactions), std::cend(transactions), base_values[attrib], [attrib](int current_total, const Transaction& transaction) { return attrib == transaction.attribute ? current_total + transaction.units : current_total; });
 	}
 
 	int get_spent_points(const std::span<Transaction> transactions, const Attrib attrib)  //(const Transactions& transactions, const Attrib attrib)
@@ -158,5 +168,17 @@ namespace attributes
 			break;
 		}
 		return results;
+	}
+
+	Transactions modifier_to_transactions(Attrib attrib, Transaction_type transaction_type, Template_type template_type, const std::string& name, int units, int points_spent, std::optional<unsigned int> transaction_id)
+	{
+		Transactions result;
+		result.emplace_back(attrib, transaction_type, template_type, name, units, points_spent, transaction_id);
+		auto raises = raises_base(attrib);
+		for (auto [raised_attrib, amount] : raises)
+		{
+			result.emplace_back(raised_attrib, Transaction_type::Raise_base, template_type, name, amount * units / 100, 0, transaction_id);
+		}
+		return result;
 	}
 }

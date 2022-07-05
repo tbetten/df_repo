@@ -3,12 +3,15 @@
 
 enum class Race : int { Human, Dwarf, Halfling };
 enum class Gender : int { Male, Female };
-enum class Occupation {};
+enum class Occupation { Knight, Barbarian };
 
 struct Shared_context;
 
 Race string_to_race(std::string race);
 std::string race_to_string(Race r);
+Occupation string_to_occupation(const std::string& occupation);
+Gender string_to_gender(std::string gender);
+std::string gender_to_string(Gender gender);
 
 struct Character
 {
@@ -21,7 +24,7 @@ struct Character
 	Gender gender { Gender::Male };
 	bool user_controlled{ false };
 	Race race { Race::Human };
-	Occupation occupation;
+	Occupation occupation{ Occupation::Knight };
 	Encumbrance encumbrance { Encumbrance::No };
 	int hitpoints { 0 };
 	int fatigue_points { 0 };

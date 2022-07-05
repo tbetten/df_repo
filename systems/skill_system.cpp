@@ -63,22 +63,12 @@ namespace systems
 		}
 		auto diff = skill_itr->difficulty;
 
-		auto skill_comp = m_mgr->get_data<ecs::Component<Skill_comp>> (ecs::Component_type::Skill, entity);
+		auto skill_comp = m_mgr->get_data<ecs::Component<skill::Skill_comp>> (ecs::Component_type::Skill, entity);
 		auto& i = skill_comp->m_skills.front ();
-		auto itr = std::ranges::find_if (skill_comp->m_skills, [&key] (const Skill_rec& s){return s.key == key; });
-		if (itr == std::cend (skill_comp->m_skills))
-		{
-			skill_comp->m_skills.emplace_back (key, 0, 0);
-			i = skill_comp->m_skills.back ();
-		}
-		else
-		{
-			i = *itr;
-		}
-		auto level = calculate_level (i.points_spent + points);
-		i.points_spent += points;
-		auto start_level = start_levels [static_cast<int>(diff)];
-		i.level = level + start_level * 100;
+		auto skills = skill_comp->m_skills;
+		// add transaction
+
+
 	}
 
 }
